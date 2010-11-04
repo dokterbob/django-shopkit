@@ -31,6 +31,19 @@ class ProductBase(models.Model):
             
             This method _should_ be implemented in a subclass. """
 
+        # TODO: Make this a NotImplemented exception
+        raise Exception('Not implemented')
+
+    def get_taxes(self, *args, **kwargs):
+        """ Get the taxes for the current product. """
+
+        # TODO: Make this a Decimal
+        return 0.0
+
+    def get_currency(self, *args, **kwargs):
+        """ Get the currency for the current price. """
+
+        # TODO: Make this a neat NotImplemented
         raise Exception('Not implemented')
 
 class CartItemBase(models.Model):
