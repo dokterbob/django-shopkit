@@ -18,6 +18,8 @@
 
 from django.db import models
 
+from webshop.core.settings import *
+
 class ProductBase(models.Model):
     """ Abstract base model for products. """
 
@@ -31,11 +33,29 @@ class ProductBase(models.Model):
 
         raise Exception('Not implemented')
 
+class CartItemBase(models.Model):
+    """ Abstract base class for shopping cart items. """
+
+    class Meta:
+        abstract = True
+
+    cart = models.ForeignKey(CART_MODEL)
+    product = models.ForeignKey(PRODUCT_MODEL)
+
 class CartBase(models.Model):
     """ Abstract base class for shopping carts. """
 
     class Meta:
         abstract = True
+
+class OrderItemBase(models.Model):
+    """ Abstract base class for order items. """
+
+    class Meta:
+        abstract = True
+
+    order = models.ForeignKey(ORDER_MODEL)
+    product = models.ForeignKey(PRODUCT_MODEL)
 
 class OrderBase(models.Model):
     """ Abstract base class for orders. """
