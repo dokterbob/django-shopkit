@@ -20,8 +20,8 @@ from django.db import models
 
 from webshop.core.settings import *
 
-class ProductBase(models.Model):
-    """ Abstract base model for products. """
+class PricedItemBase(models.Model):
+    """ Abstract base class for items with a price. """
 
     class Meta:
         abstract = True
@@ -46,38 +46,44 @@ class ProductBase(models.Model):
         # TODO: Make this a neat NotImplemented
         raise Exception('Not implemented')
 
-class CartItemBase(models.Model):
+class ProductBase(PricedItemBase):
+    class Meta(PricedItemBase.Meta):
+        pass
+
+class CartItemBase(PricedItemBase):
     """ Abstract base class for shopping cart items. """
 
-    class Meta:
-        abstract = True
+    class Meta(PricedItemBase.Meta):
+        pass
 
     cart = models.ForeignKey(CART_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
 
-class CartBase(models.Model):
+class CartBase(PricedItemBase):
     """ Abstract base class for shopping carts. """
 
-    class Meta:
-        abstract = True
+    class Meta(PricedItemBase.Meta):
+        pass
 
-class OrderItemBase(models.Model):
+class OrderItemBase(PricedItemBase):
     """ Abstract base class for order items. """
 
-    class Meta:
-        abstract = True
+    class Meta(PricedItemBase.Meta):
+        pass
 
     order = models.ForeignKey(ORDER_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
 
-class OrderBase(models.Model):
+class OrderBase(PricedItemBase):
     """ Abstract base class for orders. """
 
-    class Meta:
-        abstract = True
+    class Meta(PricedItemBase.Meta):
+        pass
 
 class PaymentBase(models.Model):
     """ Abstract base class for payments. """
+    
+    order = models.ForeignKey(ORDER_MODEL)
 
     class Meta:
         abstract = True
