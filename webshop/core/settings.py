@@ -18,7 +18,7 @@
 
 from django.conf import settings
 
-PRODUCT_MODEL = getattr(settings, 'WEBSHOP_MODEL')
+PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
 CART_MODEL = getattr(settings, 'WEBSHOP_CART_MODEL')
 ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
 
