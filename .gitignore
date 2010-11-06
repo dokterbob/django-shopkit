@@ -1,0 +1,5 @@
+*.o
+*.pyc
+.DS\_Store
+docs/_build/*
+
