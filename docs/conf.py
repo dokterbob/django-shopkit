@@ -34,8 +34,18 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.append(os.path.abspath('../webshop'))
+sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('../examples'))
+
+# This is needed to be able to import the Django shizzle
+from django.conf import global_settings
+
+setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', '')
+setattr(global_settings, 'WEBSHOP_CART_MODEL', '')
+setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '')
+
+from django.core.management import setup_environ
+setup_environ(global_settings)
 
 # -- General configuration -----------------------------------------------------
 

@@ -9,7 +9,13 @@ Welcome to django-webshop's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+
+   core/index.rst
+   extensions/index.rst
+
+   examples/index.rst
+
 
 Indices and tables
 ==================
