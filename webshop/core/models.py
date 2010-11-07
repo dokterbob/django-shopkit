@@ -47,6 +47,7 @@ class PricedItemBase(models.Model):
         raise Exception('Not implemented')
 
 class ProductBase(PricedItemBase):
+    """ Abstract base class for products in the webshop. """
     class Meta(PricedItemBase.Meta):
         pass
 
