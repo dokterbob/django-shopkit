@@ -16,9 +16,12 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from decimal import Decimal
+
 from django.db import models
 
 from webshop.core.settings import *
+
 
 class PricedItemBase(models.Model):
     """ Abstract base class for items with a price. """
@@ -31,25 +34,24 @@ class PricedItemBase(models.Model):
             
             This method _should_ be implemented in a subclass. """
 
-        # TODO: Make this a NotImplemented exception
-        raise Exception('Not implemented')
+        raise NotImplementedError
 
     def get_taxes(self, *args, **kwargs):
         """ Get the taxes for the current product. """
 
-        # TODO: Make this a Decimal
-        return 0.0
+        return Decimal('0.0')
 
     def get_currency(self, *args, **kwargs):
         """ Get the currency for the current price. """
 
-        # TODO: Make this a neat NotImplemented
-        raise Exception('Not implemented')
+        raise NotImplementedError
+
 
 class ProductBase(PricedItemBase):
     """ Abstract base class for products in the webshop. """
     class Meta(PricedItemBase.Meta):
         pass
+
 
 class CartItemBase(PricedItemBase):
     """ Abstract base class for shopping cart items. """
@@ -60,11 +62,13 @@ class CartItemBase(PricedItemBase):
     cart = models.ForeignKey(CART_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
 
+
 class CartBase(PricedItemBase):
     """ Abstract base class for shopping carts. """
 
     class Meta(PricedItemBase.Meta):
         pass
+
 
 class OrderItemBase(PricedItemBase):
     """ Abstract base class for order items. """
@@ -75,11 +79,13 @@ class OrderItemBase(PricedItemBase):
     order = models.ForeignKey(ORDER_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
 
+
 class OrderBase(PricedItemBase):
     """ Abstract base class for orders. """
 
     class Meta(PricedItemBase.Meta):
         pass
+
 
 class PaymentBase(models.Model):
     """ Abstract base class for payments. """
