@@ -31,10 +31,9 @@ Contents
 
    gettingstarted.rst 
 
-   core/index.rst
-   extensions/index.rst
+   extending.rst
 
-   examples/index.rst
+   components/index.rst
 
 
 Indices and tables
