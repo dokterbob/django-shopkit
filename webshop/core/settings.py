@@ -22,3 +22,4 @@ PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
 CART_MODEL = getattr(settings, 'WEBSHOP_CART_MODEL')
 ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
 
+MAX_NAME_LENGTH = getattr(settings, 'WEBSHOP_MAX_NAME_LENGTH', 255)

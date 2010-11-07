@@ -18,6 +18,8 @@
 
 from decimal import Decimal
 
+from django.utils.translation import ugettext_lazy as _
+
 from django.db import models
 
 from webshop.core.settings import *
@@ -49,15 +51,28 @@ class PricedItemBase(models.Model):
 
 class ProductBase(PricedItemBase):
     """ Abstract base class for products in the webshop. """
+
     class Meta(PricedItemBase.Meta):
+        verbose_name = _('product')
+        verbose_name_plural = ('products')
+
+
+class NamedProductBase(ProductBase):
+    """ Abstract base class for products with a simple name. """
+    
+    class Meta(ProductBase.Meta):
         pass
+    
+    name = models.CharField(max_length=MAX_NAME_LENGTH
+                            verbose_name=_('name'))
 
 
 class CartItemBase(PricedItemBase):
     """ Abstract base class for shopping cart items. """
 
     class Meta(PricedItemBase.Meta):
-        pass
+        verbose_name = _('cart item')
+        verbose_name_plural = _('cart items')
 
     cart = models.ForeignKey(CART_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
@@ -67,14 +82,16 @@ class CartBase(PricedItemBase):
     """ Abstract base class for shopping carts. """
 
     class Meta(PricedItemBase.Meta):
-        pass
+        verbose_name = _('cart')
+        verbose_name_plural = _('carts')
 
 
 class OrderItemBase(PricedItemBase):
     """ Abstract base class for order items. """
 
     class Meta(PricedItemBase.Meta):
-        pass
+        verbose_name = _('order item')
+        verbose_name_plural = _('order items')
 
     order = models.ForeignKey(ORDER_MODEL)
     product = models.ForeignKey(PRODUCT_MODEL)
@@ -84,7 +101,8 @@ class OrderBase(PricedItemBase):
     """ Abstract base class for orders. """
 
     class Meta(PricedItemBase.Meta):
-        pass
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')
 
 
 class PaymentBase(models.Model):
@@ -94,4 +112,7 @@ class PaymentBase(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = _('payment')
+        verbose_name_plural = _('payments')
+
 
