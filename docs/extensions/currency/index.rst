@@ -1,10 +1,10 @@
 Currency
 ========
 
-Intelligent currency handling for django-webshop. It comes in a simple and an
-advanced variant. The simple variant assumes a single currency throughout the
-webshop project, advanced currency support allows for using multiple 
-currencies throughout the site.
+`webshop.extensions.currency`
+
+.. automodule:: webshop.extensions.currency
+   :members:
 
 .. toctree::
    :maxdepth: 2

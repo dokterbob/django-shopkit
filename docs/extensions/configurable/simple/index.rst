@@ -1,9 +1,9 @@
 Simple
 ======
 
-`webshop.extensions.tax.simple`
+`webshop.extensions.configurable.simple`
 
-.. automodule:: webshop.extensions.tax.simple
+.. automodule:: webshop.extensions.configurable.simple
    :members:
 
 .. toctree::

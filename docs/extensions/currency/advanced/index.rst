@@ -1,8 +1,10 @@
 Advanced
 ========
 
-.. py:module:: webshop.extensions.advanced.advanced
-`webshop.extensions.advanced.advanced`
+`webshop.extensions.currency.advanced`
+
+.. automodule:: webshop.extensions.currency.advanced
+   :members:
 
 .. toctree::
    :maxdepth: 2

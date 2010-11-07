@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`webshop.extensions.tax.advanced`
+`webshop.extensions.configurable.advanced`
 
-.. automodule:: webshop.extensions.tax.advanced
+.. automodule:: webshop.extensions.configurable.advanced
    :members:
 
 .. toctree::

@@ -1,11 +1,10 @@
 Simple
 ======
 
-.. py:module:: webshop.extensions.advanced.simple
-`webshop.extensions.advanced.simple`
+`webshop.extensions.currency.simple`
 
-Simple currency support. This assumes a single currency throughout the
-webshop, configured in `settings.py` as `WEBSHOP_CURRENCY_DEFAULT`.
+.. automodule:: webshop.extensions.currency.simple
+   :members:
 
 .. toctree::
    :maxdepth: 2

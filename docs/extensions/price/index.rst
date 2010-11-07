@@ -1,6 +1,9 @@
 Price
 =====
 
+.. automodule:: webshop.extensions.price
+   :members:
+
 .. toctree::
    :maxdepth: 2
 
