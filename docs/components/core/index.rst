@@ -10,6 +10,7 @@ Contents:
    :maxdepth: 2
 
    models.rst
+   managers.rst
    views.rst
    settings.rst
 

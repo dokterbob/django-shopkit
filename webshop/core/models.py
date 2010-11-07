@@ -24,6 +24,8 @@ from django.db import models
 
 from webshop.core.settings import *
 
+from webshop.core.managers import ActiveProductManager
+
 
 class PricedItemBase(models.Model):
     """ Abstract base class for items with a price. """
@@ -56,9 +58,14 @@ class ProductBase(PricedItemBase):
         verbose_name = _('product')
         verbose_name_plural = ('products')
     
+    objects = models.Manager()
+    in_shop = ActiveProductManager()
+    """ ActiveProductManager returning only products with `active=True`. """
+    
     active = models.BooleanField(verbose_name=_('active'),
-                                 help_text=_('Product active in webshop.')
+                                 help_text=_('Product active in webshop.'),
                                  default=True)
+    """ Whether the product is active in the webshop frontend. """
 
 
 class NamedProductBase(ProductBase):
@@ -66,9 +73,10 @@ class NamedProductBase(ProductBase):
     
     class Meta(ProductBase.Meta):
         pass
-    
+
     name = models.CharField(max_length=MAX_NAME_LENGTH,
                             verbose_name=_('name'))
+    """ Name of the product. """
 
 
 class CartItemBase(PricedItemBase):

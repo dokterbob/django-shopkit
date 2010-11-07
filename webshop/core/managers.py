@@ -16,18 +16,16 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
+from django.db import models
 
-PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
-""" Reference to the model class defining the product. """
-
-CART_MODEL = getattr(settings, 'WEBSHOP_CART_MODEL')
-""" The model used for shopping carts. """
-
-ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
-""" The model used for orders. """
-
-MAX_NAME_LENGTH = getattr(settings, 'WEBSHOP_MAX_NAME_LENGTH', 255)
-""" (Optional) The maximum name length for named products in the webshop. 
-    This defaults to 255.
-"""
+class ActiveProductManager(models.Manager):
+    """ Manager returning only active products. """
+    
+    def get_query_set(self):
+        """ Filter the original queryset so it returns only products with
+            `active=True`.
+        """
+        qs = super(ActiveProductManager, self).get_query_set()
+        qs = qs.filter(active=True)
+        
+        return qs
