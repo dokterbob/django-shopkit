@@ -16,6 +16,6 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-""" Simple currency support. This assumes a single currency throughout the
-webshop, configured in `settings.py` as `WEBSHOP_CURRENCY_DEFAULT`. """
+from django.db import models
 
+# Create your models here.

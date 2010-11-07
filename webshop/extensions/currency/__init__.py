@@ -16,3 +16,9 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+""" 
+Intelligent currency handling for django-webshop. It comes in a simple and an
+advanced variant. The simple variant assumes a single currency throughout the
+webshop project, advanced currency support allows for using multiple 
+currencies throughout the site.
+"""
