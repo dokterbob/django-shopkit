@@ -32,3 +32,7 @@ class PricedProductBase(ProductBase):
     # TODO: Do stuff with the currency
     price = models.FloatField(verbose_name=_('price'))
     """ Price for the current product. """
+
+    def get_price(self, *args, **kwargs):
+        """ Returns the price property of the current product. """
+        return self.price
