@@ -55,6 +55,10 @@ class ProductBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('product')
         verbose_name_plural = ('products')
+    
+    active = models.BooleanField(verbose_name=_('active'),
+                                 help_text=_('Product active in webshop.')
+                                 default=True)
 
 
 class NamedProductBase(ProductBase):
