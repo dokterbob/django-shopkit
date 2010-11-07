@@ -1,0 +1,5 @@
+include README.rst
+include LICENSE
+recursive-include docs *
+recursive-exclude docs/_build *
+recursive-exclude docs .DS_Store
