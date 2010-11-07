@@ -16,3 +16,14 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+""" 
+The core of django-webshop framework contains the components
+considered to be essential in the basis of any kind of webshop.
+
+As the models and other components contained in this module are
+meant to be extended, they exposed in the form of abstract base
+classes. In an actual webshop application, they should be
+subclassed and, where applicable, a reference to them should be
+made in `settings.py` so the other components can find them.
+"""
+
