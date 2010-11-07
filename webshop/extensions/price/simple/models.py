@@ -16,3 +16,16 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.db import models
+
+from django.utils.translation import ugettext_lazy as _
+
+from webshop.core.models import ProductBase
+
+
+class PricedProductBase(ProductBase):
+    """ Base class for a priced product. """
+    
+    # TODO: Do stuff with the currency
+    price = models.FloatField(verbose_name=_('price'))
+    """ Price for the current product. """
