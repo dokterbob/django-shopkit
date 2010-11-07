@@ -4,6 +4,8 @@ Core
 .. automodule:: webshop.core
    :members:
 
+Contents:
+
 .. toctree::
    :maxdepth: 2
 
