@@ -37,6 +37,10 @@ import sys, os
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('../examples'))
 
+# Default flags for autodoc
+autodoc_default_flags = ['members', 'show-inheritance', ]
+autodoc_member_order = 'bysource'
+
 # This is needed to be able to import the Django shizzle
 from django.conf import global_settings
 
