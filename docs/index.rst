@@ -6,10 +6,30 @@
 Welcome to django-webshop's documentation!
 ==========================================
 
-Contents:
+Webshop framework for Django
+----------------------------
+Similar to the way that Django is a web application framework, django-webshop
+is a webshop application framework. It is, essentially, a toolkit for
+building customized webshop applications, for 'perfectionists with deadlines'.
+
+Compatibility
+-------------
+This piece of software will be compatible with Django 1.3. Due to the 
+unavailability of Class Based Generic Views, it will not work on earlier
+releases.
+
+Dependencies
+------------
+You will need the dependencies mentioned in `requirements.txt` to be installed
+somewhere in your `PYTHONPATH`.
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 1
+
+   gettingstarted.rst 
 
    core/index.rst
    extensions/index.rst
