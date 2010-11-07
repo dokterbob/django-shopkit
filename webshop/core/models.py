@@ -63,7 +63,7 @@ class NamedProductBase(ProductBase):
     class Meta(ProductBase.Meta):
         pass
     
-    name = models.CharField(max_length=MAX_NAME_LENGTH
+    name = models.CharField(max_length=MAX_NAME_LENGTH,
                             verbose_name=_('name'))
 
 

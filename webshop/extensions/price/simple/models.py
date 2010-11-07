@@ -26,6 +26,9 @@ from webshop.core.models import ProductBase
 class PricedProductBase(ProductBase):
     """ Base class for a priced product. """
     
+    class Meta(ProductBase.Meta):
+        pass
+    
     # TODO: Do stuff with the currency
     price = models.FloatField(verbose_name=_('price'))
     """ Price for the current product. """
