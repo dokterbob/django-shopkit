@@ -45,13 +45,6 @@ class ProductBase(PricedItemBase):
     """ Whether the product is active in the webshop frontend. """
 
 
-class NamedProductBase(ProductBase, NamedItemBase):
-    """ Abstract base class for products with a simple name. """
-    
-    class Meta(ProductBase.Meta):
-        pass
-
-
 class CartItemBase(PricedItemBase):
     """ Abstract base class for shopping cart items. """
 
@@ -60,7 +53,10 @@ class CartItemBase(PricedItemBase):
         verbose_name_plural = _('cart items')
 
     cart = models.ForeignKey(CART_MODEL)
+    """ Shopping cart this item belongs to. """
+    
     product = models.ForeignKey(PRODUCT_MODEL)
+    """ Product associated with this shopping cart item. """
 
 
 class CartBase(PricedItemBase):
@@ -79,7 +75,10 @@ class OrderItemBase(PricedItemBase):
         verbose_name_plural = _('order items')
 
     order = models.ForeignKey(ORDER_MODEL)
+    """ Order this item belongs to. """
+    
     product = models.ForeignKey(PRODUCT_MODEL)
+    """ Product associated with this order item. """
 
 
 class OrderBase(PricedItemBase):
@@ -94,6 +93,7 @@ class PaymentBase(models.Model):
     """ Abstract base class for payments. """
     
     order = models.ForeignKey(ORDER_MODEL)
+    """ Order this payment belongs to. """
 
     class Meta:
         abstract = True
