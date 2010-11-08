@@ -16,3 +16,18 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.db import models
+
+from webshop.core.models import ProductBase
+
+from webshop.extensions.category.settings import CATEGORY_MODEL
+
+
+class CategorizedProductBase(ProductBase):
+    """ Advanced categorized product, possibly belonging to multiple categories. """
+    
+    class Meta(ProductBase.Meta):
+        pass
+    
+    categories = models.ManyToManyField(CATEGORY_MODEL)
+    """ Categories for the current product. """

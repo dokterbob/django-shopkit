@@ -16,3 +16,15 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+""" 
+Django-webshop, by default, contains base classes for two kinds of categories:
+
+* Simple categories, which define a base class for products that belong to
+  exactly one category.
+* Advanced categories, that belong to zero or more categories.
+
+Furthermore, generic abstract base models are defined for 'normal' categories
+and for nested categories, allowing for the hierarchical categorization of
+products.
+
+"""

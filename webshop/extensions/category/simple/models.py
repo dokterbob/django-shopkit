@@ -16,3 +16,18 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.db import models
+
+from webshop.core.models import ProductBase
+
+from webshop.extensions.category.settings import CATEGORY_MODEL
+
+
+class CategorizedProductBase(ProductBase):
+    """ Simple categorized product, belonging to only once single category. """
+    
+    class Meta(ProductBase.Meta):
+        pass
+    
+    category = models.ForeignKey(CATEGORY_MODEL)
+    """ Category for the current product. """

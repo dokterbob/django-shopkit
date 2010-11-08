@@ -11,5 +11,4 @@ Advanced
 
    models.rst
    views.rst
-   settings.rst
 

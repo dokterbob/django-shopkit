@@ -16,3 +16,26 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.utils.translation import ugettext_lazy as _
+from django.db import models
+
+from webshop.extensions.category.settings import CATEGORY_MODEL
+
+
+class CategoryBase(models.Model):
+    """ Abstract base class for a category. """
+    
+    class Meta:
+        abstract = True
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+
+
+class NestedCategoryBase(CategoryBase):
+    """ Abstract base class for a nested category. """
+    
+    class Meta(CategoryBase.Meta):
+        pass
+    
+    parent = models.ForeignKey(CATEGORY_MODEL, verbose_name=_('parent'))
+    """ Parent category. """

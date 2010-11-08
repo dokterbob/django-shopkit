@@ -11,5 +11,4 @@ Simple
 
    models.rst
    views.rst
-   settings.rst
 
