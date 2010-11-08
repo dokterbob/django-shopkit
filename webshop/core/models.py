@@ -19,37 +19,14 @@
 from decimal import Decimal
 
 from django.utils.translation import ugettext_lazy as _
-
 from django.db import models
 
-from webshop.core.settings import *
-
+from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, ORDER_MODEL
 from webshop.core.managers import ActiveProductManager
+from webshop.core.basemodels import PricedItemBase, NamedItemBase
 
 
-class PricedItemBase(models.Model):
-    """ Abstract base class for items with a price. """
-
-    class Meta:
-        abstract = True
-
-    def get_price(self, *args, **kwargs):
-        """ Get price for the current product.
-            
-            This method _should_ be implemented in a subclass. """
-
-        raise NotImplementedError
-
-    def get_taxes(self, *args, **kwargs):
-        """ Get the taxes for the current product. """
-
-        return Decimal('0.0')
-
-    def get_currency(self, *args, **kwargs):
-        """ Get the currency for the current price. """
-
-        raise NotImplementedError
-
+""" Abstract base models for essential shop components. """
 
 class ProductBase(PricedItemBase):
     """ Abstract base class for products in the webshop. """
@@ -68,15 +45,11 @@ class ProductBase(PricedItemBase):
     """ Whether the product is active in the webshop frontend. """
 
 
-class NamedProductBase(ProductBase):
+class NamedProductBase(ProductBase, NamedItemBase):
     """ Abstract base class for products with a simple name. """
     
     class Meta(ProductBase.Meta):
         pass
-
-    name = models.CharField(max_length=MAX_NAME_LENGTH,
-                            verbose_name=_('name'))
-    """ Name of the product. """
 
 
 class CartItemBase(PricedItemBase):

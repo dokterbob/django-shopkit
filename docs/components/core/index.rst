@@ -9,6 +9,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   basemodels.rst
    models.rst
    managers.rst
    views.rst
