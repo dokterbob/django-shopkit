@@ -36,15 +36,6 @@ class PricedItemBase(models.Model):
 
         raise NotImplementedError
 
-    def get_taxes(self, *args, **kwargs):
-        """ Get the taxes for the current product. """
-
-        return Decimal('0.0')
-
-    def get_currency(self, *args, **kwargs):
-        """ Get the currency for the current price. """
-
-        raise NotImplementedError
 
 class NamedItemBase(models.Model):
     """ Abstract base class for items with a name. """
