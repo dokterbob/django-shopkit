@@ -16,4 +16,12 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-# Create your views here.
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+
+class CategoryView(ListView):
+    pass
+
+class ProductView(DetailView):
+    pass
+

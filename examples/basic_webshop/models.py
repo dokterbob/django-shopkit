@@ -17,6 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 from webshop.core.models import ProductBase, CartBase, OrderBase
+from webshop.core.basemodels import NamedItemBase
 
 from webshop.extensions.category.simple.models import CategoryBase, \
                                                       CategorizedProductBase
@@ -24,10 +25,13 @@ from webshop.extensions.category.simple.models import CategoryBase, \
 from django.db import models
 
 
-class Product(CategorizedProductBase):
+class Product(CategorizedProductBase, NamedItemBase):
     """ Basic product model. """
-
-    pass
+    
+    class Meta(CategorizedProductBase.Meta):
+        unique_together = ('category', 'slug')
+        
+    slug = models.SlugField()
 
 class Cart(CartBase):
     """ Basic shopping cart model. """
@@ -39,8 +43,8 @@ class Order(OrderBase):
     
     pass
 
-class Category(CategoryBase):
+class Category(CategoryBase, NamedItemBase):
     """ Basic category model. """
     
-    pass
+    slug = models.SlugField(unique=True)
 
