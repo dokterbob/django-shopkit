@@ -16,8 +16,8 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
+from django.views.generic import DetailView, ListView
+
 
 class CategoryView(ListView):
     pass
