@@ -20,7 +20,8 @@ from django.db import models
 
 from webshop.core.models import ProductBase
 
-from webshop.extensions.category.settings import CATEGORY_MODEL
+from webshop.extensions.category.settings import *
+from webshop.extensions.category.basemodels import *
 
 
 class CategorizedProductBase(ProductBase):
