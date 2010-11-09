@@ -16,7 +16,7 @@ Compatibility
 -------------
 This piece of software will be compatible with Django 1.3. Due to the 
 unavailability of Class Based Generic Views, it will not work on earlier
-releases.
+releases. It is being developed on the SVN trunk until it hits the 1.3 release.
 
 Dependencies
 ------------
