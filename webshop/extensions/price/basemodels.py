@@ -16,3 +16,25 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.db import models
+
+from django.utils.translation import ugettext_lazy as _
+
+from webshop.core.basemodels import PricedItemBase
+
+
+class PricedItem(PricedItemBase):
+    """ Abstract base class for priced models with a price field. 
+        This base class simply has a price field for storing the price
+        of the article.
+    """
+    
+    class Meta(PricedItemBase.Meta):
+        abstract = True
+    
+    price = models.FloatField(verbose_name=_('price'))
+    """ Price for the current product. """
+
+    def get_price(self):
+        """ Returns the price property of the current product. """
+        return self.price

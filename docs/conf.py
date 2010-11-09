@@ -49,6 +49,7 @@ setattr(global_settings, 'WEBSHOP_CART_MODEL', '')
 setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '')
 setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '')
 setattr(global_settings, 'WEBSHOP_TAX_PERCENTAGE', '')
+setattr(global_settings, 'WEBSHOP_PRICE_MODELS', '')
 
 from django.core.management import setup_environ
 setup_environ(global_settings)

@@ -16,3 +16,13 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+"""
+The model structure in this extension is very preliminary. Ideally, one would
+want all ones prices to reside in a single table.
+
+One way to approach this would be using a private function `_get_valid` for
+`PriceBase` subclasses and then implementing a `get_valid` in `PriceBase` which
+calls the `_get_valid` functions for direct parent classes that inherit from
+`PriceBase`. This could then be collapsed into a single QuerySet using Q objects.
+But perhaps this is too complicated. Any comments welcomed.
+"""

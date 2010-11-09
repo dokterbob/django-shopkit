@@ -22,16 +22,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.models import ProductBase
 
+from webshop.extensions.price.basemodels import *
 
-class PricedProductBase(ProductBase):
-    """ Abstract base class for a priced product. """
+
+class PricedProductBase(ProductBase, PricedItem):
+    """ Abstract base class for a simple priced product. """
     
     class Meta(ProductBase.Meta):
         abstract = True
     
-    price = models.FloatField(verbose_name=_('price'))
-    """ Price for the current product. """
-
-    def get_price(self, *args, **kwargs):
-        """ Returns the price property of the current product. """
-        return self.price

@@ -16,3 +16,14 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+""" 
+By default, this extension contains base classes for two different types of 
+pricing:
+
+* Simple pricing gives you an abstract base class that simply adds a price 
+  field to the `ProductBase` class.
+* Advanced pricing, allowing several prices to be specified per product, 
+  depending on factors such as the date or the amount of articles. The current
+  structure for this code is very preliminary and mostly demonstrative.
+
+"""
