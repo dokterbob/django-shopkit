@@ -1,5 +1,5 @@
-Generic category base models
-============================
+Base models
+===========
 
 .. automodule:: webshop.extensions.category.basemodels
    :members:

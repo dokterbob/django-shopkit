@@ -4,6 +4,8 @@ Price
 .. automodule:: webshop.extensions.price
    :members:
 
+Contents:
+
 .. toctree::
    :maxdepth: 2
 

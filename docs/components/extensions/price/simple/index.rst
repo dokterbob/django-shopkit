@@ -6,9 +6,3 @@ Simple
 .. automodule:: webshop.extensions.price.simple
    :members:
 
-.. toctree::
-   :maxdepth: 2
-
-   models.rst
-   settings.rst
-
