@@ -34,6 +34,7 @@ class ProductBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('product')
         verbose_name_plural = ('products')
+        abstract = True
     
     objects = models.Manager()
     in_shop = ActiveProductManager()
@@ -51,6 +52,7 @@ class CartItemBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('cart item')
         verbose_name_plural = _('cart items')
+        abstract = True
 
     cart = models.ForeignKey(CART_MODEL)
     """ Shopping cart this item belongs to. """
@@ -65,6 +67,7 @@ class CartBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
+        abstract = True
 
 
 class OrderItemBase(PricedItemBase):
@@ -73,6 +76,8 @@ class OrderItemBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
+        abstract = True
+
 
     order = models.ForeignKey(ORDER_MODEL)
     """ Order this item belongs to. """
@@ -87,6 +92,7 @@ class OrderBase(PricedItemBase):
     class Meta(PricedItemBase.Meta):
         verbose_name = _('order')
         verbose_name_plural = _('orders')
+        abstract = True
 
 
 class PaymentBase(models.Model):
@@ -96,8 +102,8 @@ class PaymentBase(models.Model):
     """ Order this payment belongs to. """
 
     class Meta:
-        abstract = True
         verbose_name = _('payment')
         verbose_name_plural = _('payments')
+        abstract = True
 
 

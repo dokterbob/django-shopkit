@@ -21,7 +21,12 @@ from webshop.core.models import ProductBase
 from webshop.extensions.tax.simple import settings
 
 class TaxedProductBase(ProductBase):
-    """ A simple taxed product based on a configurable percentage. """
+    """ Abstract base class for a simple taxed product where tax is 
+        based on a configurable percentage. """
+    
+    class Meta(ProductBase.Meta):
+        abstract = True
+
 
     def get_taxes(self, *args, **kwargs):
         """ Calculate tax according to a fixed percentage of the price. """

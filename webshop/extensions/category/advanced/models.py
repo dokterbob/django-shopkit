@@ -25,10 +25,11 @@ from webshop.extensions.category.basemodels import *
 
 
 class CategorizedProductBase(ProductBase):
-    """ Advanced categorized product, possibly belonging to multiple categories. """
+    """ Abstract base class for an advanced categorized product, 
+        possibly belonging to multiple categories. """
     
     class Meta(ProductBase.Meta):
-        pass
+        abstract = True
     
     categories = models.ManyToManyField(CATEGORY_MODEL)
     """ Categories for the current product. """

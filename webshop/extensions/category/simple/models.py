@@ -25,10 +25,11 @@ from webshop.extensions.category.basemodels import *
 
 
 class CategorizedProductBase(ProductBase):
-    """ Simple categorized product, belonging to only once single category. """
+    """ Advanced base class for a simple categorized product, 
+        belonging to only once single category. """
     
     class Meta(ProductBase.Meta):
-        pass
+        abstract = True
     
     category = models.ForeignKey(CATEGORY_MODEL)
     """ Category for the current product. """

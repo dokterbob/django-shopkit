@@ -24,10 +24,10 @@ from webshop.core.models import ProductBase
 
 
 class PricedProductBase(ProductBase):
-    """ Base class for a priced product. """
+    """ Abstract base class for a priced product. """
     
     class Meta(ProductBase.Meta):
-        pass
+        abstract = True
     
     # TODO: Do stuff with the currency
     price = models.FloatField(verbose_name=_('price'))
