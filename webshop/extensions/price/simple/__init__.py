@@ -16,3 +16,8 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+""" As of now this is only a stub module using the base class for priced
+    items found in the core. However, functionality might be added later which
+    is specific to products, so please use this extension instead of the
+    core base classes.
+"""

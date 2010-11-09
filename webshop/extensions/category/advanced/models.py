@@ -18,17 +18,15 @@
 
 from django.db import models
 
-from webshop.core.models import ProductBase
-
 from webshop.extensions.category.settings import *
 from webshop.extensions.category.basemodels import *
 
 
-class CategorizedProductBase(ProductBase):
-    """ Abstract base class for an advanced categorized product, 
+class CategorizedItemBase(models.Model):
+    """ Abstract base class for an advanced categorized item, 
         possibly belonging to multiple categories. """
     
-    class Meta(ProductBase.Meta):
+    class Meta:
         abstract = True
     
     categories = models.ManyToManyField(CATEGORY_MODEL)

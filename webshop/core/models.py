@@ -23,15 +23,16 @@ from django.db import models
 
 from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, ORDER_MODEL
 from webshop.core.managers import ActiveProductManager
-from webshop.core.basemodels import PricedItemBase, NamedItemBase
+from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
+                                    QuantizedItemBase
 
 
 """ Abstract base models for essential shop components. """
 
-class ProductBase(PricedItemBase):
+class ProductBase(AbstractPricedItemBase):
     """ Abstract base class for products in the webshop. """
 
-    class Meta(PricedItemBase.Meta):
+    class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('product')
         verbose_name_plural = ('products')
         abstract = True
@@ -46,10 +47,10 @@ class ProductBase(PricedItemBase):
     """ Whether the product is active in the webshop frontend. """
 
 
-class CartItemBase(PricedItemBase):
+class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
     """ Abstract base class for shopping cart items. """
 
-    class Meta(PricedItemBase.Meta):
+    class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('cart item')
         verbose_name_plural = _('cart items')
         abstract = True
@@ -61,19 +62,19 @@ class CartItemBase(PricedItemBase):
     """ Product associated with this shopping cart item. """
 
 
-class CartBase(PricedItemBase):
+class CartBase(AbstractPricedItemBase):
     """ Abstract base class for shopping carts. """
 
-    class Meta(PricedItemBase.Meta):
+    class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
 
 
-class OrderItemBase(PricedItemBase):
+class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     """ Abstract base class for order items. """
 
-    class Meta(PricedItemBase.Meta):
+    class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
         abstract = True
@@ -86,10 +87,10 @@ class OrderItemBase(PricedItemBase):
     """ Product associated with this order item. """
 
 
-class OrderBase(PricedItemBase):
+class OrderBase(AbstractPricedItemBase):
     """ Abstract base class for orders. """
 
-    class Meta(PricedItemBase.Meta):
+    class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('order')
         verbose_name_plural = _('orders')
         abstract = True

@@ -18,17 +18,15 @@
 
 from django.db import models
 
-from webshop.core.models import ProductBase
-
 from webshop.extensions.category.settings import *
 from webshop.extensions.category.basemodels import *
 
 
-class CategorizedProductBase(ProductBase):
-    """ Advanced base class for a simple categorized product, 
+class CategorizedItemBase(models.Model):
+    """ Advanced base class for a simple categorized item, 
         belonging to only once single category. """
     
-    class Meta(ProductBase.Meta):
+    class Meta:
         abstract = True
     
     category = models.ForeignKey(CATEGORY_MODEL)

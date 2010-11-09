@@ -23,17 +23,17 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
-from webshop.core.models import ProductBase
+from webshop.core.basemodels import PricedItemBase
 
 from webshop.extensions.price.advanced.settings import *
-from webshop.extensions.price.basemodels import *
 
-class PriceBase(PricedItem):
+
+class PriceBase(PricedItemBase):
     """ Abstract base class for price models, exposing a method to get the 
         cheapest price under given conditions. 
     """
     
-    class Meta(PricedItem.Meta):
+    class Meta(PricedItemBase.Meta):
         abstract = True
     
     @staticmethod
@@ -117,7 +117,7 @@ class QuantifiedPriceBase(PriceBase):
         return valid
 
 
-class PricedProductBase(ProductBase):
+class PricedProductBase(models.Model):
     """ Abstract base class for an advanced priced product. 
         This base class allows for more complex pricing of articles, it 
         enables features like:
@@ -126,7 +126,7 @@ class PricedProductBase(ProductBase):
         * Returning and storing different prices depending on the quantity.
     """
     
-    class Meta(ProductBase.Meta):
+    class Meta:
         abstract = True
     
     def get_price(self, *args, **kwargs):
