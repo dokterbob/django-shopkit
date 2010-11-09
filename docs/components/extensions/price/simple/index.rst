@@ -10,6 +10,5 @@ Simple
    :maxdepth: 2
 
    models.rst
-   views.rst
    settings.rst
 
