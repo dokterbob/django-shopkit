@@ -29,7 +29,6 @@ class PricedProductBase(ProductBase):
     class Meta(ProductBase.Meta):
         abstract = True
     
-    # TODO: Do stuff with the currency
     price = models.FloatField(verbose_name=_('price'))
     """ Price for the current product. """
 
