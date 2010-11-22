@@ -16,9 +16,16 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-""" 
-Currency handling for django-webshop. It comes in a simple and an advanced
-variant. The simple variant assumes a single currency throughout the webshop
-project, advanced currency support allows for using multiple currencies
-throughout the site.
-"""
+from decimal import Decimal
+
+# Pick the current locale from the LANG environment variable
+import locale
+locale.setlocale(locale.LC_MONETARY, '')
+
+
+def format_price(amount):
+    """ Format the given float-like object in the current locale. """
+    assert float(amount), 'Cannot convert this to a number.'
+    
+    return locale.currency(amount, grouping=True)
+
