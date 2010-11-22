@@ -16,12 +16,31 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.shortcuts import get_object_or_404
+
 from django.views.generic import DetailView, ListView
 
+from basic_webshop.models import Product, Category
 
-class CategoryView(ListView):
-    pass
+# class WebshopViewMixin(object):
+#     def get_context_data(self):
 
-class ProductView(DetailView):
-    pass
+class CategoryDetail(DetailView):
+    """ List products for a category. """
+    
+    model = Category
+        
+
+class ProductDetail(DetailView):
+    """ List details for a product. """
+    
+    model = Product
+    
+    def get_queryset(self):
+        category_slug = self.kwargs.get('category_slug')
+        
+        category = get_object_or_404(Category, slug=category_slug)
+        
+        queryset = super(ProductDetail, self).get_queryset()
+        return queryset.filter(category=category)
 

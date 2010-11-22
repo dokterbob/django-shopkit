@@ -28,14 +28,29 @@ from webshop.extensions.category.simple.models import CategoryBase, \
                                                       CategorizedItemBase
 from webshop.extensions.price.simple.models import PricedItemBase
 
-
+"""
+>>> c = Category(name='Fruit', slug='fruit')
+>>> c.save()
+>>> p = Product(category=c, name='Banana', slug='banana', price="15.00")
+>>> p.description = 'A nice piece of fruit for the whole family to enjoy.'
+>>> p.save()
+>>> c.product_set.all()
+[<Product: Banana>]
+"""
 class Product(CategorizedItemBase, PricedItemBase, NamedItemBase):
     """ Basic product model. """
     
     class Meta:
         unique_together = ('category', 'slug')
-        
+   
     slug = models.SlugField()
+    description = models.TextField(blank=False)
+
+    @models.permalink
+    def get_absolute_url(self):
+        return 'product_detail', None, \
+            {'category_slug': self.category.slug,
+             'slug': self.slug}
 
 class Cart(CartBase):
     """ Basic shopping cart model. """

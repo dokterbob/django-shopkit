@@ -1,0 +1,14 @@
+{% extends "basic_webshop/base.html" %}
+
+{% block content %}
+    <h1>Category: {{ category }}</h1>
+    
+    <h2>Products</h2>
+    <ul>
+        {% for product in category.product_set.all %}
+            <li><a href="{{ product.get_absolute_url }}">{{ product }}</a></li>
+        {% empty %}
+            <li>No products so far.</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

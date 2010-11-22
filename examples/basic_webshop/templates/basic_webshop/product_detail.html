@@ -1,0 +1,11 @@
+{% extends "basic_webshop/base.html" %}
+
+{% block content %}
+    <h1>Product: {{ product }}</h1>
+    
+    <p>{{ product.description }}</p>
+    
+    <p>Price: {{ product.price }}</p>
+    
+    <p><a href="{% url category_detail product.category.slug %}">Back to category {{ product.category }}</a></p>
+{% endblock content %}
