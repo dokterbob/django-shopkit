@@ -76,4 +76,7 @@ class Category(CategoryBase, NamedItemBase):
     """ Basic category model. """
     
     slug = models.SlugField(unique=True)
+    
+    def get_products(self):
+        return Product.in_shop.filter(category=self)
 

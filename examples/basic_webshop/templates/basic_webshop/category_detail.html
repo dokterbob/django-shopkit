@@ -5,7 +5,7 @@
     
     <h2>Products</h2>
     <ul>
-        {% for product in category.product_set.all %}
+        {% for product in category.get_products %}
             <li><a href="{{ product.get_absolute_url }}">{{ product }}</a></li>
         {% empty %}
             <li>No products so far.</li>

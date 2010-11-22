@@ -41,6 +41,6 @@ class ProductDetail(DetailView):
         
         category = get_object_or_404(Category, slug=category_slug)
         
-        queryset = super(ProductDetail, self).get_queryset()
+        queryset = Product.in_shop.all()
         return queryset.filter(category=category)
 
