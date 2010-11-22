@@ -6,6 +6,8 @@ Currency
 .. automodule:: webshop.extensions.currency
    :members:
 
+Contents:
+
 .. toctree::
    :maxdepth: 2
 

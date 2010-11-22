@@ -1,6 +1,8 @@
 Category
 ========
 
+`webshop.extensions.category`
+
 .. automodule:: webshop.extensions.category
    :members:
 

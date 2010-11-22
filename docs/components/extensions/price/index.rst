@@ -1,6 +1,8 @@
 Price
 =====
 
+`webshop.extensions.price`
+
 .. automodule:: webshop.extensions.price
    :members:
 

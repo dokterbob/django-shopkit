@@ -1,6 +1,8 @@
 Extensions
 ==========
 
+Contents:
+
 .. toctree::
    :maxdepth: 2
 
