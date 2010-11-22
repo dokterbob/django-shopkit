@@ -22,7 +22,7 @@ digraph name {
     <TABLE BGCOLOR="palegoldenrod" BORDER="0" CELLBORDER="0" CELLSPACING="0">
      <TR><TD COLSPAN="2" CELLPADDING="4" ALIGN="CENTER" BGCOLOR="olivedrab4"
      ><FONT FACE="Helvetica Bold" COLOR="white"
-     >Product<BR/>&lt;<FONT FACE="Helvetica Italic">CategorizedItemBase,PricedItemBase,NamedItemBase</FONT>&gt;</FONT></TD></TR>
+     >Product<BR/>&lt;<FONT FACE="Helvetica Italic">ProductBase,CategorizedItemBase,PricedItemBase,NamedItemBase</FONT>&gt;</FONT></TD></TR>
 
     
         
@@ -45,6 +45,13 @@ digraph name {
         ></TD>
         <TD ALIGN="LEFT"
         ><FONT FACE="Helvetica Italic">CharField</FONT
+        ></TD></TR>
+        
+        <TR><TD ALIGN="LEFT" BORDER="0"
+        ><FONT COLOR="#7B7B7B" FACE="Helvetica Italic">active</FONT
+        ></TD>
+        <TD ALIGN="LEFT"
+        ><FONT COLOR="#7B7B7B" FACE="Helvetica Italic">BooleanField</FONT
         ></TD></TR>
         
         <TR><TD ALIGN="LEFT" BORDER="0"
