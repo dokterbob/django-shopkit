@@ -29,7 +29,13 @@ from basic_webshop.models import Product, Category, Cart
 
 class WebshopViewMixin(object):
     """ Generic view mixin, providing a shopping cart and categories
-        as extra context."""
+        as extra context. This Mixin should later be split up in
+        several parts, some of which belong into the core and some of
+        which will be part of extensions. 
+        
+        Class Based Views are Aweseome!
+    
+    """
     
     
     def get_cart(self):
