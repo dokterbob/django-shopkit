@@ -9,7 +9,6 @@ Simple
 .. toctree::
    :maxdepth: 2
 
-   models.rst
-   views.rst
    settings.rst
+   utils.rst
 
