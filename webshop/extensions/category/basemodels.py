@@ -35,7 +35,7 @@ class NestedCategoryBase(CategoryBase):
     """ Abstract base class for a nested category. """
     
     class Meta(CategoryBase.Meta):
-        pass
+        abstract = True
     
     parent = models.ForeignKey(CATEGORY_MODEL, verbose_name=_('parent'))
     """ Parent category. """
