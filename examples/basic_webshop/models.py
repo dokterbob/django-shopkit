@@ -78,5 +78,11 @@ class Category(CategoryBase, NamedItemBase):
     slug = models.SlugField(unique=True)
     
     def get_products(self):
+        """ Get all active products for the current category. """
         return Product.in_shop.filter(category=self)
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return 'category_detail', None, \
+            {'slug': self.slug}
 
