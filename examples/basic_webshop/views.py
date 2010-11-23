@@ -56,16 +56,14 @@ class CartMixin(object):
         
         return CartItemAddForm
     
-    
-    # TODO: test me.
-    # def get_context_data(self, **kwargs):
-    #     """ Add extra stuff to the context. """
-    #     context = super(WebshopViewMixin, self).get_context_data(**kwargs)
-    #     
-    #     context.update({'cart': self.get_cart(),
-    #                     'categories': self.get_categories()})
-    #     
-    #     return context
+    def get_context_data(self, **kwargs):
+        logger.debug('CartMixin')
+
+        context = super(CartMixin, self).get_context_data(**kwargs)
+        
+        context.update({'cart': self.get_cart()})
+        
+        return context
 
 
 class CategoriesMixin(object):
@@ -75,7 +73,16 @@ class CategoriesMixin(object):
         """ Gets all the available categories. """
         
         return Category.objects.all()
+    
+    def get_context_data(self, **kwargs):
+        logger.debug('CategoriesMixin')
 
+        context = super(CategoriesMixin, self).get_context_data(**kwargs)
+        
+        context.update({'categories': self.get_categories()})
+        
+        return context
+        
 
 class WebshopViewMixin(CartMixin, CategoriesMixin):
     """ Generic view mixin, providing a shopping cart and categories
@@ -87,15 +94,7 @@ class WebshopViewMixin(CartMixin, CategoriesMixin):
     
     """ 
     
-    
-    def get_context_data(self, **kwargs):
-        """ Add extra stuff to the context. """
-        context = super(WebshopViewMixin, self).get_context_data(**kwargs)
-        
-        context.update({'cart': self.get_cart(),
-                        'categories': self.get_categories()})
-        
-        return context
+    pass
 
 
 class CategoryList(WebshopViewMixin, TemplateView):
