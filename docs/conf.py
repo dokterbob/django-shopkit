@@ -44,12 +44,12 @@ autodoc_member_order = 'bysource'
 # This is needed to be able to import the Django shizzle
 from django.conf import global_settings
 
-setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', '')
-setattr(global_settings, 'WEBSHOP_CART_MODEL', '')
-setattr(global_settings, 'WEBSHOP_CARTITEM_MODEL', '')
-setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '')
-setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', '')
-setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '')
+setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', 'basic_webshop.Product')
+setattr(global_settings, 'WEBSHOP_CART_MODEL', 'basic_webshop.Cart')
+setattr(global_settings, 'WEBSHOP_CARTITEM_MODEL', 'basic_webshop.CartItem')
+setattr(global_settings, 'WEBSHOP_ORDER_MODEL', 'basic_webshop.Order')
+setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', 'basic_webshop.OrderItem')
+setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', 'basic_webshop.Category')
 setattr(global_settings, 'WEBSHOP_TAX_PERCENTAGE', '')
 setattr(global_settings, 'WEBSHOP_PRICE_MODELS', '')
 

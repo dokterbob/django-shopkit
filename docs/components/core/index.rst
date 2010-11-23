@@ -13,6 +13,7 @@ Contents:
    models.rst
    managers.rst
    views.rst
+   forms.rst
    settings.rst
    util.rst
 

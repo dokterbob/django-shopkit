@@ -21,8 +21,19 @@ from django import forms
 from webshop.core.util import get_model_from_string
 from webshop.core.settings import PRODUCT_MODEL
 
-product_class = get_model_from_string(PRODUCT_MODEL)
-""" Construct a product class from the string value in settings. """
+
+from django.utils.functional import SimpleLazyObject
+
+
+def get_product_choices():
+    """ Get available products for shopping cart. This
+        has to be wrapped in a SimpleLazyObject, otherwise
+        Sphinx will complain in the worst ways. """
+    product_class = get_model_from_string(PRODUCT_MODEL)
+    
+    return product_class.in_shop.all()
+
+product_choices = SimpleLazyObject(get_product_choices)
 
 
 """ Core form classes. """
@@ -30,6 +41,6 @@ product_class = get_model_from_string(PRODUCT_MODEL)
 class CartItemAddForm(forms.Form):
     """ A form for adding CartItems to a Cart. """
     
-    product = forms.ModelChoiceField(queryset=product_class.in_shop.all(),
+    product = forms.ModelChoiceField(queryset=product_choices,
                                      widget=forms.HiddenInput)
     quantity = forms.IntegerField(min_value=1, initial=1)

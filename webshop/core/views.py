@@ -23,9 +23,6 @@ from webshop.core.util import get_model_from_string
 from webshop.core.settings import CART_MODEL
 from webshop.core.forms import CartItemAddForm
 
-cart_class = get_model_from_string(CART_MODEL)
-""" Construct a cart class from the string value in settings. """
-
 
 """ Generic view Mixins for webshop core functionality. """
 
@@ -37,6 +34,10 @@ class CartMixin(object):
         """ Gets the shopping cart from the context or creates a 
             new one if no shopping cart previously exists.
         """
+
+        cart_class = get_model_from_string(CART_MODEL)
+        """ Construct a cart class from the string value in settings. """
+
         
         cart_pk = self.request.session.get('cart_pk', None)
         
