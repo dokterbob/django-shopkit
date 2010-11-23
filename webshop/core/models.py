@@ -21,10 +21,13 @@ from decimal import Decimal
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
-from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, ORDER_MODEL
+from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
+                                  CARTITEM_MODEL, ORDER_MODEL
 from webshop.core.managers import ActiveProductManager
 from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
                                     QuantizedItemBase
+
+from webshop.core.util import get_model_from_string
 
 
 """ Abstract base models for essential shop components. """
@@ -71,6 +74,45 @@ class CartBase(AbstractPricedItemBase):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
+    
+    def getCartItem(self, product):
+        """ Either instantiates and returns a CartItem for the 
+            Cart-Product combination or fetches it from the
+            database. The creation is lazy: the resulting CartItem
+            is not automatically saved. """
+        
+        cartitem_class = get_model_from_string(CARTITEM_MODEL)
+        
+        # Note that we won't use 'get_or_create' here as it automatically
+        # saves the object.
+        try:
+            cartitem = cartitem_class.objects.get(cart=self, 
+                                                  product=product)
+            
+        except cartitem_class.DoesNotExist:
+            cartitem = cartitem_class(cart=self,
+                                      product=product)
+        
+        return cartitem
+        
+    def addProduct(self, product, quantity=1):
+        """ Adds the specified product in the specified quantity
+            to the current shopping Cart. This effectively creates
+            a CartItem for the Product-Cart combination or updates
+            it when a CartItem already exists.
+            
+            It returns an _unsaved_ instance of a CartItem, so the
+            called is able to determine whether the product was already
+            in the shopping cart or not. 
+        """
+        
+        cartitem = self.getCartItem(product)
+        
+        # We can do this without querying the actual value from the 
+        # database.
+        cartitem.quantity = models.F('quantity') + quantity
+        
+        return cartitem
 
 
 class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):

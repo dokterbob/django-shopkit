@@ -30,5 +30,7 @@ And add the required settings::
 
     WEBSHOP_PRODUCT_MODEL = 'mywebshop.Product'
     WEBSHOP_CART_MODEL = 'mywebshop.Cart'
+    WEBSHOP_CARTITEM_MODEL = 'mywebshop.CartItem'
     WEBSHOP_ORDER_MODEL = 'mywebshop.Order'
+    WEBSHOP_ORDERITEM_MODEL = 'mywebshop.OrderItem'
     WEBSHOP_CATEGORY_MODEL = 'mywebshop.Category'

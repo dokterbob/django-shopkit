@@ -14,5 +14,6 @@ Contents:
    managers.rst
    views.rst
    settings.rst
+   util.rst
 
 

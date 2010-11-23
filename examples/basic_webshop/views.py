@@ -168,7 +168,10 @@ class CartAdd(BaseFormView, CartMixin):
         
         """
     
-    
+    http_method_names = ['post', ]
+    """ Only allow for post requests to this view. This is necessary to
+        override the `get` method in BaseFormView. """
+
     def get_success_url(self):
         """ Get the URL to redirect to after a successful update of
             the shopping cart. This defaults to the shopping cart
@@ -189,30 +192,22 @@ class CartAdd(BaseFormView, CartMixin):
         product = form.cleaned_data['product']
         quantity = form.cleaned_data['quantity']
         
-        # Note: this performs an unnecessary save. Hence, it could
-        # be more efficient. Also: write price information to database.
-        # This code should be abstracted to something like this:
-        # Cart.addProduct(product, quantity)
-        cartitem, created = CartItem.objects.get_or_create(cart=cart, 
-                                                           product=product)
+        self.object = cart.addProduct(product, quantity)
         
-        if created:
-            # CartItem created: simply set the quantity and save it
-            cartitem.quantity = quantity
-            
+        # Make sure that we know whether we updated an existing item
+        updated = self.object.pk or False
+        
+        # After this, it will allways have a pk.
+        self.object.save()
+        
+        if updated:
+            # Object updated
             messages.add_message(self.request, messages.SUCCESS, 
-                'Added product \'%s\' to shopping cart.' % product)
-
+                'Updated \'%s\' in shopping cart.' % product)
         else:
-            # Product already in Cart: update the quantity
-            cartitem.quantity += quantity
-
+            # Object updated
             messages.add_message(self.request, messages.SUCCESS, 
-                'Updated quantity for product \'%s\' in shopping cart.' % product)
-            
-        cartitem.save()
-        
-        self.object = cartitem
+                'Added \'%s\' to shopping cart.' % product)
         
         return super(BaseFormView, self).form_valid(form)
 

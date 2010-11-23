@@ -16,24 +16,14 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
+from django.db.models import get_model
 
-PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
-""" Reference to the model class defining the product. """
+""" Several util functions for use in core functionality. """
 
-CART_MODEL = getattr(settings, 'WEBSHOP_CART_MODEL')
-""" The model used for shopping carts. """
-
-CARTITEM_MODEL = getattr(settings, 'WEBSHOP_CARTITEM_MODEL')
-""" The model used for shopping cart items. """
-
-ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
-""" The model used for orders. """
-
-ORDERITEM_MODEL = getattr(settings, 'WEBSHOP_ORDERITEM_MODEL')
-""" The model used for order items. """
-
-MAX_NAME_LENGTH = getattr(settings, 'WEBSHOP_MAX_NAME_LENGTH', 255)
-""" (Optional) The maximum name length for named products in the webshop. 
-    This defaults to 255.
-"""
+def get_model_from_string(model):
+    """ 
+    Takes a string in the form of `appname.Model`, (ie.
+    `basic_webshop.CartItem`) and returns the model class for it.
+    """
+    
+    return get_model(*model.split('.'))
