@@ -3,16 +3,28 @@
         <title>Basic webshop</title>
     </head>
     <body>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        {% block messages %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endblock messages %}
 
         {% block content %}{% endblock content %}
+
+        {% block cart %}
+            {% if cart %}
+                {% with cart.cartitem_set.count as itemcount %}
+                    <p><a href="{% url cart_detail %}">{{ itemcount }} item(s) in shopping cart.</a></p>
+                {% endwith %}
+            {% endif %}
+        {% endblock cart %}
         
+        {% block navigation %}
         <p><a href="{% url shop_index %}">Shop home</a></p>
+        {% endblock navigation %}
     </body>
 </html>
