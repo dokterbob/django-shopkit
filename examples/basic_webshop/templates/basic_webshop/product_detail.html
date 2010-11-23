@@ -9,5 +9,13 @@
     
     <p>Price: {{ product.price|format_price }}</p>
     
+    <p>Add to cart: 
+        <form action="{% url cart_add %}" method="post">
+            {{ cartform }}
+            
+            <input type="submit" value="Add to cart">
+        </form>
+    </p>
+    
     <p><a href="{% url category_detail product.category.slug %}">Back to category {{ product.category }}</a></p>
 {% endblock content %}

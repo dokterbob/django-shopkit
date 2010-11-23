@@ -16,24 +16,13 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from surlex.dj import surl
+from django import forms
 
-from django.conf.urls.defaults import *
+from basic_webshop.models import CartItem, Product
 
-from basic_webshop.views import *
-
-urlpatterns = patterns('basic_webshop.views',
-    surl(r'^$',
-         ShopIndex.as_view(), name='shop_index'),
-
-    surl(r'^categories/$',
-         CategoryList.as_view(), name='category_list'),
-    surl(r'^categories/<slug:s>/$',
-         CategoryDetail.as_view(), name='category_detail'),
-    surl(r'^categories/<category_slug:s>/product/<slug:s>/$',
-         ProductDetail.as_view(), name='product_detail'),
+class CartItemAddForm(forms.Form):
+    """ A form for adding CartItems to a Cart. """
     
-    surl(r'^cart/$',
-         CartDetail.as_view(), name='cart_detail'),
-    surl(r'^cart/add/$', CartAdd.as_view(), name='cart_add'),
-)
+    product = forms.ModelChoiceField(queryset=Product.in_shop.all(),
+                                     widget=forms.HiddenInput)
+    quantity = forms.IntegerField(min_value=1, initial=1)

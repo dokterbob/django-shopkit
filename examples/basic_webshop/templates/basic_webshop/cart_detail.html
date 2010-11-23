@@ -4,11 +4,24 @@
     <h1>Shopping cart</h1>
     
     <h2>Products</h2>
-    <ul>
-        {% for product in cart.get_products %}
-            <li><a href="{{ product.get_absolute_url }}">{{ product }}</a></li>
+    <table>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+        {% for cartitem in cart.cartitem_set.all %}
+            {% with cartitem.product as product %}
+            <tr>
+                <td><a href="{{ product.get_absolute_url }}">{{ product }}</a></td>
+                <td>{{ cartitem.quantity }}</td>
+                <td>{{ cartitem.price }}</td>
+            </tr>
+            {% endwith %}
         {% empty %}
-            <li>No products so far.</li>
+            <tr>
+                <td>No products so far.</td>
+            </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% endblock content %}
