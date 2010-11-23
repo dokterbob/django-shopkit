@@ -54,6 +54,8 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         verbose_name = _('cart item')
         verbose_name_plural = _('cart items')
         abstract = True
+        unique_together = ('cart', 'product')
+
 
     cart = models.ForeignKey(CART_MODEL)
     """ Shopping cart this item belongs to. """
@@ -78,6 +80,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
         abstract = True
+        unique_together = ('order', 'product')
 
 
     order = models.ForeignKey(ORDER_MODEL)
