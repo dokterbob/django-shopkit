@@ -16,33 +16,20 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import logging
-logger = logging.getLogger(__name__)
-
-from webshop.extensions.category.settings import CATEGORY_MODEL
+from django import forms
 
 from webshop.core.util import get_model_from_string
-category_class = get_model_from_string(CATEGORY_MODEL)
+from webshop.core.settings import PRODUCT_MODEL
+
+product_class = get_model_from_string(PRODUCT_MODEL)
+""" Construct a product class from the string value in settings. """
 
 
-""" Mixins relevant for shops with categories. """
+""" Core form classes. """
 
-
-class CategoriesMixin(object):
-    """ View Mixin providing a list of categories. """
-
-    def get_categories(self):
-        """ Gets all the available categories. """
-        
-        return category_class.objects.all()
+class CartItemAddForm(forms.Form):
+    """ A form for adding CartItems to a Cart. """
     
-    def get_context_data(self, **kwargs):
-        """ Adds the available categories to the context as `categories`."""
-        
-        logger.debug('CategoriesMixin')
-
-        context = super(CategoriesMixin, self).get_context_data(**kwargs)
-        
-        context.update({'categories': self.get_categories()})
-        
-        return context
+    product = forms.ModelChoiceField(queryset=product_class.in_shop.all(),
+                                     widget=forms.HiddenInput)
+    quantity = forms.IntegerField(min_value=1, initial=1)

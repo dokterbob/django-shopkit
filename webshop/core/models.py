@@ -81,6 +81,8 @@ class CartBase(AbstractPricedItemBase):
             database. The creation is lazy: the resulting CartItem
             is not automatically saved. """
         
+        # It makes more sense to execute this code on a higher level
+        # instead of everytime a cart item is requested.
         cartitem_class = get_model_from_string(CARTITEM_MODEL)
         
         # Note that we won't use 'get_or_create' here as it automatically

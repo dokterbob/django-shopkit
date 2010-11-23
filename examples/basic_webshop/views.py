@@ -17,7 +17,6 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import logging
-
 logger = logging.getLogger('basic_webshop')
 
 
@@ -27,62 +26,12 @@ from django.views.generic import DetailView, ListView, \
                                  TemplateView
 
 from basic_webshop.models import Product, Category, Cart, CartItem
-from basic_webshop.forms import CartItemAddForm
 
 
-class CartMixin(object):
-    """ View Mixin providing shopping cart functionality. """
+from webshop.core.views import CartMixin, CartFormMixin
 
-    def get_cart(self):
-        """ Gets the shopping cart from the context or creates a 
-            new one if no shopping cart previously exists.
-        """
-        
-        cart_pk = self.request.session.get('cart_pk', None)
-        
-        cart, created = Cart.objects.get_or_create(pk=cart_pk)
-        
-        if created:
-            logger.debug('Created shopping cart, saving to session.')
-            
-            self.request.session['cart_pk'] = cart.pk
-        else:
-            logger.debug('Shopping cart found, pk=%d.' % cart.pk)
-        
-        return cart
-    
-    def get_cart_form_class(self):
-        """ Simply return the form for adding Items to a Cart. """
-        
-        return CartItemAddForm
-    
-    def get_context_data(self, **kwargs):
-        logger.debug('CartMixin')
+from webshop.extensions.category.simple.views import CategoriesMixin
 
-        context = super(CartMixin, self).get_context_data(**kwargs)
-        
-        context.update({'cart': self.get_cart()})
-        
-        return context
-
-
-class CategoriesMixin(object):
-    """ View Mixin providing a list of categories. """
-
-    def get_categories(self):
-        """ Gets all the available categories. """
-        
-        return Category.objects.all()
-    
-    def get_context_data(self, **kwargs):
-        logger.debug('CategoriesMixin')
-
-        context = super(CategoriesMixin, self).get_context_data(**kwargs)
-        
-        context.update({'categories': self.get_categories()})
-        
-        return context
-        
 
 class WebshopViewMixin(CartMixin, CategoriesMixin):
     """ Generic view mixin, providing a shopping cart and categories
@@ -110,7 +59,7 @@ class CategoryDetail(WebshopViewMixin, DetailView):
     model = Category
         
 
-class ProductDetail(WebshopViewMixin, DetailView):
+class ProductDetail(WebshopViewMixin, CartFormMixin, DetailView):
     """ List details for a product. """
     
     model = Product
@@ -122,19 +71,6 @@ class ProductDetail(WebshopViewMixin, DetailView):
         
         queryset = Product.in_shop.all()
         return queryset.filter(category=category)
-    
-    def get_context_data(self, **kwargs):
-        """ Add a cart add form for the current product to the context. """
-        
-        cartform_class = self.get_cart_form_class()
-        
-        cartform = cartform_class(initial={'product':self.object})
-        
-        context = super(ProductDetail, self).get_context_data(**kwargs)
-        context.update({'cartform': cartform})
-        
-        return context
-
 
 
 class CartDetail(WebshopViewMixin, TemplateView):
@@ -150,7 +86,7 @@ from django.contrib import messages
 from django.views.generic.edit import BaseFormView
 from django.core.urlresolvers import reverse
 
-class CartAdd(BaseFormView, CartMixin):
+class CartAdd(CartMixin, CartFormMixin, BaseFormView):
     """ View for processing POST requests adding items to the shopping
         cart. Process flow is as follows:
         
