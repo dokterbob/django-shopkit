@@ -35,10 +35,9 @@ class CartMixin(object):
             new one if no shopping cart previously exists.
         """
 
+        # Construct a cart class from the string value in settings.
         cart_class = get_model_from_string(CART_MODEL)
-        """ Construct a cart class from the string value in settings. """
 
-        
         cart_pk = self.request.session.get('cart_pk', None)
         
         cart, created = cart_class.objects.get_or_create(pk=cart_pk)

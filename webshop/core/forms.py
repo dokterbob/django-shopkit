@@ -25,6 +25,9 @@ from webshop.core.settings import PRODUCT_MODEL
 from django.utils.functional import SimpleLazyObject
 
 
+""" Core form classes. """
+
+
 def get_product_choices():
     """ Get available products for shopping cart. This
         has to be wrapped in a SimpleLazyObject, otherwise
@@ -34,12 +37,11 @@ def get_product_choices():
     return product_class.in_shop.all()
 
 product_choices = SimpleLazyObject(get_product_choices)
+""" get_product_choices wrapped up in a SimpleLazyObject. """
 
-
-""" Core form classes. """
 
 class CartItemAddForm(forms.Form):
-    """ A form for adding CartItems to a Cart. """
+    """ Form for adding CartItems to a Cart. """
     
     product = forms.ModelChoiceField(queryset=product_choices,
                                      widget=forms.HiddenInput)
