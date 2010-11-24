@@ -22,19 +22,40 @@ logger = logging.getLogger(__name__)
 
 from decimal import Decimal
 
+from django.contrib.auth.models import User
+
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
-                                  CARTITEM_MODEL, ORDER_MODEL
+                                  CARTITEM_MODEL, ORDER_MODEL, \
+                                  CUSTOMER_MODEL
 from webshop.core.managers import ActiveProductManager
 from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
-                                    QuantizedItemBase
+                                    QuantizedItemBase, AbstractCustomerBase
 
 from webshop.core.util import get_model_from_string
 
 
 """ Abstract base models for essential shop components. """
+
+class UserCustomerBase(AbstractCustomerBase, User):
+    """ Abstract base class for customers which can also be Django users. """
+    
+    class Meta(AbstractCustomerBase.Meta):
+        abstract = True
+    
+    # 
+    # def __unicode__(self):
+    #     """ Unicode representation of a UserCustomer is the representation of the
+    #         user, if one has been set. Otherwise, return the primary key of self 
+    #         instaed.
+    #     """
+    #     if self.user:
+    #         return unicode(self.user)
+    #     
+    #     return self.pk
+
 
 class ProductBase(AbstractPricedItemBase):
     """ Abstract base class for products in the webshop. """
@@ -98,6 +119,9 @@ class CartBase(AbstractPricedItemBase):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
+    
+    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
+    """ Customer who owns this cart, if any. """
     
     def getCartItems(self):
         """ Gets all items from the cart with a quantity > 0. """
@@ -212,6 +236,9 @@ class OrderBase(AbstractPricedItemBase):
         verbose_name = _('order')
         verbose_name_plural = _('orders')
         abstract = True
+
+    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
+    """ Customer whom this order belongs to. """
 
 
 class PaymentBase(models.Model):

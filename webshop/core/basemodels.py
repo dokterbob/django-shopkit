@@ -23,6 +23,24 @@ from webshop.core.settings import MAX_NAME_LENGTH
 
 """ Generic base models. """
 
+
+class AbstractCustomerBase(models.Model):
+    """ Abstract base class for customers of the shop. """
+    
+    class Meta:
+        verbose_name = _('customer')
+        verbose_name_plural = _('customers')
+        abstract = True
+    
+    # def get_first_name(self):
+    #     """ This attribute should be accessed as a function as the customer's information 
+    #         might originate somewhere else, for example the 
+    #         :class:`django.contrib.auth.models.User` model.
+    #     """
+    #     
+    #     raise NotImplementedError
+
+
 class AbstractPricedItemBase(models.Model):
     """ Abstract base class for items with a price. This only contains
         a `get_price` dummy function yielding a NotImplementedError. An

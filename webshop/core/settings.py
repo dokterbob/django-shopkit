@@ -18,6 +18,9 @@
 
 from django.conf import settings
 
+CUSTOMER_MODEL = getattr(settings, 'WEBSHOP_CUSTOMER_MODEL')
+""" Reference to the customer model used in the shop. """
+
 PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
 """ Reference to the model class defining the product. """
 

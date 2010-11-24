@@ -20,7 +20,7 @@ from django.db import models
 
 
 from webshop.core.models import ProductBase, CartBase, CartItemBase, \
-                                OrderBase, OrderItemBase
+                                OrderBase, OrderItemBase, UserCustomerBase
                                 
 from webshop.core.basemodels import NamedItemBase
 
@@ -28,17 +28,23 @@ from webshop.extensions.category.simple.models import CategoryBase, \
                                                       CategorizedItemBase
 from webshop.extensions.price.simple.models import PricedItemBase
 
-"""
->>> c = Category(name='Fruit', slug='fruit')
->>> c.save()
->>> p = Product(category=c, name='Banana', slug='banana', price="15.00")
->>> p.description = 'A nice piece of fruit for the whole family to enjoy.'
->>> p.save()
->>> c.product_set.all()
-[<Product: Banana>]
-"""
+
+class Customer(UserCustomerBase):
+    """ Basic webshop customer. """
+    pass
+
 class Product(ProductBase, CategorizedItemBase, PricedItemBase, NamedItemBase):
-    """ Basic product model. """
+    """ Basic product model. 
+    
+    >>> c = Category(name='Fruit', slug='fruit')
+    >>> c.save()
+    >>> p = Product(category=c, name='Banana', slug='banana', price="15.00")
+    >>> p.description = 'A nice piece of fruit for the whole family to enjoy.'
+    >>> p.save()
+    >>> c.product_set.all()
+    [<Product: Banana>]
+    
+    """
     
     class Meta:
         unique_together = ('category', 'slug')
