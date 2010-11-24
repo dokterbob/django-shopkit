@@ -28,6 +28,7 @@ Now include the webshop URL's in `urls.py`::
 
 And add the required settings::
 
+    WEBSHOP_CUSTOMER_MODEL = 'mywebshop.Customer'
     WEBSHOP_PRODUCT_MODEL = 'mywebshop.Product'
     WEBSHOP_CART_MODEL = 'mywebshop.Cart'
     WEBSHOP_CARTITEM_MODEL = 'mywebshop.CartItem'

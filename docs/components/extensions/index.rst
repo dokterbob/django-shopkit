@@ -8,7 +8,7 @@ Contents:
 
    price/index.rst
    category/index.rst
-   tax/index.rst
+   vat/index.rst
    currency/index.rst
    configurable/index.rst
 

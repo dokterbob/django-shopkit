@@ -16,7 +16,6 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
-
-TAX_PERCENTAGE = getattr(settings, 'WEBSHOP_TAX_PERCENTAGE')
-
+""" 
+VAT Extension, implementing Value Added Tax mechanisms for products, carts and orders. 
+"""

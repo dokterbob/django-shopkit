@@ -1,7 +1,7 @@
-Tax
-========
+Value Added Tax
+===============
 
-.. automodule:: webshop.extensions.tax
+.. automodule:: webshop.extensions.vat
    :members:
 
 .. toctree::

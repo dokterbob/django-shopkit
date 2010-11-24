@@ -16,21 +16,7 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from webshop.core.models import ProductBase
+from django.conf import settings
 
-from webshop.extensions.tax.simple import settings
+VAT_PERCENTAGE = getattr(settings, 'WEBSHOP_VAT_PERCENTAGE')
 
-class TaxedProductBase(ProductBase):
-    """ Abstract base class for a simple taxed product where tax is 
-        based on a configurable percentage. """
-    
-    class Meta(ProductBase.Meta):
-        abstract = True
-
-
-    def get_taxes(self, *args, **kwargs):
-        """ Calculate tax according to a fixed percentage of the price. """
-
-        price = self.get_price(*args, **kwargs)
-        
-        return settings.TAX_PERCENTAGE * price

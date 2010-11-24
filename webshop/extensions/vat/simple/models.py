@@ -16,3 +16,21 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from webshop.core.models import ProductBase
+
+from webshop.extensions.vat.simple import settings
+
+class VATProductBase(ProductBase):
+    """ Abstract base class for a simple VAT taxed product where VAT is 
+        based on a single configurable percentage. """
+    
+    class Meta(ProductBase.Meta):
+        abstract = True
+
+
+    def get_taxes(self, **kwargs):
+        """ Calculate tax according to a fixed percentage of the price. """
+
+        price = self.get_price(**kwargs)
+        
+        return settings.VAT_PERCENTAGE * 0.01 * price
