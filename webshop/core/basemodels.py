@@ -35,29 +35,12 @@ class AbstractPricedItemBase(models.Model):
     class Meta:
         abstract = True
 
-    def get_price(self, *args, **kwargs):
+    def get_price(self, **kwargs):
         """ Get price for the current product.
             
             This method _should_ be implemented in a subclass. """
 
         raise NotImplementedError
-
-
-class PricedItemBase(AbstractPricedItemBase):
-    """ Abstract base class for priced models with a price field. 
-        This base class simply has a price field for storing the price
-        of the item.
-    """
-    
-    class Meta(AbstractPricedItemBase.Meta):
-        abstract = True
-    
-    price = models.FloatField(verbose_name=_('price'))
-    """ Price for the current product. """
-
-    def get_price(self):
-        """ Returns the price property of the current product. """
-        return self.price
 
 
 class QuantizedItemBase(models.Model):
@@ -66,7 +49,11 @@ class QuantizedItemBase(models.Model):
     class Meta:
         abstract = True
     
-    quantity = models.IntegerField(default=1, verbose_name=_('quantity'))
+    quantity = models.IntegerField(default=0, verbose_name=_('quantity'))
+    """ Number of items of this kind. The default is 0: this is necessary so that we 
+        can add a certain quantity to a new object without knowing its initial
+        value.
+    """
 
 
 class NamedItemBase(models.Model):

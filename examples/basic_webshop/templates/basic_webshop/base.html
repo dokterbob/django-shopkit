@@ -16,10 +16,8 @@
         {% block content %}{% endblock content %}
 
         {% block cart %}
-            {% if cart %}
-                {% with cart.cartitem_set.count as itemcount %}
-                    <p><a href="{% url cart_detail %}">{{ itemcount }} item(s) in shopping cart.</a></p>
-                {% endwith %}
+            {% if cart.get_total_items %}
+                <p><a href="{% url cart_detail %}">{{ cart.get_total_items }} item(s) in shopping cart with total value of {{ cart.get_total_price }}</a></p>
             {% endif %}
         {% endblock cart %}
         

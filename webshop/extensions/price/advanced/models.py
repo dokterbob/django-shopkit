@@ -23,7 +23,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
-from webshop.core.basemodels import PricedItemBase
+from webshop.extensions.price.models import PricedItemBase
 
 from webshop.extensions.price.advanced.settings import *
 
@@ -46,16 +46,16 @@ class PriceBase(PricedItemBase):
         return qs.aggregate(models.Min('price'))['price__min']
         
     @classmethod
-    def get_cheapest(cls, product, *args, **kwargs):
+    def get_cheapest(cls, product, **kwargs):
         """ Get the cheapest available price for the current product under
             given conditions. """
         
-        valid = cls.get_valid(product, *args, **kwargs)
+        valid = cls.get_valid(product, **kwargs)
         
         return cls._get_minimal_price(valid)
     
     @classmethod
-    def get_valid(cls, product, *args, **kwargs):
+    def get_valid(cls, product, **kwargs):
         """ Get valid prices under the given conditions. This should be
             overriden for subclasses actually implementing some features.
         """
@@ -129,7 +129,7 @@ class PricedProductBase(models.Model):
     class Meta:
         abstract = True
     
-    def get_price(self, *args, **kwargs):
+    def get_price(self, **kwargs):
         """ Iterate over the models in `WEBSHOP_PRICE_MODELS` in order
             to find the lowest possible price under the conditions specified
             in the arguments.
@@ -147,13 +147,13 @@ class PricedProductBase(models.Model):
 
             # Execute the get_cheapest class model for efficient price
             # finding.
-            this_cheapest = model.get_cheapest(*args, **kwargs)
+            this_cheapest = model.get_cheapest(**kwargs)
             
             # Compare to the cheapest price so far and if it's cheaper,
             # use it.
             if cheapest and this_cheapest and \
-                    this_cheapest.get_price() < cheapest.get_price():
+                    this_cheapest.get_price(**kwargs) < cheapest.get_price(**kwargs):
                 
                 cheapest = this_cheapest
         
-        return cheapest.get_price()
+        return cheapest.get_price(**kwargs)

@@ -16,6 +16,10 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from decimal import Decimal
 
 from django.utils.translation import ugettext_lazy as _
@@ -65,6 +69,26 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
     
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this shopping cart item. """
+    
+    def __unicode__(self):
+        """ A natural representation for a cart item is the product. """
+        
+        return unicode(self.product)
+    
+    def get_price(self, **kwargs):
+        """ Wraps `get_total_price()`. """
+        
+        return self.get_total_price(**kwargs)
+    
+    def get_total_price(self, **kwargs):
+        """ Gets the tatal price for the items in the cart. """
+        
+        return self.quantity*self.get_piece_price(**kwargs)
+    
+    def get_piece_price(self, **kwargs):
+        """ Gets the price per piece for a given quantity of items. """
+        
+        return self.product.get_price(quantity=self.quantity, **kwargs)
 
 
 class CartBase(AbstractPricedItemBase):
@@ -74,6 +98,11 @@ class CartBase(AbstractPricedItemBase):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
+    
+    def getCartItems(self):
+        """ Gets all items from the cart with a quantity > 0. """
+        
+        return self.cartitem_set.filter(quantity__gt=0)
     
     def getCartItem(self, product):
         """ Either instantiates and returns a CartItem for the 
@@ -91,7 +120,11 @@ class CartBase(AbstractPricedItemBase):
             cartitem = cartitem_class.objects.get(cart=self, 
                                                   product=product)
             
+            logger.debug('Found existing cart item for product \'%s\'' % product)
+            
         except cartitem_class.DoesNotExist:
+            logger.debug('Product \'%s\' not already in Cart, creating new item.' % product)
+
             cartitem = cartitem_class(cart=self,
                                       product=product)
         
@@ -107,14 +140,52 @@ class CartBase(AbstractPricedItemBase):
             called is able to determine whether the product was already
             in the shopping cart or not. 
         """
+        assert isinstance(quantity, int), 'Quantity not an integer.'
         
         cartitem = self.getCartItem(product)
         
         # We can do this without querying the actual value from the 
         # database.
-        cartitem.quantity = models.F('quantity') + quantity
+        # cartitem.quantity = models.F('quantity') + quantity
+        cartitem.quantity += quantity
         
         return cartitem
+    
+    def get_total_items(self):
+        """ Gets the total quantity of products in the shopping cart. """
+        
+        quantity = 0
+        
+        # TODO: Use aggregation
+        for cartitem in self.getCartItems():
+            quantity += cartitem.quantity
+        
+        return quantity
+    
+    def get_price(self, **kwargs):
+        """ Wraps the `get_total_price` function. """
+        
+        return self.get_total_price(**kwargs)
+    
+    def get_total_price(self, **kwargs):
+        """ Gets the total price for all items in the cart. """
+        
+        logger.debug('Calculating total price for shopping cart.')
+        
+        # logger.debug(self.getCartItems()[0].get_total_price())
+        
+        # TODO: Add either caching or aggregation. Preferably the former.
+        # This can be achieved by keeping something like a serial or timestamp
+        # in the Cart and CartItem models.
+        price = Decimal("0.0")
+        
+        for cartitem in self.getCartItems():
+            item_price = cartitem.get_total_price(**kwargs)
+            logger.debug('Adding price %f for item \'%s\' to total cart price.' % \
+                (item_price, cartitem))
+            price += item_price
+        
+        return price
 
 
 class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
@@ -132,7 +203,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
-
+    
 
 class OrderBase(AbstractPricedItemBase):
     """ Abstract base class for orders. """

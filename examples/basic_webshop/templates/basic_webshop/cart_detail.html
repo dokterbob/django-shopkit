@@ -8,14 +8,16 @@
         <tr>
             <th>Product</th>
             <th>Quantity</th>
-            <th>Price</th>
+            <th>Price per piece</th>
+            <th>Total price</th>
         </tr>
         {% for cartitem in cart.cartitem_set.all %}
             {% with cartitem.product as product %}
             <tr>
                 <td><a href="{{ product.get_absolute_url }}">{{ product }}</a></td>
                 <td>{{ cartitem.quantity }}</td>
-                <td>{{ cartitem.price }}</td>
+                <td>{{ cartitem.get_piece_price }}</td>
+                <td>{{ cartitem.get_total_price }}</td>
             </tr>
             {% endwith %}
         {% empty %}
@@ -23,5 +25,9 @@
                 <td>No products so far.</td>
             </tr>
         {% endfor %}
+        <tr>
+            <td colspan="3">Total:</td>
+            <td>{{ cart.get_total_price }}</td>
+        </tr>
     </table>
 {% endblock content %}
