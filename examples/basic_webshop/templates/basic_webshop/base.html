@@ -1,28 +1,11 @@
-<html>
-    <head>
-        <title>Basic webshop</title>
-    </head>
-    <body>
-        {% block messages %}
-            {% if messages %}
-                <ul class="messages">
-                    {% for message in messages %}
-                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        {% endblock messages %}
+{% extends "base.html" %}
 
-        {% block content %}{% endblock content %}
+{% block cart %}
+    {% if cart.get_total_items %}
+        <p><a href="{% url cart_detail %}">{{ cart.get_total_items }} item(s) in shopping cart with total value of {{ cart.get_total_price }}</a></p>
+    {% endif %}
+{% endblock cart %}
 
-        {% block cart %}
-            {% if cart.get_total_items %}
-                <p><a href="{% url cart_detail %}">{{ cart.get_total_items }} item(s) in shopping cart with total value of {{ cart.get_total_price }}</a></p>
-            {% endif %}
-        {% endblock cart %}
-        
-        {% block navigation %}
-        <p><a href="{% url shop_index %}">Shop home</a></p>
-        {% endblock navigation %}
-    </body>
-</html>
+{% block navigation %}
+<p><a href="{% url shop_index %}">Shop home</a></p>
+{% endblock navigation %}
