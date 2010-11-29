@@ -79,6 +79,9 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
               to the users Cart.
         5. Redirect to the cart view.
         
+        TODO Graceously handle errors instead of form_invalid noting that
+        render_to_response was not found.
+        
         """
     
     http_method_names = ['post', ]
