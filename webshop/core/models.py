@@ -228,6 +228,25 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
     
+    @classmethod
+    def fromCartItem(cls, cartitem, order):
+        """ Create an order item from a shopping cart item. """
+        
+        orderitem = cls(product=cartitem.product, 
+                        quantity=cartitem.quantity,
+                        order=order)
+        
+        orderitem.save()
+        
+        # TODO
+        #
+        # We should consider iterating over all the fields (properties)
+        # of the cartitem and copying the information to the order item.
+        #
+        # For now, I'll leave the code like this.
+        
+        return orderitem
+
 
 class OrderBase(AbstractPricedItemBase):
     """ Abstract base class for orders. """
@@ -239,6 +258,26 @@ class OrderBase(AbstractPricedItemBase):
 
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
     """ Customer whom this order belongs to. """
+
+    @classmethod
+    def fromCart(cls, cart, customer):
+        """ Instantiate an order based on the basis of a
+            shopping cart, copying all the items. """
+        order = cls(customer=customer)
+        order.save()
+
+        orderitem_class = get_model_from_string(ORDERITEM_MODEL)
+        
+        for cartitem in cart.cartitem_set.all():
+            orderitem = orderitem_class.fromCartItem(cartitem=cartitem,
+                                                     order=order)
+            
+            assert orderitem, 'Something went wrong creating an \
+                               OrderItem from a CartItem.'
+        
+        
+        return order
+
 
 
 class PaymentBase(models.Model):
