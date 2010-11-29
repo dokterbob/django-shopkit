@@ -1,5 +1,7 @@
 {% extends "basic_webshop/base.html" %}
 
+{% load currency_tags %}
+
 {% block content %}
     <h1>Shopping cart</h1>
     
@@ -16,8 +18,8 @@
             <tr>
                 <td><a href="{{ product.get_absolute_url }}">{{ product }}</a></td>
                 <td>{{ cartitem.quantity }}</td>
-                <td>{{ cartitem.get_piece_price }}</td>
-                <td>{{ cartitem.get_total_price }}</td>
+                <td>{{ cartitem.get_piece_price|format_price }}</td>
+                <td>{{ cartitem.get_total_price|format_price }}</td>
             </tr>
             {% endwith %}
         {% empty %}

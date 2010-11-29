@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
+{% load currency_tags %}
+
 {% block cart %}
     {% if cart.get_total_items %}
-        <p><a href="{% url cart_detail %}">{{ cart.get_total_items }} item(s) in shopping cart with total value of {{ cart.get_total_price }}</a></p>
+        <p><a href="{% url cart_detail %}">{{ cart.get_total_items }} item(s) in shopping cart with total value of {{ cart.get_total_price|format_price }}</a></p>
     {% endif %}
 {% endblock cart %}
 
