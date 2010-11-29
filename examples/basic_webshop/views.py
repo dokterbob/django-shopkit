@@ -34,33 +34,20 @@ from webshop.core.util import get_cart_from_request
 from webshop.extensions.category.simple.views import CategoriesMixin
 
 
-class WebshopViewMixin(CategoriesMixin):
-    """ Generic view mixin, providing a shopping cart and categories
-        as extra context. This Mixin should later be split up in
-        several parts, some of which belong into the core and some of
-        which will be part of extensions. 
-        
-        Class Based Views are Aweseome!
-    
-    """ 
-    
-    pass
-
-
-class CategoryList(WebshopViewMixin, TemplateView):
+class CategoryList(TemplateView):
     """ A dummy view taking the list of categories from the Mixin
         and displaying it using a simple template. """
     
     template_name = 'basic_webshop/category_list.html'
 
 
-class CategoryDetail(WebshopViewMixin, DetailView):
+class CategoryDetail(DetailView):
     """ List products for a category. """
     
     model = Category
         
 
-class ProductDetail(WebshopViewMixin, CartAddFormMixin, DetailView):
+class ProductDetail(CartAddFormMixin, DetailView):
     """ List details for a product. """
     
     model = Product
@@ -74,7 +61,7 @@ class ProductDetail(WebshopViewMixin, CartAddFormMixin, DetailView):
         return queryset.filter(category=category)
 
 
-class CartDetail(WebshopViewMixin, TemplateView):
+class CartDetail(TemplateView):
     """ A simple template view returning cart details,
         since the cart is already given in the template context from
         the WebshopViewMixin. """
@@ -152,7 +139,7 @@ class CartAdd(CartAddFormMixin, BaseFormView):
         return super(BaseFormView, self).form_valid(form)
 
 
-class ShopIndex(WebshopViewMixin, TemplateView):
+class ShopIndex(TemplateView):
     """ An index view for the shop, containing only the default context
         of the WebshopViewMixin. """
     
