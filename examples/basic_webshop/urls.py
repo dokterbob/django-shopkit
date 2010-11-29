@@ -22,7 +22,7 @@ from django.conf.urls.defaults import *
 
 from basic_webshop.views import *
 
-urlpatterns = patterns('basic_webshop.views',
+urlpatterns = patterns('',
     surl(r'^$',
          ShopIndex.as_view(), name='shop_index'),
 
