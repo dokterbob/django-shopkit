@@ -28,12 +28,13 @@ from django.views.generic import DetailView, ListView, \
 from basic_webshop.models import Product, Category, Cart, CartItem
 
 
-from webshop.core.views import CartMixin, CartFormMixin
+from webshop.core.views import CartAddFormMixin
+from webshop.core.util import get_cart_from_request
 
 from webshop.extensions.category.simple.views import CategoriesMixin
 
 
-class WebshopViewMixin(CartMixin, CategoriesMixin):
+class WebshopViewMixin(CategoriesMixin):
     """ Generic view mixin, providing a shopping cart and categories
         as extra context. This Mixin should later be split up in
         several parts, some of which belong into the core and some of
@@ -59,7 +60,7 @@ class CategoryDetail(WebshopViewMixin, DetailView):
     model = Category
         
 
-class ProductDetail(WebshopViewMixin, CartFormMixin, DetailView):
+class ProductDetail(WebshopViewMixin, CartAddFormMixin, DetailView):
     """ List details for a product. """
     
     model = Product
@@ -86,7 +87,7 @@ from django.contrib import messages
 from django.views.generic.edit import BaseFormView
 from django.core.urlresolvers import reverse
 
-class CartAdd(CartMixin, CartFormMixin, BaseFormView):
+class CartAdd(CartAddFormMixin, BaseFormView):
     """ View for processing POST requests adding items to the shopping
         cart. Process flow is as follows:
         
@@ -122,8 +123,12 @@ class CartAdd(CartMixin, CartFormMixin, BaseFormView):
         """ Form data was valid: add a CartItem to the Cart or increase
             the number. """
         
-        cart = self.get_cart()
-        
+        cart = get_cart_from_request(self.request)
+
+        # The cart might not have been saved so far
+        if not cart.pk:
+            cart.save()
+
         product = form.cleaned_data['product']
         quantity = form.cleaned_data['quantity']
         

@@ -27,44 +27,7 @@ from webshop.core.forms import CartItemAddForm
 """ Generic view Mixins for webshop core functionality. """
 
 
-class CartMixin(object):
-    """ View Mixin providing shopping cart functionality. """
-
-    def get_cart(self):
-        """ Gets the shopping cart from the context or creates a 
-            new one if no shopping cart previously exists.
-        """
-
-        # Construct a cart class from the string value in settings.
-        cart_class = get_model_from_string(CART_MODEL)
-
-        cart_pk = self.request.session.get('cart_pk', None)
-        
-        cart, created = cart_class.objects.get_or_create(pk=cart_pk)
-        
-        if created:
-            logger.debug('Created shopping cart, saving to session.')
-            
-            self.request.session['cart_pk'] = cart.pk
-        else:
-            logger.debug('Shopping cart found, pk=%d.' % cart.pk)
-        
-        return cart
-    
-    
-    def get_context_data(self, **kwargs):
-        """ Adds a shopping cart object to the context as `cart`. """
-        
-        logger.debug('CartMixin')
-
-        context = super(CartMixin, self).get_context_data(**kwargs)
-        
-        context.update({'cart': self.get_cart()})
-        
-        return context
-
-
-class CartFormMixin(object):
+class CartAddFormMixin(object):
     """ Mixin providing a basic form class for adding items to the
         shopping cart. It will be added to the context as `cartaddform`.
     """
@@ -84,14 +47,12 @@ class CartFormMixin(object):
         logging a debug message.
         """
 
-        logger.debug('CartFormMixin')
-       
         cartform_class = self.get_cart_form_class()
         
         # TODO: check whether a product is available.
         cartform = cartform_class(initial={'product':self.object})        
         
-        context = super(CartFormMixin, self).get_context_data(**kwargs)
+        context = super(CartAddFormMixin, self).get_context_data(**kwargs)
         
         context.update({'cartaddform': cartform})
         

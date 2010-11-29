@@ -16,5 +16,7 @@ Contents:
    forms.rst
    settings.rst
    util.rst
+   context_processors.rst
+   
 
 

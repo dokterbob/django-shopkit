@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 
+from webshop.core.settings import CART_MODEL
 
 """ Several util functions for use in core functionality. """
 
@@ -36,3 +37,28 @@ def get_model_from_string(model):
         '%s does not refer to a known Model class.' % model
 
     return model_class
+
+
+def get_cart_from_request(request):
+    """ Gets the shopping cart from the request or creates a 
+        new one if no shopping cart previously exists.
+    """
+
+    # Construct a cart class from the string value in settings.
+    cart_class = get_model_from_string(CART_MODEL)
+
+    cart_pk = request.session.get('cart_pk', None)
+    
+    # TODO
+    # It should not be necessary to save this cart - this code
+    # can be more optimal.
+    cart, created = cart_class.objects.get_or_create(pk=cart_pk)
+    
+    if created:
+        logger.debug('Created shopping cart, saving to session.')
+        
+        request.session['cart_pk'] = cart.pk
+    else:
+        logger.debug('Shopping cart found, pk=%d.' % cart.pk)
+    
+    return cart
