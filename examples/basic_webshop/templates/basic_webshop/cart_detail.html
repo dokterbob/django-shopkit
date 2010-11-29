@@ -29,7 +29,7 @@
         {% endfor %}
         <tr>
             <td colspan="3">Total:</td>
-            <td>{{ cart.get_total_price }}</td>
+            <td>{{ cart.get_total_price|format_price }}</td>
         </tr>
     </table>
 {% endblock content %}
