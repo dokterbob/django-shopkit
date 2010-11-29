@@ -71,12 +71,87 @@ class ProductDetail(CartAddFormMixin, DetailView):
         return queryset.filter(category=category)
 
 
-class CartDetail(TemplateView):
+from django.forms.models import modelformset_factory
+
+from webshop.core.util import get_cart_from_request
+from django.views.generic.edit import BaseFormView
+
+
+class CartEditFormMixin(object):
+    """ Mixin providing a formset for updating the quantities of
+        products in the shopping cart. """
+    
+    def get_form_class(self):
+        """ Do a little trick and see whether it works: returning a 
+            formset instead of a form here.
+        """
+        formset_class =  modelformset_factory(CartItem, 
+                                              exclude=('cart', 'product'),
+                                              extra=0)
+        
+        return formset_class
+    
+    
+    def get_form(self, form_class):
+        """ Gets an instance of the formset. """
+        cart = get_cart_from_request(self.request)
+        
+        qs = CartItem.objects.filter(cart=cart, quantity__gte=1)
+                
+        formset = form_class(queryset=qs)
+        
+        return formset
+
+        
+    def get_context_data(self, **kwargs):
+        """ Add a form for editing the quantities of articles to 
+            the template. """            
+        
+        context = super(CartEditFormMixin, self).get_context_data(**kwargs)
+        
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        context.update({'carteditformset': form})
+        
+        
+        return context
+
+
+class CartDetail(CartEditFormMixin, TemplateView):
     """ A simple template view returning cart details,
         since the cart is already given in the template context from
         the WebshopViewMixin. """
     
     template_name = 'basic_webshop/cart_detail.html'
+    
+
+class CartEdit(CartDetail, BaseFormView):
+    """ View for updating the quantities of objects in the shopping 
+        cart. """
+
+    http_method_names = ['post', ]
+    """ Only allow for post requests to this view. This is necessary to
+        override the `get` method in BaseFormView. """
+
+    def get_success_url(self):
+        """ The URL to return to after the form was processed 
+            succesfully. This function should be overridden. """
+        
+        # TODO
+        # Decide whether or not to make the default success url a
+        # configuration value or not.
+        #raise NotImplemented
+
+        return reverse('cart_detail')
+    
+    def form_valid(self, form):
+        """ Save the formset. """
+        
+        pass
+
+
+
+
 
 
 class ShopIndex(TemplateView):

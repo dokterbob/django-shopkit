@@ -32,4 +32,11 @@
             <td>{{ cart.get_total_price|format_price }}</td>
         </tr>
     </table>
+
+        <form action="{% url cart_edit %}" method="post">
+            {{ carteditformset }}
+            
+            <input type="submit" value="Update cart">
+        </form>
+
 {% endblock content %}
