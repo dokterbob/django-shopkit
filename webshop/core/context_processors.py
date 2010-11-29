@@ -23,6 +23,10 @@ def cart(request):
         context as `cart`. 
     """
     
+    # TODO
+    # Make this a lazy object: we should only perform the actual 
+    # database query when this object is requested from within
+    # template.
     return {'cart': get_cart_from_request(request)}
     
     
