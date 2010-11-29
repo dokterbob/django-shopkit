@@ -19,22 +19,12 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from webshop.extensions.category.simple.util import get_categories
+from webshop.extensions.category.settings import CATEGORY_MODEL
 
+from webshop.core.util import get_model_from_string
+category_class = get_model_from_string(CATEGORY_MODEL)
 
-""" Mixins relevant for shops with categories. """
-
-
-class CategoriesMixin(object):
-    """ View Mixin providing a list of categories. """
+def get_categories():
+    """ Gets all the available categories. """
     
-    def get_context_data(self, **kwargs):
-        """ Adds the available categories to the context as `categories`."""
-        
-        logger.debug('CategoriesMixin')
-
-        context = super(CategoriesMixin, self).get_context_data(**kwargs)
-        
-        context.update({'categories': get_categories()})
-        
-        return context
+    return category_class.objects.all()
