@@ -46,17 +46,6 @@ class CategoryDetail(DetailView):
     model = Category
 
 
-class CartAdd(CartAddBase):
-    """ View for adding a quantity of products to the cart. """
-    
-    def get_success_url(self):
-        """ Get the URL to redirect to after a successful update of
-            the shopping cart. This defaults to the shopping cart
-            detail view. """
-        
-        return reverse('cart_detail')
-
-
 class ProductDetail(CartAddFormMixin, DetailView):
     """ List details for a product. """
     
@@ -71,21 +60,37 @@ class ProductDetail(CartAddFormMixin, DetailView):
         return queryset.filter(category=category)
 
 
+# Just added ProductDetail as a base class, as errors for this 
+# form have to go... somewhere.
+class CartAdd(CartAddBase, ProductDetail):
+    """ View for adding a quantity of products to the cart. """
+    
+    def get_success_url(self):
+        """ Get the URL to redirect to after a successful update of
+            the shopping cart. This defaults to the shopping cart
+            detail view. """
+        
+        return reverse('cart_detail')
+
+
+
 from django.forms.models import modelformset_factory
 
 from webshop.core.util import get_cart_from_request
 from django.views.generic.edit import BaseFormView
 
+from django.contrib import messages
 
 class CartEditFormMixin(object):
     """ Mixin providing a formset for updating the quantities of
         products in the shopping cart. """
     
+    
     def get_form_class(self):
         """ Do a little trick and see whether it works: returning a 
             formset instead of a form here.
         """
-        formset_class =  modelformset_factory(CartItem, 
+        formset_class =  modelformset_factory(CartItem,
                                               exclude=('cart', 'product'),
                                               extra=0)
         
@@ -97,10 +102,27 @@ class CartEditFormMixin(object):
         cart = get_cart_from_request(self.request)
         
         qs = CartItem.objects.filter(cart=cart, quantity__gte=1)
-                
-        formset = form_class(queryset=qs)
-        
-        return formset
+
+
+        if self.request.method in ('POST', 'PUT'):\
+            return form_class(self.request.POST, queryset=qs)
+
+            # return form_class(
+            #     data=self.request.POST,
+            #     files=self.request.FILES,
+            #     initial=self.get_initial(),
+            #     instance=self.object,
+            # )
+        else:
+            return form_class(queryset=qs)
+        #     return form_class(
+        #         initial=self.get_initial(),
+        #         instance=self.object,
+        #     )
+        # 
+        # formset = 
+        # 
+        # return formset
 
         
     def get_context_data(self, **kwargs):
@@ -112,7 +134,6 @@ class CartEditFormMixin(object):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         context.update({'carteditformset': form})
-        
         
         return context
 
@@ -143,15 +164,17 @@ class CartEdit(CartDetail, BaseFormView):
         #raise NotImplemented
 
         return reverse('cart_detail')
-    
+            
     def form_valid(self, form):
         """ Save the formset. """
         
-        pass
-
-
-
-
+        logger.debug('Supervalide form man, dude, cool; %s', form)
+        form.save()
+        
+        messages.add_message(self.request, messages.SUCCESS,
+            'Updated shopping cart.')
+        
+        return super(CartEdit, self).form_valid(form)
 
 
 class ShopIndex(TemplateView):

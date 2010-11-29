@@ -11,6 +11,10 @@
     
     <p>Add to cart: 
         <form action="{% url cart_add %}" method="post">
+            {% csrf_token %}
+            
+            {{ cartaddform.non_field_errors }}
+
             {{ cartaddform }}
             
             <input type="submit" value="Add to cart">

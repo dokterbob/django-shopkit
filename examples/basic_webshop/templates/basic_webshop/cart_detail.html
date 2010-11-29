@@ -6,37 +6,39 @@
     <h1>Shopping cart</h1>
     
     <h2>Products</h2>
-    <table>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price per piece</th>
-            <th>Total price</th>
-        </tr>
-        {% for cartitem in cart.cartitem_set.all %}
-            {% with cartitem.product as product %}
-            <tr>
-                <td><a href="{{ product.get_absolute_url }}">{{ product }}</a></td>
-                <td>{{ cartitem.quantity }}</td>
-                <td>{{ cartitem.get_piece_price|format_price }}</td>
-                <td>{{ cartitem.get_total_price|format_price }}</td>
-            </tr>
-            {% endwith %}
-        {% empty %}
-            <tr>
-                <td>No products so far.</td>
-            </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="3">Total:</td>
-            <td>{{ cart.get_total_price|format_price }}</td>
-        </tr>
-    </table>
+    <form action="{% url cart_edit %}" method="post">
+        {% csrf_token %}
+        {{ carteditformset.management_form }}
 
-        <form action="{% url cart_edit %}" method="post">
-            {{ carteditformset }}
-            
-            <input type="submit" value="Update cart">
-        </form>
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price per piece</th>
+                <th>Total price</th>
+            </tr>
+            {% for form in carteditformset.forms %}
+                {% with form.instance as cartitem %}
+                {{ form.id }}
+                <tr>
+                    <td><a href="{{ cartitem.product.get_absolute_url }}">{{ cartitem.product }}</a></td>
+                    <td>{{ form.quantity }}</td>
+                    <td>{{ cartitem.get_piece_price|format_price }}</td>
+                    <td>{{ cartitem.get_total_price|format_price }}</td>
+                </tr>
+                {% endwith %}
+            {% empty %}
+                <tr>
+                    <td>No products so far.</td>
+                </tr>
+            {% endfor %}            
+            <tr>
+                <td colspan="3">Total:</td>
+                <td>{{ cart.get_total_price|format_price }}</td>
+            </tr>
+        </table>
+        <input type="submit" value="Update cart">
+
+    </form>
 
 {% endblock content %}
