@@ -21,5 +21,3 @@ Contents:
 
    core/index.rst
    extensions/index.rst
-
-   examples/index.rst

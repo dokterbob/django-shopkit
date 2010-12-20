@@ -1,37 +1,59 @@
 Getting started
 ===============
 
-Copy the example webshop app from `examples/basic_webshop` to wherever you
-would like to work on your Django webshop app. We will assume you have named
-it `mywebshop`, below. Make sure you have installed the django-webshop
-package into your Python path and add the following applications to
-`INSTALLED_APPS` in `settings.py`::
+
+#) Install the app basic_webshop in your environment using `PIP <http://pypi.python.org/pypi/pip/>`_  
+   (better make sure you're working in a virtual environment):: 
+
+    pip install -e git://salmon.dokterbob.net/basic-webshop.git#egg=basic-webshop
+
+#) Enable the `basic_webshop` application in `INSTALLED_APPS` in `settings.py`::
 
     INSTALLED_APPS = (
         ...
-        'django.contrib.admin',
-        ...
         'webshop.extensions.currency.simple',
-        ...
-        'mywebshop',
+        'basic_webshop',
         ...
     )
 
-Now include the webshop URL's in `urls.py`::
+#) Import the webshop settings from `basic_webshop` in `settings.py`::
+
+    from basic_webshop.django_settings import *
+
+   Or add the settings manually::
+
+    WEBSHOP_CUSTOMER_MODEL = 'basic_webshop.Customer'
+    WEBSHOP_PRODUCT_MODEL = 'basic_webshop.Product'
+    WEBSHOP_CART_MODEL = 'basic_webshop.Cart'
+    WEBSHOP_CARTITEM_MODEL = 'basic_webshop.CartItem'
+    WEBSHOP_ORDER_MODEL = 'basic_webshop.Order'
+    WEBSHOP_ORDERITEM_MODEL = 'basic_webshop.OrderItem'
+    WEBSHOP_CATEGORY_MODEL = 'basic_webshop.Category'
+
+
+#) Now include the webshop URL's in `urls.py`::
 
     urlpatterns = patterns('',
         ...
-        (r'^shop/', include('mywebshop.urls')),
+        (r'^shop/', include('basic_webshop.urls')),
         ...
     )
 
 
-And add the required settings::
+#) Update the database by running `syncdb`::
 
-    WEBSHOP_CUSTOMER_MODEL = 'mywebshop.Customer'
-    WEBSHOP_PRODUCT_MODEL = 'mywebshop.Product'
-    WEBSHOP_CART_MODEL = 'mywebshop.Cart'
-    WEBSHOP_CARTITEM_MODEL = 'mywebshop.CartItem'
-    WEBSHOP_ORDER_MODEL = 'mywebshop.Order'
-    WEBSHOP_ORDERITEM_MODEL = 'mywebshop.OrderItem'
-    WEBSHOP_CATEGORY_MODEL = 'mywebshop.Category'
+    ./manage.py syncdb
+
+
+#) You now have a working basic webshop, start developing in the `src`    
+   directory in your environment. Make your own branch with::
+
+    git checkout -b mywebshop
+
+   And edit away! Whenever you want to update your own project with changes
+   in the `basic_webshop` project, just do::
+
+    git pull origin master
+    git merge master
+
+
