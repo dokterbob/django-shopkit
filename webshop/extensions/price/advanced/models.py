@@ -50,12 +50,12 @@ class PriceBase(PricedItemBase):
         """ Get the cheapest available price for the current product under
             given conditions. """
         
-        valid = cls.get_valid(product, **kwargs)
+        valid = cls.get_valid_prices(product, **kwargs)
         
         return cls._get_minimal_price(valid)
     
     @classmethod
-    def get_valid(cls, product, **kwargs):
+    def get_valid_prices(cls, product, **kwargs):
         """ Get valid prices under the given conditions. This should be
             overriden for subclasses actually implementing some features.
         """
@@ -72,11 +72,13 @@ class DateRangedPriceBase(PriceBase):
 
     product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
                                 verbose_name=_('product'))
-    start_date = models.DateField(verbose_name=_('start date'), db_index=True)
-    end_date = models.DateField(verbose_name=_('end date'), db_index=True)
+    start_date = models.DateField(verbose_name=_('start date'),
+                                  db_index=True)
+    end_date = models.DateField(verbose_name=_('end date'),
+                                db_index=True)
     
     @classmethod
-    def get_valid(cls, product, date=None, *args, **kwargs):
+    def get_valid_prices(cls, product, date=None, *args, **kwargs):
         """ Return valid prices for a specified date, taking the current
             date if no date is specified. """
 
@@ -105,7 +107,7 @@ class QuantifiedPriceBase(PriceBase):
                                    verbose_name=('quantity'))
 
     @classmethod
-    def get_valid(cls, product, quantity=1, *args, **kwargs):
+    def get_valid_prices(cls, product, quantity=1, *args, **kwargs):
         """ Get valid prices for a given quantity of items. If no
             quantity is given, 1 is assumed. 
         """
@@ -152,8 +154,11 @@ class PricedProductBase(models.Model):
             # Compare to the cheapest price so far and if it's cheaper,
             # use it.
             if cheapest and this_cheapest and \
-                    this_cheapest.get_price(**kwargs) < cheapest.get_price(**kwargs):
+                    this_cheapest.get_price(**kwargs) < \
+                       cheapest.get_price(**kwargs):
                 
                 cheapest = this_cheapest
         
         return cheapest.get_price(**kwargs)
+
+
