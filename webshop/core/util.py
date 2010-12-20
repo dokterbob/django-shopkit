@@ -31,6 +31,9 @@ def get_model_from_string(model):
     Takes a string in the form of `appname.Model`, (ie.
     `basic_webshop.CartItem`) and returns the model class for it.
     """
+    if model == '#doc':
+        return False
+    
     model_class = models.get_model(*model.split('.'))
     
     assert isinstance(model_class, models.base.ModelBase), \

@@ -35,7 +35,6 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../examples'))
 
 # Default flags for autodoc
 autodoc_default_flags = ['members', 'show-inheritance', ]
@@ -44,16 +43,17 @@ autodoc_member_order = 'bysource'
 # This is needed to be able to import the Django shizzle
 from django.conf import global_settings
 
-setattr(global_settings, 'WEBSHOP_CUSTOMER_MODEL', 'basic_webshop.Customer')
-setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', 'basic_webshop.Product')
-setattr(global_settings, 'WEBSHOP_CART_MODEL', 'basic_webshop.Cart')
-setattr(global_settings, 'WEBSHOP_CARTITEM_MODEL', 'basic_webshop.CartItem')
-setattr(global_settings, 'WEBSHOP_ORDER_MODEL', 'basic_webshop.Order')
-setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', 'basic_webshop.OrderItem')
-setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', 'basic_webshop.Category')
+setattr(global_settings, 'WEBSHOP_CUSTOMER_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_CART_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_CARTITEM_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_PRICE_MODEL', '#doc')
+
 setattr(global_settings, 'WEBSHOP_VAT_PERCENTAGE', 19)
 setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)
-setattr(global_settings, 'WEBSHOP_PRICE_MODEL', '')
 
 from django.core.management import setup_environ
 setup_environ(global_settings)
