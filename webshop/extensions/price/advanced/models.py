@@ -22,9 +22,10 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+from webshop.core.util import get_model_from_string
 from webshop.core.settings import PRODUCT_MODEL
+from webshop.core.basemodels import QuantizedItemBase
 from webshop.extensions.price.models import PricedItemBase
-
 from webshop.extensions.price.advanced.settings import *
 
 
@@ -32,6 +33,10 @@ class PriceBase(PricedItemBase):
     """ Abstract base class for price models, exposing a method to get the 
         cheapest price under given conditions. 
     """
+
+    product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
+                                verbose_name=_('product'))
+    """ Product this price relates to. """
     
     class Meta(PricedItemBase.Meta):
         abstract = True
@@ -70,8 +75,6 @@ class DateRangedPriceBase(PriceBase):
         abstract = True
         unique_together = ('product', 'start_date', 'end_date')
 
-    product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
-                                verbose_name=_('product'))
     start_date = models.DateField(verbose_name=_('start date'),
                                   db_index=True)
     end_date = models.DateField(verbose_name=_('end date'),
@@ -94,17 +97,13 @@ class DateRangedPriceBase(PriceBase):
         return valid
 
 
-class QuantifiedPriceBase(PriceBase):
-    """ Base class for a price that is only valid above a certain quantity. """
+class QuantifiedPriceBase(PriceBase, QuantizedItemBase):
+    """ Base class for a price that is only valid above a certain quantity.
+    """
 
     class Meta(PriceBase.Meta):
         abstract = True
         unique_together = ('product', 'quantity')
-
-    product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
-                                verbose_name=_('product'))
-    quantity = models.IntegerField(default=1, db_index=True,
-                                   verbose_name=('quantity'))
 
     @classmethod
     def get_valid_prices(cls, product, quantity=1, *args, **kwargs):
@@ -132,32 +131,11 @@ class PricedProductBase(models.Model):
         abstract = True
     
     def get_price(self, **kwargs):
-        """ Iterate over the models in `WEBSHOP_PRICE_MODELS` in order
-            to find the lowest possible price under the conditions specified
-            in the arguments.
-        """
+        """ Get the cheapest available price, based
+            upon WEBSHOP_PRICE_MODEL. """
         
-        # Iterate over the specified price models 
-        # TODO: We might consider some kind of registration for price
-        # models instead of using something in settings.py
-        
-        # TODO2: Caching might be nice.
-
-        cheapest = None        
-        for model_name in PRICE_MODELS:
-            model = models.get_model(*model_name.split('.'))
-
-            # Execute the get_cheapest class model for efficient price
-            # finding.
-            this_cheapest = model.get_cheapest(**kwargs)
-            
-            # Compare to the cheapest price so far and if it's cheaper,
-            # use it.
-            if cheapest and this_cheapest and \
-                    this_cheapest.get_price(**kwargs) < \
-                       cheapest.get_price(**kwargs):
-                
-                cheapest = this_cheapest
+        model = get_model_from_string(PRICE_MODEL)
+        cheapest = model.get_cheapest(**kwargs)
         
         return cheapest.get_price(**kwargs)
 

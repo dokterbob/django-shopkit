@@ -68,9 +68,9 @@ class QuantizedItemBase(models.Model):
         abstract = True
     
     quantity = models.IntegerField(default=0, verbose_name=_('quantity'))
-    """ Number of items of this kind. The default is 0: this is necessary so that we 
-        can add a certain quantity to a new object without knowing its initial
-        value.
+    """ Number of items of this kind. The default is 0: this is necessary so
+    that we can add a certain quantity to a new object without knowing its
+    initial value.
     """
 
 
