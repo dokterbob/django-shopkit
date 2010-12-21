@@ -88,3 +88,18 @@ class NamedItemBase(models.Model):
         """ Returns the item's name. """
         
         return self.name
+
+
+class OrderedItemBase(models.Model):
+    """ Abstract base class for items that have explicit ordering. """
+    
+    class Meta:
+        abstract = True
+        ordering = ('sort_order', )
+    
+    sort_order = models.PositiveSmallIntegerField(verbose_name=('sort order'),
+                                 unique=True, blank=True,
+                                 help_text=_('Change this to alter the order \
+                                              in which items are displayed.'))
+
+
