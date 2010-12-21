@@ -37,6 +37,19 @@ class CategoryBase(models.Model):
         return cls.objects.all()
 
 
+    @classmethod
+    def get_main_categories(cls):
+        """ 
+        Gets the main categories, which for unnested categories
+        implies all of them. This method exists purely for uniformity
+        reasons. 
+        """
+        
+        categories = cls.get_categories()
+        
+        return categories
+
+
     def get_products(self):
         """ Get all active products for the current category. 
         """
@@ -67,7 +80,7 @@ class NestedCategoryBase(CategoryBase):
     def get_main_categories(cls):
         """ Gets the main categories; the ones which have no parent. """
         
-        categories = cls.get_categories()
+        categories = super(NestedCategoryBase, cls).get_main_categories()
         
         return categories.filter(parent__isnull=True)
     
