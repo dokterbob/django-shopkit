@@ -18,8 +18,9 @@
 
 from django.contrib import admin
 
-from webshop.extensions.price.advanced.settings import PRICE_MODEL
 from webshop.core.util import get_model_from_string
+
+from webshop.extensions.price.advanced.settings import PRICE_MODEL
 price_class = get_model_from_string(PRICE_MODEL)
 
 
