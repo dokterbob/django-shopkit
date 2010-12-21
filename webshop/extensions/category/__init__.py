@@ -27,4 +27,7 @@ Furthermore, generic abstract base models are defined for 'normal' categories
 and for nested categories, allowing for the hierarchical categorization of
 products.
 
+TODO: We want a setting allowing us to limit the nestedness of categories.
+For 'navigational' reasons, a number of 3 should be a reasonable default.
+
 """
