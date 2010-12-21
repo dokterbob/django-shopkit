@@ -78,7 +78,7 @@ class ProductPriceMixin(models.Model):
     """ Represents prices available for a specific product product. """
     
 
-    class Meta(PriceBase.Meta):
+    class Meta:
         abstract = True
 
     product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
@@ -101,7 +101,7 @@ class DateRangedPriceMixin(models.Model):
     """ Base class for a price that is only valid within a given date range. 
     """
 
-    class Meta(PriceBase.Meta):
+    class Meta:
         abstract = True
         # unique_together = ('product', 'start_date', 'end_date')
 
@@ -134,7 +134,7 @@ class QuantifiedPriceMixin(QuantizedItemBase):
     """ Base class for a price that is only valid above a certain quantity.
     """
 
-    class Meta(PriceBase.Meta):
+    class Meta:
         abstract = True
         # unique_together = ('product', 'quantity')
 
