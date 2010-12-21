@@ -16,9 +16,15 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from webshop.extensions.category.simple.util import get_categories
+from webshop.core.util import get_model_from_string
+
+from webshop.extensions.category.settings import CATEGORY_MODEL
+category_class = get_model_from_string(CATEGORY_MODEL)
 
 
-def categories(request):
-    """ Return the categories available in the shop. """
-    return {'categories': get_categories()}
+def main_categories(request):
+    """ 
+    Return the main categories, from which it is easy to
+    render a hierarchical category structure. 
+    """
+    return {'main_categories': category_class.get_main_categories()}
