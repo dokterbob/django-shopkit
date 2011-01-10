@@ -51,6 +51,7 @@ setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_PRICE_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_PRODUCTVARIATION_MODEL', '#doc')
 
 setattr(global_settings, 'WEBSHOP_VAT_PERCENTAGE', 19)
 setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)

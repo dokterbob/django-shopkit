@@ -19,4 +19,5 @@
 from django.conf import settings
 
 PRODUCTVARIATION_MODEL = getattr(settings, 'WEBSHOP_PRODUCTVARIATION_MODEL')
+""" Model used for product variations. """
 

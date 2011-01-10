@@ -11,5 +11,7 @@ Contents:
    vat/index.rst
    currency/index.rst
    configurable/index.rst
+   variations/index.rst
+   
 
 

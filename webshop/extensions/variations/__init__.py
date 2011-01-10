@@ -16,3 +16,15 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+"""
+Base classes for `Product`, `Cart` and `OrderItem` models which have several
+variations. The base classes have no natural properties or fields, these
+have to be defined in the application which uses the variations.
+
+Within the models module, two kinds of models are defined:
+
+1. Unordered variations.
+2. Ordered variations - for which an integer ordering has to be
+   specified.
+
+"""
