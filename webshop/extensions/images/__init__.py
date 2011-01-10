@@ -21,5 +21,10 @@ Images extension, allowing us to attach images to products using an
 ImageField. It provides a `ProductImageBase` abstract base class and a setting
 for defining the actual class implementing product images. This extension also
 provides an AdminInline class for updating product images from within the
-Admin interface.
+Admin interface and an Admin Mixin for showing thumbnails from within the
+list view.
+
+This extension is loosely coupled to the new 
+`sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ - it will scale
+thumbnails when Sorl is available but should work just fine without it.
 """

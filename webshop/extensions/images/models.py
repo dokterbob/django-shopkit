@@ -22,6 +22,14 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+try:
+    from sorl.thumbnail import ImageField    
+    logger.debug('Sorl-thumbnail found: using it.')
+
+except ImportError:
+    ImageField = models.ImageField
+    logger.debug('Sorl-thumbnail not found. Skipping.')
+
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import OrderedItemBase
 
@@ -35,8 +43,8 @@ class ProductImageBase(models.Model):
         verbose_name_plural = _('images')
 
     product = models.ForeignKey(PRODUCT_MODEL)
-    image = models.ImageField(verbose_name=_('image'), 
-                              upload_to='product_images')
+    image = ImageField(verbose_name=_('image'), 
+                       upload_to='product_images')
 
 
 class OrderedProductImageBase(ProductImageBase, OrderedItemBase):

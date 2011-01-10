@@ -28,8 +28,23 @@ from webshop.extensions.images.settings import PRODUCTIMAGE_MODEL
 from webshop.core.util import get_model_from_string
 productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
 
+try:
+    from sorl.thumbnail.admin import AdminInlineImageMixin
+    
+    from sorl.thumbnail import default
 
-class ProductImageInline(admin.TabularInline):
+    SORL_THUMBNAIL = True    
+    logger.debug('Sorl-thumbnail found: using it.')
+
+except ImportError:
+    class AdminInlineImageMixin(object):
+        pass
+
+    SORL_THUMBNAIL = False
+    logger.debug('Sorl-thumbnail not found. Skipping.')
+
+
+class ProductImageInline(AdminInlineImageMixin, admin.TabularInline):
     """ Inline admin for product images. """
     
     model = productimage_class
@@ -43,17 +58,31 @@ class ImagesProductMixin(object):
     `'default_image'` to the `list_display` tuple.
     
     Like such::
+    
        ProductAdmin(<Base classes>, ImagesProductMixin):
           list_display = ('name', 'default_image')
     
     """
     
+    thumbnail_geometry = '150x150'
+    
     def default_image(self, obj):
-        """ Renders the default image for display in the admin list. """
-        
-        image = obj.get_default_image().image
+        """ Renders the default image for display in the admin list. 
+            Makes a thumbnail if `sorl-thumbnail` is available.
+        """
 
+        image = obj.get_default_image()
+        
         if image:
+            if SORL_THUMBNAIL:
+                # This should not raise an error when an image is non-
+                # existant or something like that.
+                try:
+                    image = default.backend.get_thumbnail(image.image, 
+                                                 self.thumbnail_geometry)
+                except:
+                    pass
+            
             return u'<a href="%d/"><img src="%s" alt="%s"/></a>' % \
                 (obj.pk, image.url, unicode(obj))
         else:
