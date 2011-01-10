@@ -74,6 +74,13 @@ class PriceBase(PricedItemBase):
         return cls.objects.all()
 
 
+    def __unicode__(self):
+        """ Return the formatted value of the price. """
+        
+        # TODO: Do price formatting in a generic manner.
+        return u'%2.2f' % self.get_price()
+
+
 class ProductPriceMixin(models.Model):
     """ Represents prices available for a specific product product. """
     
