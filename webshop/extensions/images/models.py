@@ -23,5 +23,25 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
+from webshop.core.basemodels import OrderedItemBase
 
+
+class ProductImageBase(models.Model):
+    """ Base class for image relating to a product. """
+    
+    class Meta:
+        abstract = True
+        verbose_name = _('image')
+        verbose_name_plural = _('images')
+
+    product = models.ForeignKey(PRODUCT_MODEL)
+    image = models.ImageField(verbose_name=_('image'), 
+                              upload_to='product_images')
+
+
+class OrderedProductImageBase(ProductImageBase, OrderedItemBase):
+    """ Base class for explicitly ordere image relating to a product. """
+    
+    class Meta(ProductImageBase.Meta, OrderedItemBase.Meta):
+        abstract = True
 

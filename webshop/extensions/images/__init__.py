@@ -17,10 +17,9 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
-Images extension, allowing us to attach images to products using the
-ImageField that comes with the new sorl-thumbnail. It provides a
-`ProductImageBase` abstract base class and a setting for defining the
-actual class implementing product images. This extension also provides
-an AdminInline class for updating product images from within the Admin
-interface.
+Images extension, allowing us to attach images to products using an
+ImageField. It provides a `ProductImageBase` abstract base class and a setting
+for defining the actual class implementing product images. This extension also
+provides an AdminInline class for updating product images from within the
+Admin interface.
 """

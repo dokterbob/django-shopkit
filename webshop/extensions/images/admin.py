@@ -16,3 +16,17 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.contrib import admin
+
+from webshop.extensions.images.settings import PRODUCTIMAGE_MODEL
+from webshop.core.util import get_model_from_string
+productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
+
+
+class ProductImageInline(admin.TabularInline):
+    """ Inline admin for product images. """
+    
+    model = productimage_class
+    extra = 1
+
+
