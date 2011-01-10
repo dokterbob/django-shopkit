@@ -12,6 +12,7 @@ Contents:
    currency/index.rst
    configurable/index.rst
    variations/index.rst
+   images/index.rst
    
 
 

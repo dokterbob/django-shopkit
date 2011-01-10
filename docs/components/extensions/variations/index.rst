@@ -1,4 +1,4 @@
-Product variations
+Variations
 ==================
 
 `webshop.extensions.variations`

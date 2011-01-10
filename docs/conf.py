@@ -52,6 +52,7 @@ setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_PRICE_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_PRODUCTVARIATION_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_PRODUCTIMAGE_MODEL', '#doc')
 
 setattr(global_settings, 'WEBSHOP_VAT_PERCENTAGE', 19)
 setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)
@@ -71,7 +72,8 @@ extensions = ['sphinx.ext.intersphinx',
               ]
 
 intersphinx_mapping = {'python': ('http://docs.python.org/2.6', None),
-                       'django': ('http://docs.djangoproject.com/en/dev/', 'http://docs.djangoproject.com/en/dev/_objects/'),}
+                       'django': ('http://docs.djangoproject.com/en/dev/', 'http://docs.djangoproject.com/en/dev/_objects/'),
+                       'sorl': ('http://thumbnail.sorl.net/', None)}
 
 
 # Add any paths that contain templates here, relative to this directory.
@@ -217,7 +219,7 @@ htmlhelp_basename = 'django-webshopdoc'
 latex_paper_size = 'a4'
 
 # The font size ('10pt', '11pt' or '12pt').
-#latex_font_size = '10pt'
+latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
