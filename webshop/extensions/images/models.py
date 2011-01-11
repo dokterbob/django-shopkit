@@ -91,8 +91,10 @@ class ImagesProductMixin(object):
         """ By default, this returns the first image according to whatever
             sortorder is used.
         """
-        
-        return self.productimage_set.all()[0]
+        if self.productimage_set.all().count() > 0:
+            return self.productimage_set.all()[0]
+        else:
+            return None
     
     
     
