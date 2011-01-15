@@ -235,15 +235,31 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         orderitem = cls(product=cartitem.product, 
                         quantity=cartitem.quantity,
                         order=order)
-        
-        orderitem.save()
-        
-        # TODO
-        #
+                
         # We should consider iterating over all the fields (properties)
         # of the cartitem and copying the information to the order item.
         #
-        # For now, I'll leave the code like this.
+        # However, we need to skip AutoField instances in any case.
+        #
+        # Also: we should read all properties - not just fields - from the
+        # CartItem and see whether matching fields exist for the OrderItem.
+
+        cartitem_keys = cartitem.__dict__.keys()
+        orderitem_fields = cls._meta.fields
+        
+        from django.db.models.fields import AutoField
+
+        for orderitem_field in orderitem_fields:
+            # Skip AutoField instances
+            if not isinstance(orderitem_field, AutoField):            
+                attname = orderitem_field.attname
+                
+                if attname in cartitem_keys:
+                     cartitem_value = cartitem[attname]
+                     
+                     setattr(orderitem, attname, cartitem_value)            
+        
+        orderitem.save()
         
         return orderitem
 
@@ -265,6 +281,10 @@ class OrderBase(AbstractPricedItemBase):
             shopping cart, copying all the items. """
         order = cls(customer=customer)
         order.save()
+        
+        # TODO
+        # We should copy any eventual matching fields from the
+        # cart into the order.
 
         orderitem_class = get_model_from_string(ORDERITEM_MODEL)
         
