@@ -33,6 +33,32 @@ CARTITEM_MODEL = getattr(settings, 'WEBSHOP_CARTITEM_MODEL')
 ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
 """ The model used for orders. """
 
+ORDER_STATES = getattr(settings, 'WEBSHOP_ORDER_STATES')
+"""
+Mapping for order states of the following form::
+
+    WEBSHOP_ORDER_STATES = (
+        (00, _('Temp')),
+        (10, _('New')),
+        (20, _('Blocked')),
+        (30, _('In Process')),
+        (40, _('Billed')),
+        (50, _('Shipped')),
+        (60, _('Complete')),
+        (70, _('Cancelled')),
+    )
+
+"""
+
+DEFAULT_ORDER_STATE = getattr(settings, 'WEBSHOP_DEFAULT_ORDER_STATE', ORDER_STATES[0][0])
+""" 
+Default state for new orders. By default, the first state in 
+`WEBSHOP_ORDER_STATES` is selected.
+"""
+
+ORDERSTATE_CHANGE_MODEL = getattr(settings, 'WEBSHOP_ORDERSTATE_CHANGE_MODEL')
+""" Model used for logging state changes of orders. """
+
 ORDERITEM_MODEL = getattr(settings, 'WEBSHOP_ORDERITEM_MODEL')
 """ The model used for order items. """
 

@@ -29,7 +29,8 @@ from django.db import models
 
 from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
                                   CARTITEM_MODEL, ORDER_MODEL, \
-                                  CUSTOMER_MODEL
+                                  CUSTOMER_MODEL, ORDERSTATE_CHANGE_MODEL, \
+                                  ORDER_STATES, DEFAULT_ORDER_STATE
 from webshop.core.managers import ActiveProductManager
 from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
                                     QuantizedItemBase, AbstractCustomerBase
@@ -264,6 +265,28 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         return orderitem
 
 
+class OrderStateChangeBase(models.Model):
+    """ Abstract base class for logging order state changes. """
+    
+    class Meta:
+        verbose_name = _('order state change')
+        verbose_name_plural = _('order state changes')
+        abstract = True
+    
+    order = models.ForeignKey(ORDER_MODEL)
+    date = models.DateTimeField(auto_now_add=True, verbose_name=_('date'))
+    """ Date at which the state change ocurred. """
+    
+    state = models.PositiveSmallIntegerField(_('status'), 
+                                             choices=ORDER_STATES)
+    """ State of the order, represented by a PositveSmallInteger field.
+        Available choices can be configured in WEBSHOP_ORDER_STATES. 
+    """
+    
+    notes = models.TextField(blank=True, verbose_name=('notes'))
+    """ Any notes manually added to a state change. """
+
+
 class OrderBase(AbstractPricedItemBase):
     """ Abstract base class for orders. """
 
@@ -274,7 +297,14 @@ class OrderBase(AbstractPricedItemBase):
 
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
     """ Customer whom this order belongs to. """
-
+    
+    state = models.PositiveSmallIntegerField(_('status'), 
+                                             choices=ORDER_STATES,
+                                             default=DEFAULT_ORDER_STATE)
+    """ State of the order, represented by a PositveSmallInteger field.
+        Available choices can be configured in WEBSHOP_ORDER_STATES. 
+    """
+    
     @classmethod
     def fromCart(cls, cart, customer):
         """ Instantiate an order based on the basis of a
@@ -297,7 +327,32 @@ class OrderBase(AbstractPricedItemBase):
         
         
         return order
+    
+    def save(self, *args, **kwargs):
+        """ Make sure we log a state change where applicable. """
+        
+        result = super(self, OrderBase).save(*args, **kwargs)
 
+        orderstate_change_class = \
+            get_model_from_string(ORDERSTATE_CHANGE_MODEL)
+
+        try:
+            latest_statechange = self.orderstatechange_set.all().latest('date')
+            
+            if latest_statechange.state != self.state:
+                # There's a new state change to be made
+                
+                # TODO: Create a classmethod performing this functionality            
+                orderstate_change_class(state=self.state, order=self).save()
+            
+        except orderstate_change_class.DoesNotExist:
+            # No pre-existing state change exists, create new one.
+
+            # TODO: Create a classmethod performing this functionality            
+            orderstate_change_class(state=self.state, order=self).save()
+        
+        return result
+        
 
 
 class PaymentBase(models.Model):
