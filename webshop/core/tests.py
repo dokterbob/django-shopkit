@@ -22,7 +22,7 @@ from django.conf import settings
 from webshop.core.util import get_model_from_string
 
 
-class CoreTestBase(TestCase):
+class CoreTestMixin(object):
     """ Base class for testing core webshop functionality. This class should
         not directly be used, rather it should be subclassed similar to the
         way that included model base classes should be subclassed.
@@ -34,6 +34,7 @@ class CoreTestBase(TestCase):
         makes them available as `self.cusomter_class`, `self.product_class` 
         etcetera.
         """
+        super(CoreTestMixin, self).setUp()
         
         self.customer_class = \
             get_model_from_string(settings.WEBSHOP_CUSTOMER_MODEL)
@@ -53,6 +54,22 @@ class CoreTestBase(TestCase):
         self.orderitem_class = \
             get_model_from_string(settings.WEBSHOP_ORDERITEM_MODEL)
     
+    def make_test_product(self):
+        """ 
+        Abstract function for creating a test product. As the actual
+        properties of Products depend on the classes actually implementing
+        it, this function must be overridden in subclasses.
+        """
+        raise NotImplementedError
+
+    def test_basic_product(self):
+        """ Test if we can create and save a simple product. """
+        
+        p = self.make_test_product()
+        p.save()
+        
+        self.assert_(p.pk)
+        
     def test_cartitem_from_product(self):
         """ Create a CartItem from a product. """
         pass
