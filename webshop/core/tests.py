@@ -17,6 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 from django.test import TestCase
+from django.conf import settings
 
 from webshop.core.util import get_model_from_string
 
@@ -28,6 +29,12 @@ class CoreTestBase(TestCase):
     """
     
     def setUp(self):
+        """ 
+        This function gets the model classes from `settings.py` and
+        makes them available as `self.cusomter_class`, `self.product_class` 
+        etcetera.
+        """
+        
         self.customer_class = \
             get_model_from_string(settings.WEBSHOP_CUSTOMER_MODEL)
         
@@ -45,4 +52,36 @@ class CoreTestBase(TestCase):
 
         self.orderitem_class = \
             get_model_from_string(settings.WEBSHOP_ORDERITEM_MODEL)
-        
+    
+    def test_cartitem_from_product(self):
+        """ Create a CartItem from a product. """
+        pass
+    
+    def test_orderitem_from_cartitem(self):
+        """ Create an OrderItem from a CartItem. """
+        pass
+    
+    def test_create_usercustomer(self):
+        """ Create a UserCustomer. """
+        pass
+    
+    def test_cart(self):
+        """ 
+        Create a shopping cart with several products, quantities and
+        prices.
+        """
+        pass
+    
+    def test_order(self):
+        """
+        Create an order on the basis of a shopping cart and a customer
+        object.
+        """
+        pass
+    
+    def test_orderstate_change_tracking(self):
+        """
+        Change the state of an order, see if the state change gets logged.
+        """
+        pass
+
