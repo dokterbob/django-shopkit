@@ -25,8 +25,33 @@ productvariation_class = get_model_from_string(PRODUCTVARIATION_MODEL)
 
 class ProductVariationInline(admin.TabularInline):
     """ Inline admin for product variations. """
-    
+
     model = productvariation_class
     extra = 1
 
+
+class VariationInlineMixin(object):
+    """
+    Base class for Admin Inline's (such as prices) in which we should be able
+    to select Variations only pertaining to a specific Product.
+    """
+
+    def get_formset(self, request, obj=None, **kwargs):
+        """
+        Make sure we can only select variations that relate to the current
+        product.
+
+        This should be part of the django-webshop variations extension.
+        TODO: Unittest this mother...
+
+        Reference: http://stackoverflow.com/questions/1824267/limit-foreign-key-choices-in-select-in-an-inline-form-in-admin
+
+        """
+        formset = super(VariationInlineMixin, self).get_formset(request, obj=None, **kwargs)
+
+        if obj and formset.form.base_fields.has_key('variation'):
+            formset.form.base_fields['variation'].queryset = \
+                formset.form.base_fields['variation'].queryset.filter(product=obj)
+
+        return formset
 
