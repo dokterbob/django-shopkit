@@ -17,6 +17,7 @@ Contents:
    settings.rst
    util.rst
    context_processors.rst
+   tests.rst
    
 
 

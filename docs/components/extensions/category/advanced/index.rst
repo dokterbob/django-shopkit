@@ -10,5 +10,6 @@ Advanced
    :maxdepth: 2
 
    models.rst
-   views.rst
+   views.rst 
+   tests.rst
 

@@ -13,6 +13,7 @@ Contents:
    
    basemodels.rst
    settings.rst
+   tests.rst
    
    simple/index.rst
    advanced/index.rst

@@ -11,4 +11,5 @@ Simple
 
    models.rst
    views.rst
+   tests.rst
 

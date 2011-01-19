@@ -71,15 +71,15 @@ class CoreTestMixin(object):
         self.assert_(p.pk)
         
     def test_cartitem_from_product(self):
-        """ Create a CartItem from a product. """
+        """ Create a `CartItem` from a `Product`. """
         pass
     
     def test_orderitem_from_cartitem(self):
-        """ Create an OrderItem from a CartItem. """
+        """ Create an `OrderItem` from a `CartItem`. """
         pass
     
     def test_create_usercustomer(self):
-        """ Create a UserCustomer. """
+        """ Create a `UserCustomer`. """
         pass
     
     def test_cart(self):
