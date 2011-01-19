@@ -69,6 +69,11 @@ class ImagesProductMixin(object):
     def default_image(self, obj):
         """ Renders the default image for display in the admin list. 
             Makes a thumbnail if `sorl-thumbnail` is available.
+            
+            .. todo::
+                Add a setting for returning stub images when no
+                default image currently exists.
+            
         """
 
         image = obj.get_default_image()
@@ -87,7 +92,6 @@ class ImagesProductMixin(object):
                 (obj.pk, image.url, unicode(obj))
         else:
             
-            # TODO: return the path to a stub image
             return u''
     default_image.short_description = _('image')
     default_image.allow_tags = True

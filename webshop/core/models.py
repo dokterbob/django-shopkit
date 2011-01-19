@@ -177,11 +177,15 @@ class CartBase(AbstractPricedItemBase):
         return cartitem
     
     def get_total_items(self):
-        """ Gets the total quantity of products in the shopping cart. """
+        """ 
+        Gets the total quantity of products in the shopping cart. 
+        
+        .. todo::
+            Use aggregation here.
+        """
         
         quantity = 0
         
-        # TODO: Use aggregation
         for cartitem in self.getCartItems():
             quantity += cartitem.quantity
         
@@ -193,15 +197,20 @@ class CartBase(AbstractPricedItemBase):
         return self.get_total_price(**kwargs)
     
     def get_total_price(self, **kwargs):
-        """ Gets the total price for all items in the cart. """
+        """ 
+        Gets the total price for all items in the cart. 
+        
+        .. todo::
+            Add either caching or aggregation. Preferably the former.
+            This can be achieved by keeping something like a serial or timestamp
+            in the Cart and CartItem models.
+        
+        """
         
         logger.debug('Calculating total price for shopping cart.')
         
         # logger.debug(self.getCartItems()[0].get_total_price())
         
-        # TODO: Add either caching or aggregation. Preferably the former.
-        # This can be achieved by keeping something like a serial or timestamp
-        # in the Cart and CartItem models.
         price = Decimal("0.0")
         
         for cartitem in self.getCartItems():
@@ -307,14 +316,17 @@ class OrderBase(AbstractPricedItemBase):
     
     @classmethod
     def fromCart(cls, cart, customer):
-        """ Instantiate an order based on the basis of a
-            shopping cart, copying all the items. """
+        """ 
+        Instantiate an order based on the basis of a
+        shopping cart, copying all the items. 
+        
+        .. todo::
+            We should copy any eventual matching fields from the
+            cart into the order.
+        
+        """
         order = cls(customer=customer)
         order.save()
-        
-        # TODO
-        # We should copy any eventual matching fields from the
-        # cart into the order.
 
         orderitem_class = get_model_from_string(ORDERITEM_MODEL)
         
@@ -329,7 +341,15 @@ class OrderBase(AbstractPricedItemBase):
         return order
     
     def save(self, *args, **kwargs):
-        """ Make sure we log a state change where applicable. """
+        """ 
+        
+        Make sure we log a state change where applicable. 
+        
+        .. todo::
+            Create a classmethod for creating an OrderState from an order class
+            and state.
+        
+        """
         
         result = super(self, OrderBase).save(*args, **kwargs)
 
@@ -342,13 +362,11 @@ class OrderBase(AbstractPricedItemBase):
             if latest_statechange.state != self.state:
                 # There's a new state change to be made
                 
-                # TODO: Create a classmethod performing this functionality            
                 orderstate_change_class(state=self.state, order=self).save()
             
         except orderstate_change_class.DoesNotExist:
             # No pre-existing state change exists, create new one.
 
-            # TODO: Create a classmethod performing this functionality            
             orderstate_change_class(state=self.state, order=self).save()
         
         return result

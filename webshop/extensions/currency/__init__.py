@@ -22,7 +22,9 @@ variant. The simple variant assumes a single currency throughout the webshop
 project, advanced currency support allows for using multiple currencies
 throughout the site.
 
-TODO: Use a setting to define the way in which prices are formatted site-wide.
-      This way we have a simple mechanism for formatting prices everywhere
-      on the site while leaving everything loosely coupled.
+.. todo::
+    Use a setting to define the way in which prices are formatted site-wide.
+    This way we have a simple mechanism for formatting prices everywhere
+    on the site while leaving everything loosely coupled.
+
 """

@@ -56,8 +56,10 @@ class OrderedProductVariationBase(ProductVariationBase, OrderedItemBase):
     """
     Base class for ordered product variations. 
     
-    TODO: Get rid of uniqueness constraint in OrderItemBase -- either by
-    removing it from the base model or by not inheriting from it.
+    .. todo::
+        Get rid of uniqueness constraint in OrderItemBase -- either by
+        removing it from the base model or by not inheriting from it.
+
     """
     
     class Meta(ProductVariationBase.Meta, OrderedItemBase.Meta):

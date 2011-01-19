@@ -64,7 +64,8 @@ class CategoryBase(models.Model):
 class NestedCategoryBase(CategoryBase):
     """ Abstract base class for a nested category. 
         
-        TODO: Consider treebeard for nested structures. 
+        .. todo::
+            Consider treebeard for nested structures. 
     """
     
     class Meta(CategoryBase.Meta):
@@ -119,8 +120,9 @@ class NestedCategoryBase(CategoryBase):
             If the argument `reversed` evaluates to `True`, the list runs
             in reverse order. This *saves* an extra reverse operation.
             
-            TODO: Cache this. It is a slow operation which requires
-            as many queries as the category tree is deep.
+            .. todo::
+                Cache this. It is a slow operation which requires
+                as many queries as the category tree is deep.
         """
 
         current = self

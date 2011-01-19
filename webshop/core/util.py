@@ -45,6 +45,11 @@ def get_model_from_string(model):
 def get_cart_from_request(request):
     """ Gets the shopping cart from the request or creates a 
         new one if no shopping cart previously exists.
+        
+        .. todo::
+            It should not be necessary to save this cart - this code
+            can be more optimal.
+
     """
 
     # Construct a cart class from the string value in settings.
@@ -52,9 +57,6 @@ def get_cart_from_request(request):
 
     cart_pk = request.session.get('cart_pk', None)
     
-    # TODO
-    # It should not be necessary to save this cart - this code
-    # can be more optimal.
     cart, created = cart_class.objects.get_or_create(pk=cart_pk)
     
     if created:

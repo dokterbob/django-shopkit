@@ -77,6 +77,7 @@ intersphinx_mapping = {'python': ('http://docs.python.org/2.6', None),
                        'django': ('http://docs.djangoproject.com/en/dev/', 'http://docs.djangoproject.com/en/dev/_objects/'),
                        'sorl': ('http://thumbnail.sorl.net/', None)}
 
+todo_include_todos = True
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['_templates']

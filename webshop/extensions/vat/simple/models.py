@@ -27,7 +27,9 @@ class VATItemBase(AbstractPricedItemBase):
         it might be imported in what order the base classes for the VAT'ed item are
         listed. Feedback about this is welcomed.
         
-        TODO: Write tests for this piece of code.
+        ..todo:: 
+            Write unittests for this piece of code.
+        
     """
 
     def get_vat(**kwargs):

@@ -27,7 +27,7 @@ class ProductVariationInline(admin.TabularInline):
     """ Inline admin for product variations. """
 
     model = productvariation_class
-    extra = 1
+    extra = 0
 
 
 class VariationInlineMixin(object):
@@ -42,9 +42,12 @@ class VariationInlineMixin(object):
         product.
 
         This should be part of the django-webshop variations extension.
-        TODO: Unittest this mother...
+        
+        .. todo:: 
+            Write unittest this little bugger.
 
-        Reference: http://stackoverflow.com/questions/1824267/limit-foreign-key-choices-in-select-in-an-inline-form-in-admin
+        .. seealso::
+            http://stackoverflow.com/questions/1824267/limit-foreign-key-choices-in-select-in-an-inline-form-in-admin
 
         """
         formset = super(VariationInlineMixin, self).get_formset(request, obj=None, **kwargs)

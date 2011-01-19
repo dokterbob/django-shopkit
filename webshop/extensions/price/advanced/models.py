@@ -75,9 +75,14 @@ class PriceBase(PricedItemBase):
 
 
     def __unicode__(self):
-        """ Return the formatted value of the price. """
+        """ 
+        Return the formatted value of the price.
         
-        # TODO: Do price formatting in a generic manner.
+        .. todo::
+            Perform price formatting in a generic manner.
+        
+        """
+        
         return u'%2.2f' % self.get_price()
 
 

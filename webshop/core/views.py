@@ -50,11 +50,15 @@ class CartAddFormMixin(object):
         
         If this is not the case, we should fail silently (perhaps)
         logging a debug message.
+        
+        .. todo::
+            Make an API hook allowing us to check whether a product available
+            for adding it to a cart.
+        
         """
 
         cartform_class = self.get_cart_form_class()
         
-        # TODO: check whether a product is available.
         cartform = cartform_class(initial={'product':self.object})        
         
         context = super(CartAddFormMixin, self).get_context_data(**kwargs)
@@ -79,8 +83,9 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
               to the users Cart.
         5. Redirect to the cart view.
         
-        TODO Graceously handle errors instead of form_invalid noting that
-        render_to_response was not found.
+        .. todo::
+            Graceously handle errors instead of form_invalid noting that
+            render_to_response was not found.
         
         """
     
@@ -89,12 +94,16 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
         override the `get` method in BaseFormView. """
 
     def get_success_url(self):
-        """ The URL to return to after the form was processed 
-            succesfully. This function should be overridden. """
+        """ 
+        The URL to return to after the form was processed 
+        succesfully. This function should be overridden. 
+
+        .. todo::
+            Decide whether or not to make the default success url a
+            configuration value or not.
         
-        # TODO
-        # Decide whether or not to make the default success url a
-        # configuration value or not.
+        """
+        
         raise NotImplemented
         
     def get_form_class(self):

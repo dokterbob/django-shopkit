@@ -20,13 +20,15 @@ from webshop.core.util import get_cart_from_request
 
 def cart(request):
     """ Request context processor adding the shopping cart to the current
-        context as `cart`. 
+        context as `cart`.
+        
+        .. todo::
+            Make this a lazy object: we should only perform the actual 
+            database query when this object is requested from within
+            template.
+        
     """
     
-    # TODO
-    # Make this a lazy object: we should only perform the actual 
-    # database query when this object is requested from within
-    # template.
     return {'cart': get_cart_from_request(request)}
     
     
