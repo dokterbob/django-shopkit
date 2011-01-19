@@ -28,7 +28,8 @@ class AdvancedPriceTestMixin(object):
     
     def setUp(self):
         """
-        We want to have the price class available in `self`.
+        This makes the `Price` class from the `WEBSHOP_PRICE_MODEL` available
+        as `self.price_class` for unittests to make use of.
         """
 
         super(AdvancedPriceTestMixin, self).setUp()
