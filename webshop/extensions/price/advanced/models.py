@@ -41,12 +41,15 @@ class PriceBase(PricedItemBase):
     
     @staticmethod
     def _get_minimal_price(qs):
-        """ Get the minimal price within the given QuerySet. """
+        """ 
+        Get the price object with the lowest price 
+        within the given QuerySet. 
+        """
         
         assert qs.count(), \
             'FIXME: No prices found. This will raise an exception that should be called.'
-
-        return qs.aggregate(models.Min('price'))['price__min']
+        
+        return qs.order_by('price')[0]
     
     
     @classmethod
