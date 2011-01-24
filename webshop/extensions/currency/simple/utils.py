@@ -16,6 +16,9 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from decimal import Decimal
 
 # Pick the current locale from the LANG environment variable
@@ -25,7 +28,11 @@ locale.setlocale(locale.LC_MONETARY, '')
 
 def format_price(amount):
     """ Format the given float-like object in the current locale. """
-    assert float(amount), 'Cannot convert this to a number.'
-    
+    try:
+        float(amount)
+    except ValueError:
+        logger.warn('Attempting to format an empty price, failing softly by returning None.')
+        return None
+
     return locale.currency(amount, grouping=True)
 
