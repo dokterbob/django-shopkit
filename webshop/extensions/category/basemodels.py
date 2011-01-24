@@ -108,7 +108,7 @@ class NestedCategoryBase(CategoryBase):
         from webshop.core.util import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
-        return product_class.in_shop.filter(category_set=self)
+        return product_class.in_shop.filter(categories=self)
 
     def get_parent_list(self, reversed=False):
         """ Return a list of all parent categories of the current category.
