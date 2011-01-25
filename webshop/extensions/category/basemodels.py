@@ -33,7 +33,7 @@ class CategoryBase(models.Model):
     objects = models.Manager()
     in_shop = objects
     """ The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
-        containing all the `Product` objects which should be enabled in the
+        containing all the items which should be enabled in the
         shop's frontend.
     """
 
