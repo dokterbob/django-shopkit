@@ -31,7 +31,6 @@ from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
                                   CARTITEM_MODEL, ORDER_MODEL, \
                                   CUSTOMER_MODEL, ORDERSTATE_CHANGE_MODEL, \
                                   ORDER_STATES, DEFAULT_ORDER_STATE
-from webshop.core.managers import ActiveProductManager
 from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
                                     QuantizedItemBase, AbstractCustomerBase
 
@@ -67,13 +66,11 @@ class ProductBase(AbstractPricedItemBase):
         abstract = True
     
     objects = models.Manager()
-    in_shop = ActiveProductManager()
-    """ ActiveProductManager returning only products with `active=True`. """
-    
-    active = models.BooleanField(verbose_name=_('active'),
-                                 help_text=_('Product active in webshop.'),
-                                 default=True)
-    """ Whether the product is active in the webshop frontend. """
+    in_shop = objects
+    """ The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
+        containing all the `Product` objects which should be enabled in the
+        shop's frontend.
+    """
 
 
 class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):

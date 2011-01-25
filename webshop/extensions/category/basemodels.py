@@ -30,11 +30,18 @@ class CategoryBase(models.Model):
         verbose_name = _('category')
         verbose_name_plural = _('categories')
 
+    objects = models.Manager()
+    in_shop = objects
+    """ The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
+        containing all the `Product` objects which should be enabled in the
+        shop's frontend.
+    """
+
     @classmethod
     def get_categories(cls):
         """ Gets all the available categories. """
         
-        return cls.objects.all()
+        return cls.in_shop.all()
 
 
     @classmethod

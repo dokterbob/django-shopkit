@@ -18,14 +18,19 @@
 
 from django.db import models
 
-class ActiveProductManager(models.Manager):
-    """ Manager returning only active products. """
-    
+class ActiveItemManager(models.Manager):
+    """ 
+    Manager returning only activated items, ideally for subclasses of
+    :class:`AbstractActiveItemBase <webshop.core.basemodels.AbstractActiveItemBase>`. 
+    """
+
     def get_query_set(self):
-        """ Filter the original queryset so it returns only products with
+        """ Filter the original queryset so it returns only items with
             `active=True`.
         """
-        qs = super(ActiveProductManager, self).get_query_set()
+        qs = super(ActiveItemManager, self).get_query_set()
         qs = qs.filter(active=True)
-        
+
         return qs
+
+

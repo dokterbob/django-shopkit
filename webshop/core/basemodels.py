@@ -20,8 +20,13 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from webshop.core.settings import MAX_NAME_LENGTH
+from webshop.core.managers import ActiveItemManager
 
-""" Generic base models. """
+""" 
+Generic abstract base classes for:
+* :class:`Customers <webshop.core.basemodels.AbstractCustomerBase>`
+
+"""
 
 
 class AbstractCustomerBase(models.Model):
@@ -102,4 +107,35 @@ class OrderedItemBase(models.Model):
                                  help_text=_('Change this to alter the order \
                                               in which items are displayed.'))
 
+
+class ActiveItemBase(models.Model):
+    """ 
+    Abstract base class for items which can be activated or deactivated.
+    """
+
+    class Meta:
+        abstract = True
+
+    active = models.BooleanField(verbose_name=_('active'),
+                                 default=True)
+    """ Whether the item is active in the frontend. """
+
+
+class ActiveItemInShopBase(ActiveItemBase):
+    """ 
+    This is a subclass of :class:`ActiveItemBase` with an 
+    :class:`ActiveItemManager <webshop.core.managers.ActiveItemManager>` called `in_shop`.
+    
+    The main purpose of this class is allowing for items to be enabled or
+    disabled in the shop's frontend
+    """
+    
+    class Meta:
+        abstract = True
+
+    objects = models.Manager()
+    in_shop = ActiveItemManager()
+    """ An instance of :class:`ActiveItemManager <webshop.core.managers.ActiveItemManager>`,
+        returning only items with `active=True`.
+    """
 
