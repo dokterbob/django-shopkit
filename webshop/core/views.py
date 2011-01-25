@@ -38,6 +38,17 @@ from webshop.core.forms import CartItemAddForm
 """ Generic view Mixins for webshop core functionality. """
 
 
+class InShopViewMixin(object):
+    """ 
+    Mixin using the `in_shop` manager rather than the default `objects`,
+    so that it only uses objects which are actually enabled in the frontend of 
+    the shop.
+    """
+    
+    def get_queryset(self):
+        return self.model.in_shop.all()
+
+
 class CartAddFormMixin(object):
     """ Mixin providing a basic form class for adding items to the
         shopping cart. It will be added to the context as `cartaddform`.
@@ -147,3 +158,5 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
                 'Added \'%s\' to shopping cart.' % product)
         
         return super(BaseFormView, self).form_valid(form)
+
+
