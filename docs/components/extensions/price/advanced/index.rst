@@ -12,5 +12,6 @@ Advanced
    models.rst
    settings.rst
    admin.rst
+   forms.rst
    tests.rst
 

@@ -16,24 +16,21 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
-from webshop.core.util import get_model_from_string
-
-from webshop.extensions.price.advanced.forms import PriceInlineFormSet
-from webshop.extensions.price.advanced.settings import PRICE_MODEL
-price_class = get_model_from_string(PRICE_MODEL)
+from django.forms.models import BaseInlineFormSet
+from django import forms
 
 
-class PriceInline(admin.TabularInline):
-    """ Inline price admin for prices belonging to products. """
+class PriceInlineFormSet(BaseInlineFormSet):
+    """ Formset which makes sure that at least one price is filled in. """
     
-    model = price_class
-    
-    extra = 1
-    """ By default, onlye one extra form is shown, as to prevent clogging up
-        of the user interface.
-    """
-    
-    formset = PriceInlineFormSet
-    """ An alias for :class:`PriceInlineFormSet <webshop.extensions.price.advanced.forms.PriceInlineFormSet>`."""
+    def clean(self):
+        """ Raise a ValidationError if no Price forms are filled in. """
+        
+        # Raise this error when no forms exist or when no price has been 
+        # specified in the first form.
+        if len(self.forms) < 1  \
+            or not self.forms[0].cleaned_data.has_key('price'):
+            raise forms.ValidationError(
+                _('At least one price should be provided.'))
