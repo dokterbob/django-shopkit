@@ -46,6 +46,7 @@ class InShopViewMixin(object):
     """
     
     def get_queryset(self):
+        """ Return `in_shop.all()` for the `model`. """
         return self.model.in_shop.all()
 
 
