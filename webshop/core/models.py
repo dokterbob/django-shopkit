@@ -220,7 +220,11 @@ class CartBase(AbstractPricedItemBase):
 
 
 class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
-    """ Abstract base class for order items. """
+    """ 
+    Abstract base class for order items. An `OrderItem` should, ideally, copy all
+    specific properties from the shopping cart as an order should not change
+    at all when the objects they relate to change.
+    """
 
     class Meta(AbstractPricedItemBase.Meta):
         verbose_name = _('order item')
@@ -235,14 +239,20 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
     
-    @classmethod
-    def fromCartItem(cls, cartitem, order):
-        """ Create an order item from a shopping cart item. """
+    def _propertiesFromCartItem(self, cartitem):
+        """ 
+        This method copies all relevant properties from a `CartItem` over
+        to the current `OrderItem` instance. 
         
-        orderitem = cls(product=cartitem.product, 
-                        quantity=cartitem.quantity,
-                        order=order)
-                
+        When the automatic mechanism here doesn't work as advertised 
+        (because it is probably too generic), it should be overridden in a
+        subclass.
+        """
+        
+        # This should be redundant
+        # self.product=cartitem.product 
+        # self.quantity=cartitem.quantity
+
         # We should consider iterating over all the fields (properties)
         # of the cartitem and copying the information to the order item.
         #
@@ -252,7 +262,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         # CartItem and see whether matching fields exist for the OrderItem.
 
         cartitem_keys = cartitem.__dict__.keys()
-        orderitem_fields = cls._meta.fields
+        orderitem_fields = self._meta.fields
         
         from django.db.models.fields import AutoField
 
@@ -264,7 +274,16 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
                 if attname in cartitem_keys:
                      cartitem_value = cartitem[attname]
                      
-                     setattr(orderitem, attname, cartitem_value)            
+                     setattr(self, attname, cartitem_value)            
+        
+        
+    @classmethod
+    def fromCartItem(cls, cartitem, order):
+        """ Create an order item from a shopping cart item. """
+        
+        orderitem = cls(order=order)
+
+        orderitem._propertiesFromCartItem(cartitem)        
         
         orderitem.save()
         
