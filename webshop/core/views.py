@@ -19,13 +19,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-# For some reason, `django.views.generic.edit` is not picked up by Sphinx
-# To still be able to use autodoc here, we catch ImportErrors in a rather
-# hackish manner.
-try:
-    from django.views.generic.edit import BaseFormView
-except ImportError:
-    BaseFormView = object
+from django.views.generic.edit import BaseFormView
 
 from django.contrib import messages
 
