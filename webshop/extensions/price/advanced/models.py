@@ -105,7 +105,7 @@ class ProductPriceMixin(models.Model):
         """ Return valid prices for a specified product """
 
         valid = \
-            super(ProductPriceBase, self).get_valid_prices(*args, **kwargs)
+            super(ProductPriceMixin, self).get_valid_prices(*args, **kwargs)
         
         valid = valid.filter(product=product)
         
@@ -131,16 +131,15 @@ class DateRangedPriceMixin(models.Model):
             date if no date is specified. """
 
         valid = \
-            super(DateRangedPriceBase, self).get_valid_prices(*args, **kwargs)
+            super(DateRangedPriceMixin, self).get_valid_prices(*args, **kwargs)
 
         # If no date is set, take today.
         if not date:
             date = datetime.datetime.today()
         
         # First get valid prices for the current situation
-        valid = valid.filter(product=product, 
-                           start_date__gte=date, 
-                           end_date__lte=date)
+        valid = valid.filter(start_date__gte=date, 
+                             end_date__lte=date)
         
         return valid
 
@@ -160,7 +159,7 @@ class QuantifiedPriceMixin(QuantizedItemBase):
         """
         
         valid = \
-            super(QuantifiedPriceBase, self).get_valid_prices(*args, **kwargs)
+            super(QuantifiedPriceMixin, self).get_valid_prices(*args, **kwargs)
                 
         # First get valid prices for the current situation
         valid = valid.filter(quantity__gte=quantity)

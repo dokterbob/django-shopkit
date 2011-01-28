@@ -13,6 +13,7 @@ Contents:
    configurable/index.rst
    variations/index.rst
    images/index.rst
+   discounts/index.rst
    
 
 
