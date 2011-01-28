@@ -19,11 +19,13 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from webshop.extensions.category.simple.util import get_categories
+from webshop.core.util import get_model_from_string
+
+from webshop.extensions.category.settings import CATEGORY_MODEL
+category_class = get_model_from_string(CATEGORY_MODEL)
 
 
 """ Mixins relevant for shops with categories. """
-
 
 class CategoriesMixin(object):
     """ View Mixin providing a list of categories. """
@@ -35,6 +37,6 @@ class CategoriesMixin(object):
 
         context = super(CategoriesMixin, self).get_context_data(**kwargs)
         
-        context.update({'categories': get_categories()})
+        context.update({'categories': category_class.get_categories()})
         
         return context
