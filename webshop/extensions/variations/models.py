@@ -23,7 +23,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
-from webshop.core.basemodels import OrderedItemBase
+from webshop.core.basemodels import OrderedInlineItemBase
 
 
 class ProductVariationBase(models.Model):
@@ -52,52 +52,24 @@ class ProductVariationBase(models.Model):
     """ Product this variation is linked to. """
 
 
-class OrderedProductVariationBase(ProductVariationBase, OrderedItemBase):
+class OrderedProductVariationBase(ProductVariationBase, OrderedInlineItemBase):
     """
     Base class for ordered product variations. 
-    
-    .. todo::
-        Get rid of uniqueness constraint in OrderItemBase -- either by
-        removing it from the base model or by not inheriting from it.
-
     """
     
-    class Meta(ProductVariationBase.Meta, OrderedItemBase.Meta):
+    class Meta(ProductVariationBase.Meta, OrderedInlineItemBase.Meta):
         abstract = True
+        unique_together = ('sort_order', 'product')
+
     
     @classmethod
     def get_default_variation(cls):
         """ By default, this returns the first variation according to the
             default sortorder. """
         
-        return self.__class__.objects.all()[0]
+        if cls.objects.count():
+            return cls.objects.all()[0]
     
-    
-    def save(self, **kwargs):
-        """ Calculate default ordering for products.
-           
-            This code is inspired by from `django-inline-ordering <https://github.com/centralniak/django-inline-ordering/blob/master/inline_ordering/models.py>`_.
-            
-        """
-        
-        if not self.sort_order:
-            related_variations = \
-                self.__class__.objects.filter(product=self.product)
-            
-            max_ordering_query = \
-                related_variations.aggregate(models.Max('sort_order'))
-            
-            max_ordering = max_ordering_query['sort_order__max']
-            
-            if max_ordering:
-                self.sort_order = max_ordering + 10
-            else:
-                self.sort_order = 10
-            
-            logger.debug('Generated sort_order %d for object %s',
-                         self.sort_order, self)
-        
-        parent = super(OrderedProductVariationBase, self)    
-        return parent.save(**kwargs)
-
-
+    def get_related_ordering(self):
+        """ Related objects for generating default ordering. """
+        return self.__class__.objects.filter(product=self.product)
