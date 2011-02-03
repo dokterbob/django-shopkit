@@ -15,5 +15,6 @@ Contents:
    images/index.rst
    discounts/index.rst
    stock/index.rst
+   related/index.rst
 
 
