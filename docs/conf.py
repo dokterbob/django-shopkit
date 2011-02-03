@@ -61,6 +61,7 @@ setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)
 
 setattr(global_settings, 'WEBSHOP_DISCOUNT_MODEL', '#doc')
 
+setattr(global_settings, 'WEBSHOP_BRAND_MODEL', '#doc')
 
 from django.core.management import setup_environ
 setup_environ(global_settings)
