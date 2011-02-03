@@ -31,7 +31,7 @@ productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
 try:
     from sorl.thumbnail.admin import AdminInlineImageMixin
     
-    from sorl.thumbnail import default
+    from sorl.thumbnail.default import backend as sorl_backend
 
     SORL_THUMBNAIL = True    
     logger.debug('Sorl-thumbnail found: using it.')
@@ -83,10 +83,10 @@ class ImagesProductMixin(object):
                 # This should not raise an error when an image is non-
                 # existant or something like that.
                 try:
-                    image = default.backend.get_thumbnail(image.image, 
-                                                 self.thumbnail_geometry)
+                    image = sorl_backend.get_thumbnail(image.image, 
+                                                       self.thumbnail_geometry)
                 except:
-                    pass
+                    logger.warn('Error rendering thumbnail')
             
             return u'<a href="%d/"><img src="%s" alt="%s"/></a>' % \
                 (obj.pk, image.url, unicode(obj))
