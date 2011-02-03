@@ -14,6 +14,6 @@ Contents:
    variations/index.rst
    images/index.rst
    discounts/index.rst
-   
+   stock/index.rst
 
 
