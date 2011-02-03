@@ -12,7 +12,6 @@ Contents:
    :maxdepth: 2
    
    models.rst
-   settings.rst
    exceptions.rst
    simple/index.rst
    advanced/index.rst
