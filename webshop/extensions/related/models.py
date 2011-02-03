@@ -28,6 +28,6 @@ class RelatedProductsMixin(models.Model):
     class Meta:
         abstract = True
 
-    related = models.ManyToManyField('self', 
+    related = models.ManyToManyField('self', null=True, blank=True,
                                      symmetrical=RELATED_SYMMETRICAL,
                                      verbose_name=_('related products'))
