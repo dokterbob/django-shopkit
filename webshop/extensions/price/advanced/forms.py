@@ -30,7 +30,8 @@ class PriceInlineFormSet(BaseInlineFormSet):
         
         # Raise this error when no forms exist or when no price has been 
         # specified in the first form.
-        if len(self.forms) < 1  \
-            or not self.forms[0].cleaned_data.has_key('price'):
+        if len(self.forms) < 1 or \
+            (not any(self.forms[0].errors) and \
+             not self.forms[0].cleaned_data.has_key('price')):
             raise forms.ValidationError(
                 _('At least one price should be provided.'))
