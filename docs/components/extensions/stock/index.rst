@@ -1,4 +1,4 @@
-Price
+Stock
 =====
 
 `webshop.extensions.stock`
@@ -13,5 +13,6 @@ Contents:
    
    models.rst
    settings.rst
+   exceptions.rst
    simple/index.rst
    advanced/index.rst

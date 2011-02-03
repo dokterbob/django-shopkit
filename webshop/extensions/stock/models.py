@@ -20,3 +20,41 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+from webshop.extensions.stock.exceptions import NoStockAvailableException
+
+
+class StockedCartItemMixinBase(object):
+    """
+    Base class for cart items for which the stock can be maintained.
+    By default the `is_available` method returns `True`, this method can be
+    overridden in subclassed to provide for more extended functionality.
+    
+    .. todo::
+        Decide whether this bugger belongs into :module:webshop.core or
+        whether it is just fine at it's place right here.
+        
+        * Pro: We'll have a generic API for determining the stock state of
+          items.
+        * Con: It's bad to have too much code in the core, it is better if 
+          modules within `django-webshop` have the least possible knowledge
+          about one another.
+    
+    """
+    
+    def is_available(self):
+        """ 
+        The `is_available` method can be used to determine whether a cart
+        item is eligible to be saved or not.
+        """
+        return True
+    
+    
+    def save(self):
+        """ 
+        This save method will raise a :class:`NoStockAvailableException` when
+        no stock items are available.
+        """
+        if not self.is_available():
+            raise NoStockAvailableException(object=self)
+
+

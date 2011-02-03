@@ -17,7 +17,11 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
-.. todo::
-    Write documentation here.
+Simple stock management: 
+:class:`StockedItemMixin <webshop.extensions.stock.simple.models.StockedItemMixin>`'s 
+will have a `stock` property which is a 
+:class:`SmallPositiveIntegerField <django.db.models.PositiveSmallIntegerField>` 
+used to provide not an exact stock count, rather then a choice from few
+options used to determine whether an item is available or not.
     
 """

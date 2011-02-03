@@ -17,7 +17,10 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
+Support for stock management for items in the shop.
+
 .. todo::
-    Write documentation here.
+    Write more descriptive documentation here about the stock management
+    API's.
     
 """

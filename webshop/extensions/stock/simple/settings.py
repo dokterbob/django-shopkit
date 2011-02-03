@@ -16,3 +16,27 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
+STOCK_CHOICES = getattr(settings, 'WEBSHOP_STOCK_CHOICES', 
+                    ((0, _('Available')),
+                     (1, _('Not available')), ))
+"""
+Available choices for the `stock` field of 
+:class:`StockedItems <webshop.extensions.stock.simple.models.StockedItem>`.
+"""
+
+STOCK_DEFAULT = getattr(settings, 'WEBSHOP_STOCK_DEFAULT', 0) 
+"""
+Default
+choice for the `stock` field of :class:`StockedItems
+<webshop.extensions.stock.simple.models.StockedItem>`.
+"""
+
+STOCK_ORDERABLE = getattr(settings, 'WEBSHOP_STOCK_ORDERABLE', (0, ))
+""" 
+An iterable with choices from `STOCK_CHOICES` which represent orderable states
+-- states which will not raise an exception when saving the shopping cart.
+"""
+

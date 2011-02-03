@@ -16,10 +16,16 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
+from webshop.core.exceptions import WebshopExceptionBase
 
-PRICE_MAX_DIGITS = getattr(settings, 'WEBSHOP_PRICE_MAX_DIGITS', 6)
-""" Maximum number of decimals for the price in `PricedItemBase`. Defaults to: 6. """
-
-PRICE_DECIMALS = getattr(settings, 'WEBSHOP_PRICE_DECIMALS', 2)
-""" Number of decimals for the price in `PricedItemBase`. Defaults to: 2."""
+class NoStockAvailableException(WebshopExceptionBase):
+    """ 
+    Exception raised by the save method of :class:`StockedCartItemMixinBase` 
+    when no stock is available for the current item.
+    """
+    
+    def __init__(self, item):
+        self.item = item
+    
+    def __unicode__(self):
+        return u'No stock available for item \'%s\'' % self.item
