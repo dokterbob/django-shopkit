@@ -249,3 +249,16 @@ class ActiveItemInShopBase(ActiveItemBase):
         returning only items with `active=True`.
     """
 
+
+class DatedItemBase(models.Model):
+
+    class Meta:
+        abstract = True
+        ordering = ['-date_added', '-date_modified']
+        get_latest_by = 'date_added'
+
+    date_added = models.DateTimeField(auto_now_add=True,
+                                      verbose_name=_('date added'))
+    date_modified = models.DateTimeField(auto_now=True,
+                                       verbose_name=_('date modified'))
+
