@@ -18,6 +18,6 @@ Contents:
    util.rst
    context_processors.rst
    tests.rst
-   
+   exceptions.rst
 
 
