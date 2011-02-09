@@ -19,6 +19,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
@@ -251,6 +253,10 @@ class ActiveItemInShopBase(ActiveItemBase):
 
 
 class DatedItemBase(models.Model):
+    """ 
+    Item for which the add and modification date are automatically
+    tracked.
+    """
 
     class Meta:
         abstract = True
@@ -258,7 +264,18 @@ class DatedItemBase(models.Model):
         get_latest_by = 'date_added'
 
     date_added = models.DateTimeField(auto_now_add=True,
-                                      verbose_name=_('date added'))
+                                      verbose_name=_('creation date'))
     date_modified = models.DateTimeField(auto_now=True,
-                                       verbose_name=_('date modified'))
+                                       verbose_name=_('modification date'))
 
+
+class PublishDateItemBase(models.Model):
+    """ Item with a publish date. """
+    
+    class Meta:
+        abstract = True
+        ordering = ['-date_publish']
+        get_latest_by = 'date_publish'
+ 
+    date_publish = models.DateTimeField(default=datetime.datetime.now(),
+                                        verbose_name=_('publication date'))
