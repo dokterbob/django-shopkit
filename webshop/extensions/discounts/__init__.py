@@ -19,4 +19,8 @@
 """
 Base classes for discounts.
 
+.. todo::
+    Figure out what to do when multiple discounts are valid. Really, some
+    though should be put into this. Maybe something like a `combine_with`
+    boolean or other customizable behaviour.
 """

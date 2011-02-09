@@ -38,74 +38,117 @@ class DiscountBase(models.Model):
     @classmethod
     def get_valid_discounts(cls, **kwargs):
         """
-        Get all valid discount objects for a given `kwargs`. Subclasses
-        should implement this method.
+        Get all valid discount objects for a given `kwargs`. By default,
+        all discounts are valid.
         """
 
-        raise NotImplementedError
+        raise cls.objects.all()
+
+    def is_valid(self, **kwargs):
+        """
+        Check to see whether an individual discount is valid under the
+        given circumstances.
+        """
+
+        valid = self.get_valid_discounts(**kwargs)
+
+        assert self.pk, \
+        "This discount has not yet been saved, which is required in order \
+         to determine it's validity (for now)."
+
+        valid.filter(pk=self.pk)
+
+        return valid.exists()
 
 
-class ProductDiscountMixin(object):
+class ProductDiscountMixin(models.Model):
     """ Mixin defining discounts based on products. """
 
+    class Meta:
+        abstract = True
+
     product = models.ForeignKey(PRODUCT_MODEL, db_index=True,
+                                blank=True, null=True,
                                 verbose_name=_('product'))
     """ Product this discount relates to. """
 
     @classmethod
-    def get_valid_discounts(cls, product, *args, **kwargs):
+    def get_valid_discounts(cls, product, **kwargs):
         """ Return valid discounts for a specified product """
 
         valid = \
             super(ProductDiscountMixin, self).get_valid_discounts(*args, **kwargs)
 
-        valid = valid.filter(product=product)
+        valid = valid.filter(product=product) | \
+                valid.filter(product__isnull=True)
 
         return valid
 
 
-class ManyProductDiscountMixin(object):
+class ManyProductDiscountMixin(models.Model):
     """ Mixin defining discounts based on products. """
 
+    class Meta:
+        abstract = True
+
     products = models.ManyToManyField(PRODUCT_MODEL, db_index=True,
+                                blank=True, null=True,
                                 verbose_name=_('products'))
     """ Products this discount relates to. """
 
     @classmethod
-    def get_valid_discounts(cls, product, *args, **kwargs):
+    def get_valid_discounts(cls, product, **kwargs):
         """ Return valid discounts for a specified product """
 
         valid = \
             super(ProductDiscountMixin, self).get_valid_discounts(*args, **kwargs)
 
-        valid = valid.filter(products=product)
+        valid = valid.filter(products=product) | \
+                valid.filter(products__isnull=True)
 
         return valid
 
 
-class DateRangeDiscountMixin(object):
+class DateRangeDiscountMixin(models.Model):
     """ Mixin for discount which are only valid within a given date range. """
 
+    class Meta:
+        abstract = True
+
     start_date = models.DateField(verbose_name=_('start date'),
-                                  db_index=True)
+                                  db_index=True, null=True, blank=True,
+                                help_text=_('If not left blank, this \
+                                  specifies a start date for the validity \
+                                  of this discount.'))
     end_date = models.DateField(verbose_name=_('end date'),
-                                db_index=True)
+                                db_index=True, null=True, blank=True,
+                                help_text=_('If not left blank, this \
+                                  specifies an end date for the validity \
+                                  of this discount.'))
 
     @classmethod
-    def get_valid_discounts(cls, date=None, *args, **kwargs):
-        """ Return valid discounts for a specified date, taking the current
-            date if no date is specified. """
+    def get_valid_discounts(cls, date=None, **kwargs):
+        """
+        Return valid discounts for a specified date, taking the current
+        date if no date is specified. When no start or end date are specified,
+        a discount defaults to be valid.
+
+        .. todo::
+            Test this code.
+        """
 
         valid = \
-            super(DateRangeDiscountMixin, self).get_valid_discounts(*args, **kwargs)
+            super(DateRangeDiscountMixin, self).get_valid_discounts(**kwargs)
 
         # If no date is set, take today.
         if not date:
             date = datetime.datetime.today()
 
         # Get valid discounts for the current situation
-        valid = valid.filter(start_date__gte=date,
-                             end_date__lte=date)
+        valid = valid.filter(start_date__gte=date, end_date__lte=date) | \
+                valid.filter(start_date__isnull=True, end_date__lte=date) | \
+                valid.filter(start_date__gte=date, end_date__isnull=True) | \
+                valid.filter(start_date__isnull=True, end_date__isnull=True)
 
         return valid
 
@@ -120,31 +163,65 @@ except ImportError:
 
 
 if CATEGORIES:
-    class CategoryDiscountMixin(object):
-        """ Mixin defining discounts based on products. """
+    class CategoryDiscountMixin(models.Model):
+        """ Mixin defining discounts based on a single category. """
+
+        class Meta:
+            abstract = True
 
         category = models.ForeignKey(CATEGORY_MODEL, db_index=True,
+                                     blank=True, null=True,
                                      verbose_name=_('category'))
-        """ Product this discount relates to. """
+        """ Category this discount relates to. """
 
         @classmethod
-        def get_valid_discounts(cls, product, *args, **kwargs):
+        def get_valid_discounts(cls, category, **kwargs):
             """ Return valid discounts for a specified product """
 
             valid = \
-                super(CategoryDiscountMixin, self).get_valid_prices(*args, **kwargs)
+                super(CategoryDiscountMixin, self).get_valid_prices(**kwargs)
 
-            valid = valid.filter(product=product)
+            valid = valid.filter(category=category) | \
+                    valid.filter(category__isnull=True)
 
             return valid
 
 
-class CouponDiscountMixin(object):
+    class ManyCategoryDiscountMixin(models.Model):
+        """ Mixin defining discounts based on a collection of categories. """
+
+        class Meta:
+            abstract = True
+
+        categories = models.ManyToManyField(CATEGORY_MODEL, db_index=True,
+                                            blank=True, null=True,
+                                            verbose_name=_('categories'))
+        """ Categories this discount relates to. """
+
+        @classmethod
+        def get_valid_discounts(cls, category, **kwargs):
+            """ Return valid discounts for a specified product """
+
+            valid = \
+                super(ManyCategoryDiscountMixin, self).get_valid_prices(**kwargs)
+
+            valid = valid.filter(categories=category) | \
+                    valid.filter(categories__isnull=True)
+
+            return valid
+
+
+class CouponDiscountMixin(models.Model):
     """ Discount based on a specified coupon code. """
 
-    coupon_code = models.CharField(verbose_name=_('coupon code'),
-                                   max_length=COUPON_LENGTH,
-                                   help_text=_('If left empty, a code will \
+    class Meta:
+        abstract = True
+    
+    use_coupon = models.BooleanField(default=False)
+    coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
+                                   max_length=COUPON_LENGTH, blank=True,
+                                   help_text=_('If left empty and a coupon \
+                                                is used, a code will \
                                                 be automatically generated.'))
     """ Code for this coupon, which will be automatically generated upon saving. """
 
@@ -158,6 +235,8 @@ class CouponDiscountMixin(object):
             Unittest this function.
 
         """
+        import random
+        
         rndgen = random.random()
         random.seed()
 
@@ -174,16 +253,37 @@ class CouponDiscountMixin(object):
 
 
     def save(self):
-        if not self.coupon_code:
+        if self.use_coupon and not self.coupon_code:
             self.coupon_code = self.generate_coupon_code()
 
         super(CouponDiscountMixin, self).save()
 
+    @classmethod
+    def get_valid_discounts(cls, coupon_code, **kwargs):
+        """
+        Return currently valid discounts.
 
-class AccountedUseDiscountMixin(object):
+        .. todo::
+            Write tests for this.
+        """
+
+        valid = \
+            super(CouponDiscountMixin, self).get_valid_discounts(**kwargs)
+
+        valid = valid.filter(coupon_code=coupon_code) | \
+                valid.filter(coupon_code__isnull=True)
+
+        return valid
+
+
+class AccountedUseDiscountMixin(models.Model):
     """ Mixin class for discounts for which the number of uses is accounted. """
 
-    used = models.PositiveSmallIntegerField(default=0)
+    class Meta:
+        abstract = True
+
+    used = models.PositiveSmallIntegerField(verbose_name=_('times used'),
+                                            default=0)
     """ The number of times this discount has been used. """
 
     def register_use(self, count=1):
@@ -205,14 +305,20 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
         of times.
     """
 
-    use_limit = models.PositiveSmallIntegerField(blank=True, null=True)
+    class Meta:
+        abstract = True
+
+    use_limit = models.PositiveSmallIntegerField(verbose_name=_('use limit'),
+                                                 blank=True, null=True,
+                                                 help_text= \
+                      _('Maximum number of times this discount may be used.'))
     """
     The maximum number of times this discount may be used. If this value is
     not given, no limit is imposed.
     """
 
     @classmethod
-    def get_valid_discounts(cls, *args, **kwargs):
+    def get_valid_discounts(cls, **kwargs):
         """
         Return currently valid discounts: ones for which either no use
         limit has been set or for which the amount of uses lies under the
@@ -223,8 +329,7 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
         """
 
         valid = \
-            super(LimitedUseDiscountMixin, self).get_valid_discounts(*args, \
-                                                                     **kwargs)
+            super(LimitedUseDiscountMixin, self).get_valid_discounts(**kwargs)
 
         valid = valid.filter(use_limit__lte=models.F('used'))| \
                 valid.filter(use_limit__isnull=True)
