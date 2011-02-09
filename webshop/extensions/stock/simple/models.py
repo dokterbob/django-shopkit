@@ -64,8 +64,8 @@ class StockedItemMixin(models.Model):
     class Meta:
         abstract = True
 
-    stock = models.SmallIntegerField(_('stock'), choices=STOCK_CHOICES,
-                                     default=STOCK_DEFAULT)
+    stock = models.PositiveSmallIntegerField(_('stock'), choices=STOCK_CHOICES,
+                                             default=STOCK_DEFAULT)
     """
     SmallIntegerField allowing for choices from `STOCK_CHOICES`, with a
     default value of `STOCK_DEFAULT`.
