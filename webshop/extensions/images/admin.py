@@ -30,10 +30,10 @@ productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
 
 try:
     from sorl.thumbnail.admin import AdminInlineImageMixin
-    
+
     from sorl.thumbnail.default import backend as sorl_backend
 
-    SORL_THUMBNAIL = True    
+    SORL_THUMBNAIL = True
     logger.debug('Sorl-thumbnail found: using it.')
 
 except ImportError:
@@ -46,52 +46,52 @@ except ImportError:
 
 class ProductImageInline(AdminInlineImageMixin, admin.TabularInline):
     """ Inline admin for product images. """
-    
+
     model = productimage_class
     extra = 1
 
 
-class ImagesProductMixin(object):
-    """ 
-    Mixin class adding a function for easily displaying images in the 
-    product list display of the admin. To use this, simply add 
-    `'default_image'` to the `list_display` tuple.
-    
-    Like such::
-    
-       ProductAdmin(<Base classes>, ImagesProductMixin):
-          list_display = ('name', 'default_image')
-    
+class ImagesProductAdminMixin(object):
     """
-    
+    Mixin class adding a function for easily displaying images in the
+    product list display of the admin. To use this, simply add
+    `'default_image'` to the `list_display` tuple.
+
+    Like such::
+
+       ProductAdmin(ImagesProductAdminMixin, <Base classes>):
+          list_display = ('name', 'default_image')
+
+    """
+
     thumbnail_geometry = '150x150'
-    
+
     def default_image(self, obj):
-        """ Renders the default image for display in the admin list. 
+        """ Renders the default image for display in the admin list.
             Makes a thumbnail if `sorl-thumbnail` is available.
-            
+
             .. todo::
                 Add a setting for returning stub images when no
                 default image currently exists.
-            
+
         """
 
         image = obj.get_default_image()
-        
+
         if image:
             if SORL_THUMBNAIL:
                 # This should not raise an error when an image is non-
                 # existant or something like that.
                 try:
-                    image = sorl_backend.get_thumbnail(image.image, 
+                    image = sorl_backend.get_thumbnail(image.image,
                                                        self.thumbnail_geometry)
                 except:
                     logger.warn('Error rendering thumbnail')
-            
+
             return u'<a href="%d/"><img src="%s" alt="%s"/></a>' % \
                 (obj.pk, image.url, unicode(obj))
         else:
-            
+
             return u''
     default_image.short_description = _('image')
     default_image.allow_tags = True
