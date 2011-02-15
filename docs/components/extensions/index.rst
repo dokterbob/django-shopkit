@@ -17,5 +17,6 @@ Contents:
    stock/index.rst
    related/index.rst
    brands/index.rst
+   featured/index.rst
 
 
