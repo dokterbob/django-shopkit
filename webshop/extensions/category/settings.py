@@ -20,3 +20,9 @@ from django.db import settings
 
 CATEGORY_MODEL = getattr(settings, 'WEBSHOP_CATEGORY_MODEL')
 """ Reference to the model class defining a category. """
+
+USE_MPTT = getattr(settings, 'WEBSHOP_USE_MPTT', 'mptt' in settings.INSTALLED_APPS)
+""" 
+Whether or not to use django-mptt. This is enabled by default when `mptt` is
+in Django's `INSTALLED_APPS` and disabled otherwise.
+"""

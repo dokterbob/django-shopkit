@@ -16,15 +16,20 @@ Compatibility
 -------------
 This piece of software will be compatible with Django 1.3. Due to the 
 unavailability of Class Based Generic Views, it will not work on earlier
-releases. It is being developed on the SVN trunk until it hits the 1.3
+releases. It is being developed on the SVN trunk until Django hits the 1.3
 release.
 
 Dependencies
 ------------
 You will need the dependencies mentioned in `requirements.txt` to be installed
 somewhere in your `PYTHONPATH`. `django-webshop` will default to using (the
-new) `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ if available,
-but does not depend on it.
+new) `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ when
+available, but does not depend on it.
+
+When available, it has support for MPTT indexing of nested categories using
+`django-mptt <https://github.com/django-mptt/django-mptt>`_. However, this
+support is entirely optional, though using  some kind of tree optimization
+algorithm is recommended.
 
 Contents
 --------

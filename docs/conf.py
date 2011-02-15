@@ -63,6 +63,8 @@ setattr(global_settings, 'WEBSHOP_DISCOUNT_MODEL', '#doc')
 
 setattr(global_settings, 'WEBSHOP_BRAND_MODEL', '#doc')
 
+setattr(global_settings, 'WEBSHOP_USE_MPTT', True)
+
 from django.core.management import setup_environ
 setup_environ(global_settings)
 
@@ -79,7 +81,8 @@ extensions = ['sphinx.ext.intersphinx',
 
 intersphinx_mapping = {'python': ('http://docs.python.org/2.6', None),
                        'django': ('http://docs.djangoproject.com/en/dev/', 'http://docs.djangoproject.com/en/dev/_objects/'),
-                       'sorl': ('http://thumbnail.sorl.net/', None)}
+                       'sorl': ('http://thumbnail.sorl.net/', None),}
+                       #'mptt': ('http://django-mptt.github.com/django-mptt/objects.inv', None)}
 
 todo_include_todos = True
 

@@ -16,15 +16,20 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from webshop.extensions.category.settings import CATEGORY_MODEL
+from webshop.extensions.category.settings import USE_MPTT
 
 
 class CategoryBase(models.Model):
     """ Abstract base class for a category. """
-    
+
     class Meta:
         abstract = True
         verbose_name = _('category')
@@ -40,25 +45,25 @@ class CategoryBase(models.Model):
     @classmethod
     def get_categories(cls):
         """ Gets all the available categories. """
-        
+
         return cls.in_shop.all()
 
 
     @classmethod
     def get_main_categories(cls):
-        """ 
+        """
         Gets the main categories, which for unnested categories
         implies all of them. This method exists purely for uniformity
-        reasons. 
+        reasons.
         """
-        
+
         categories = cls.get_categories()
-        
+
         return categories
 
 
     def get_products(self):
-        """ Get all active products for the current category. 
+        """ Get all active products for the current category.
         """
 
         from webshop.core.settings import PRODUCT_MODEL
@@ -69,15 +74,13 @@ class CategoryBase(models.Model):
 
 
 class NestedCategoryBase(CategoryBase):
-    """ Abstract base class for a nested category. 
-        
-        .. todo::
-            Consider treebeard for nested structures. 
     """
-    
+    Abstract base class for a nested category.
+    """
+
     class Meta(CategoryBase.Meta):
         abstract = True
-    
+
     parent = models.ForeignKey(CATEGORY_MODEL, null=True, blank=True,
                                verbose_name=_('parent category'),
                                help_text=_('If left empty, this will be a \
@@ -87,26 +90,26 @@ class NestedCategoryBase(CategoryBase):
     @classmethod
     def get_main_categories(cls):
         """ Gets the main categories; the ones which have no parent. """
-        
+
         categories = super(NestedCategoryBase, cls).get_main_categories()
-        
+
         return categories.filter(parent__isnull=True)
-    
+
     def get_subcategories(self):
         """ Gets the subcategories for the current category. """
-        
+
         categories = self.get_categories()
-        
+
         return categories.filter(parent=self)
 
     def get_products(self):
-        """ Get all active products for the current category. 
-            
+        """ Get all active products for the current category.
+
             For performance reasons, and added control, this only
-            returns only products explicitly associated to this 
+            returns only products explicitly associated to this
             category - as opposed to listing also products in subcategories
             of the current category.
-            
+
             This would take a lot more requests and is probably not
             what we should wish for.
         """
@@ -119,14 +122,14 @@ class NestedCategoryBase(CategoryBase):
 
     def get_parent_list(self, reversed=False):
         """ Return a list of all parent categories of the current category.
-            
+
             By default it lists the categories from parent to child, ie.::
-            
+
                 [<categoryt>, <subcategory>, <subsubcategory>, ...]
-            
+
             If the argument `reversed` evaluates to `True`, the list runs
             in reverse order. This *saves* an extra reverse operation.
-            
+
             .. todo::
                 Cache this. It is a slow operation which requires
                 as many queries as the category tree is deep.
@@ -137,21 +140,21 @@ class NestedCategoryBase(CategoryBase):
         while current.parent:
             parent_list.append(current.parent)
             current = current.parent
-        
+
         if not reversed:
             parent_list.reverse()
-        
+
         return parent_list
 
 
     def __unicode__(self):
         """ The unicode representation of a nested category is that of
-            it's parents and the current, separated by two colons. 
-            
+            it's parents and the current, separated by two colons.
+
             So something like: <main> :: <sub> :: <subsub>
         """
-        
-        
+
+
         parent_list = self.get_parent_list()
         result_list = []
         for parent in parent_list:
@@ -159,12 +162,82 @@ class NestedCategoryBase(CategoryBase):
             result_list.append(super_unicode)
 
         super_unicode = super(NestedCategoryBase, self).__unicode__()
-        
+
         result_list.append(super_unicode)
-        
+
         result = ' :: '.join(result_list)
-        
+
         return result
 
-            
-        
+"""
+:class:MPTTCategoryBase
+Blabla
+"""
+if USE_MPTT:
+    logger.debug('Enabling MPTTCategoryBase with category tree optimalization')
+
+    from mptt.models import MPTTModel
+
+    class MPTTCategoryBase(MPTTModel, NestedCategoryBase):
+
+        class Meta:
+            abstract = True
+
+        @classmethod
+        def get_main_categories(cls):
+            """ Gets the main categories; the ones which have no parent. """
+
+            return cls.tree.root_nodes()
+
+        def get_subcategories(self):
+            """ Gets the subcategories for the current category. """
+
+            return self.get_children()
+
+        def get_products(self):
+            """
+            Get all active products for the current category.
+
+            As opposed to the original function in the base class, this also
+            includes products in subcategories of the current category object.
+
+            """
+
+            from webshop.core.settings import PRODUCT_MODEL
+            from webshop.core.util import get_model_from_string
+            product_class = get_model_from_string(PRODUCT_MODEL)
+
+            in_shop = product_class.in_shop
+
+            return in_shop.filter(categories=self.get_descentants(include_self=True))
+
+
+        def __unicode__(self):
+            """ The unicode representation of a nested category is that of
+                it's parents and the current, separated by two colons.
+
+                So something like: <main> :: <sub> :: <subsub>
+
+                ..todo::
+                    Make some kind of cache on the model to handle repeated
+                    queries of the __unicode__ value without extra queries.
+            """
+
+            parent_list = self.get_ancestors()
+            result_list = []
+            for parent in parent_list:
+                super_unicode = super(NestedCategoryBase, parent).__unicode__()
+                result_list.append(super_unicode)
+
+            super_unicode = super(NestedCategoryBase, self).__unicode__()
+
+            result_list.append(super_unicode)
+
+            result = ' :: '.join(result_list)
+
+            return result
+
+else:
+    logger.debug('Not using mptt for nested categories: not in INSTALLED_APPS')
+
+
