@@ -180,7 +180,7 @@ if USE_MPTT:
 
     class MPTTCategoryBase(MPTTModel, NestedCategoryBase):
 
-        class Meta:
+        class Meta(MPTTModel.Meta, NestedCategoryBase.Meta):
             abstract = True
 
         @classmethod
@@ -209,8 +209,7 @@ if USE_MPTT:
 
             in_shop = product_class.in_shop
 
-            return in_shop.filter(categories=self.get_descentants(include_self=True))
-
+            return in_shop.filter(categories=self.get_descendants(include_self=True))
 
         def __unicode__(self):
             """ The unicode representation of a nested category is that of
