@@ -45,10 +45,19 @@ def get_model_from_string(model):
 def get_cart_from_request(request):
     """ Gets the shopping cart from the request or creates a 
         new one if no shopping cart previously exists.
-        
+
         .. todo::
             It should not be necessary to save this cart - this code
             can be more optimal.
+
+            This should be accounted for in some base class for cart
+            views, where the pk of a cart is only added to the session
+            if it exists at the end of the request - just before sending
+            it out to 'the people'.
+
+        .. todo::
+            This method should be a class method of CartBase so it
+            can be easily overridden.
 
     """
 
