@@ -21,12 +21,138 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.crypto import salted_hmac
 
 from webshop.core.settings import PRODUCT_MODEL
-from webshop.core.basemodels import OrderedItemBase
+from webshop.core.basemodels import AbstractPricedItemBase
 
 from webshop.extensions.discounts.settings import *
+
+from webshop.discounts.settings import DISCOUNT_MODEL
+from webshop.core.util import get_model_from_string
+discount_class = get_model_from_string(DISCOUNT_MODEL)
+
+
+class DiscountedItemMixin(AbstractPricedItemBase):
+    """ Mixin class for discounted items. """
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current order. """
+        discounts = discount_class.get_valid_discounts(**kwargs)
+
+        return discounts
+
+    def get_discount(self, **kwargs):
+        """
+        Get the discount for the current item. Should be overridden
+        in subclasses.
+        """
+        raise NotImplementedError
+
+    def get_discounted_price(self, **kwargs):
+        """ Get the current price with discount applied. """
+
+        return self.get_price(**kwargs) - self.get_discount(**kwargs)
+
+
+class DiscountedOrderBase(DiscountedItemMixin, models.Model):
+    """ Base class for orders with a discount. """
+
+    class Meta:
+        abstract = True
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current order. """
+        superclass = super(DiscountedOrderBase, self)
+        return superclass.get_valid_discounts(order_discounts=True, **kwargs)
+
+    def get_discount(self, **kwargs):
+        """
+        Get the total discount for this Order.
+
+        ..todo::
+            Persistent storage of the discount amount on the order -
+            and making sure it automatically updates when this is needed.
+        """
+
+        # First, get discounts on order items
+
+        # We might optimize this, considering that we eventually want to
+        # store all discount quantities directly in the database.
+        # This is fairly safe as long as we provide proper save hooks.
+        total_discount = 0.0
+        for item in self.orderitem_set.all():
+            total_discount += item.get_discount(**kwargs)
+
+        # Now, add discounts on the total order
+        valid_discounts = self.get_valid_discounts(**kwargs)
+        order_price = self.get_price(**kwargs)
+
+        for discount in valid_discounts:
+            total_discount += discount.get_discount(order_price=order_price,
+                                                    **kwargs)
+
+        # Make sure the discount is never higher than the price of the oringal
+        # item
+        if total_discount > order_price:
+            total_discount = order_price
+
+        return total_discount
+
+
+class DiscountCouponOrderBase(DiscountedOrderBase):
+    """ Order with a coupon code. """
+
+    class Meta:
+        abstract = True
+
+    coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
+                                   max_length=COUPON_LENGTH, blank=True)
+    """ Coupon code entered for the current order. """
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current order. """
+        superclass = super(DiscountCouponOrderBase, self)
+        return superclass.get_valid_discounts(coupon_code=self.coupon_code,
+                                              **kwargs)
+
+
+class DiscountedOrderItemBase(DiscountedItemMixin, models.Model):
+    """ Base class for orderitems which can have discounts applied to them.  """
+
+    class Meta:
+        abstract = True
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current order. """
+        superclass = super(DiscountedOrderItemBase, self)
+        return superclass.get_valid_discounts(product=self.product,
+                                              item_discounts=True,
+                                              **kwargs)
+
+
+    def get_discount(self, **kwargs):
+        """
+        Get the total discount for this OrderItem.
+
+        ..todo::
+            Persistent storage of the discount amount on the order -
+            and making sure it automatically updates when this is needed.
+
+        """
+
+        valid_discounts = self.get_valid_discounts(**kwargs)
+        item_price = self.product.get_price(**kwargs)
+
+        total_discount = 0.0
+        for discount in valid_discounts:
+            total_discount += discount.get_discount(item_price=item_price, **kwargs)
+
+        # Make sure the discount is never higher than the price of the oringal
+        # item
+        if total_discount > item_price:
+            total_discount = item_price
+
+        return total_discount
 
 
 class DiscountBase(models.Model):
@@ -60,9 +186,218 @@ class DiscountBase(models.Model):
 
         return valid.exists()
 
+    def get_discount(self, **kwargs):
+        """
+        Get the total amount of discount produced by this `Discount`. This
+        method should be implemented by subclasses of `:class:DiscountBase`.
+        """
+        raise NotImplementedError
+
+
+class OrderDiscountAmountMixin(models.Model):
+    """
+    Mixin for absolute amount discounts which act on the total price
+    for an order.
+    """
+
+    class Meta:
+        abstract = True
+
+    order_amount = models.DecimalField(verbose_name=\
+                                            _('order discount amount'),
+                                       max_digits=PRICE_MAX_DIGITS,
+                                       decimal_places=PRICE_DECIMALS,
+                                       null=True, blank=True)
+    """ Absolute discount on the total of an order. """
+
+    @classmethod
+    def get_valid_discounts(cls, order_discounts=None, **kwargs):
+        """
+        We want to be able to discriminate between discounts valid for
+        the whole order and those valid for order items.
+
+        :param order_discounts: When `True`, only items for which
+                               `order_amount` has been specified are valid.
+                               When `False`, only items which have no
+                               `order_amount` specified are let through.
+        """
+
+        superclass = super(OrderDiscountAmountMixin, self)
+        valid = superclass.get_valid_discounts(**kwargs)
+
+        if not order_discounts is None:
+            # If an order discounts criterium has been specified
+            valid = valid.filter(order_amount__isnull=not order_discounts)
+
+        return valid
+
+    def get_discount(self, **kwargs):
+        """
+        Get the total amount of discount for the current item.
+        """
+        superclass = super(OrderDiscountAmountMixin, self)
+
+        discount = superclass.get_discount(**kwargs)
+        discount += self.order_amount
+
+        return discount
+
+
+class ItemDiscountAmountMixin(models.Model):
+    """
+    Mixin for absolute amount discounts, valid only for the particular
+    items in this order.
+    """
+
+    class Meta:
+        abstract = True
+
+    item_amount = models.DecimalField(verbose_name=_('item discount amount'),
+                                      max_digits=PRICE_MAX_DIGITS,
+                                      decimal_places=PRICE_DECIMALS,
+                                      null=True, blank=True)
+    """
+    Absolute discount for items of an order for which this discount
+    is valid.
+    """
+
+    @classmethod
+    def get_valid_discounts(cls, item_discounts=None, **kwargs):
+        """
+        We want to be able to discriminate between discounts valid for
+        the whole order and those valid for order items.
+
+        :param item_discounts: When `True`, only items for which
+                               `item_amount` has been specified are valid.
+                               When `False`, only items which have no
+                               `item_amount` specified are let through.
+        """
+
+        superclass = super(ItemDiscountAmountMixin, self)
+        valid = superclass.get_valid_discounts(**kwargs)
+
+        if not item_discounts is None:
+            # If an order discounts criterium has been specified
+            valid = valid.filter(item_amount__isnull=not item_discounts)
+
+        return valid
+
+    def get_discount(self, **kwargs):
+        """
+        Get the total amount of discount for the current item.
+        """
+        superclass = super(ItemDiscountAmountMixin, self)
+
+        discount = superclass.get_discount(**kwargs)
+        discount += self.item_amount
+
+        return discount
+
+
+class OrderDiscountPercentageMixin(models.Model):
+    """
+    Mixin for discounts which apply as a percentage from the total
+    order amount.
+    """
+
+    class Meta:
+        abstract = True
+
+    order_percentage = models.DecimalField(verbose_name=\
+                                               _('order discount percentage'),
+                                           max_digits=2,
+                                           decimal_places=2,
+                                           null=True, blank=True)
+    """ Percentual discount on the total of an order. """
+
+    @classmethod
+    def get_valid_discounts(cls, order_discounts=None, **kwargs):
+        """
+        We want to be able to discriminate between discounts valid for
+        the whole order and those valid for order items.
+
+        :param order_discounts: When `True`, only items for which
+                               `order_amount` has been specified are valid.
+                               When `False`, only items which have no
+                               `order_amount` specified are let through.
+        """
+
+        superclass = super(OrderDiscountPercentageMixin, self)
+        valid = superclass.get_valid_discounts(*args, **kwargs)
+
+        if not order_discounts is None:
+            # If an order discounts criterium has been specified
+            valid = valid.filter(order_percentage__isnull=not order_discounts)
+
+        return valid
+
+    def get_discount(self, order_price, **kwargs):
+        """
+        Get the total amount of discount for the current item.
+        """
+        superclass = super(OrderDiscountPercentageMixin, self)
+
+        discount = superclass.get_discount(**kwargs)
+        discount += (self.order_percentage/100)*order_price
+
+        return discount
+
+
+class ItemDiscountPercentageMixin(models.Model):
+    """
+    Mixin for percentual discounts, valid only for the particular
+    items in this order.
+    """
+
+    class Meta:
+        abstract = True
+
+    item_percentage = models.DecimalField(verbose_name=\
+                                            _('item discount percentage'),
+                                          max_digits=2,
+                                          decimal_places=2,
+                                          null=True, blank=True)
+    """
+    Percentual discount for items of an order for which this discount
+    is valid.
+    """
+
+
+    @classmethod
+    def get_valid_discounts(cls, item_discounts=None, **kwargs):
+        """
+        We want to be able to discriminate between discounts valid for
+        the whole order and those valid for order items.
+
+        :param item_discounts: When `True`, only items for which
+                               `item_amount` has been specified are valid.
+                               When `False`, only items which have no
+                               `item_amount` specified are let through.
+        """
+
+        superclass = super(ItemDiscountPercentageMixin, self)
+        valid = superclass.get_valid_discounts(*args, **kwargs)
+
+        if not item_discounts is None:
+            # If an order discounts criterium has been specified
+            valid = valid.filter(item_percentage__isnull=not item_discounts)
+
+        return valid
+
+    def get_discount(self, item_price, **kwargs):
+        """
+        Get the total amount of discount for the current item.
+        """
+        superclass = super(ItemDiscountPercentageMixin, self)
+
+        discount = superclass.get_discount(**kwargs)
+        discount += (self.item_percentage/100)*item_price
+
+        return discount
+
 
 class ProductDiscountMixin(models.Model):
-    """ Mixin defining discounts based on products. """
+    """ Mixin defining a discount on a single product. """
 
     class Meta:
         abstract = True
@@ -216,7 +551,7 @@ class CouponDiscountMixin(models.Model):
 
     class Meta:
         abstract = True
-    
+
     use_coupon = models.BooleanField(default=False)
     coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
                                    max_length=COUPON_LENGTH, blank=True,
@@ -236,7 +571,7 @@ class CouponDiscountMixin(models.Model):
 
         """
         import random
-        
+
         rndgen = random.random()
         random.seed()
 
@@ -259,9 +594,11 @@ class CouponDiscountMixin(models.Model):
         super(CouponDiscountMixin, self).save()
 
     @classmethod
-    def get_valid_discounts(cls, coupon_code, **kwargs):
+    def get_valid_discounts(cls, coupon_code=None, **kwargs):
         """
-        Return currently valid discounts.
+        Return only items for which no coupon code has been set or
+        ones for which the current coupon code matches that of the
+        discounts.
 
         .. todo::
             Write tests for this.
@@ -270,14 +607,23 @@ class CouponDiscountMixin(models.Model):
         valid = \
             super(CouponDiscountMixin, self).get_valid_discounts(**kwargs)
 
-        valid = valid.filter(coupon_code=coupon_code) | \
-                valid.filter(coupon_code__isnull=True)
+        if coupon_code:
+            valid = valid.filter(coupon_code=coupon_code) | \
+                    valid.filter(coupon_code__isnull=True)
+        else:
+            valid = valid.filter(coupon_code__isnull=True)
 
         return valid
 
 
 class AccountedUseDiscountMixin(models.Model):
-    """ Mixin class for discounts for which the number of uses is accounted. """
+    """
+    Mixin class for discounts for which the number of uses is accounted.
+
+    ..todo::
+        Make sure our Order API has hooks for 'completed orders' and this one
+        attaches to these. We probably want to use signals for this one.
+    """
 
     class Meta:
         abstract = True
@@ -301,8 +647,9 @@ class AccountedUseDiscountMixin(models.Model):
 
 
 class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
-    """ Mixin class for discounts which can only be used a limited number
-        of times.
+    """
+    Mixin class for discounts which can only be used a limited number
+    of times.
     """
 
     class Meta:
