@@ -229,7 +229,7 @@ class ActiveItemBase(models.Model):
         abstract = True
 
     active = models.BooleanField(verbose_name=_('active'),
-                                 default=True)
+                                 default=True, db_index=True)
     """ Whether the item is active in the frontend. """
 
 
@@ -278,4 +278,5 @@ class PublishDateItemBase(models.Model):
         get_latest_by = 'date_publish'
  
     date_publish = models.DateTimeField(default=datetime.datetime.now(),
-                                        verbose_name=_('publication date'))
+                                        verbose_name=_('publication date'),
+                                        db_index=True)
