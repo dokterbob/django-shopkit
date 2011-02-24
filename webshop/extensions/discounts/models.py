@@ -24,12 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import AbstractPricedItemBase
+from webshop.core.util import get_model_from_string
+
+from webshop.extensions.price.settings import PRICE_MAX_DIGITS, PRICE_DECIMALS
 
 from webshop.extensions.discounts.settings import *
-
-from webshop.discounts.settings import DISCOUNT_MODEL
-from webshop.core.util import get_model_from_string
-discount_class = get_model_from_string(DISCOUNT_MODEL)
 
 
 class DiscountedItemMixin(AbstractPricedItemBase):
@@ -37,6 +36,8 @@ class DiscountedItemMixin(AbstractPricedItemBase):
 
     def get_valid_discounts(self, **kwargs):
         """ Return valid discounts for the current order. """
+        discount_class = get_model_from_string(DISCOUNT_MODEL)
+
         discounts = discount_class.get_valid_discounts(**kwargs)
 
         return discounts
