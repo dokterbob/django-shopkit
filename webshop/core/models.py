@@ -312,7 +312,7 @@ class OrderStateChangeBase(models.Model):
     """ Any notes manually added to a state change. """
 
 
-class OrderBase(AbstractPricedItemBase):
+class OrderBase(AbstractPricedItemBase, DatedItemBase):
     """ Abstract base class for orders. """
 
     class Meta(AbstractPricedItemBase.Meta):
