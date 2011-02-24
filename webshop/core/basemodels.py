@@ -42,6 +42,32 @@ class AbstractCustomerBase(models.Model):
         verbose_name_plural = _('customers')
         abstract = True
 
+    def get_all_orders(self):
+        """ Get all orders by the customer """
+        return self.order_set.all()
+
+    def get_completed_orders(self):
+        """
+        Get all completed orders for this customer
+
+        .. todo::
+            We should consider adding a manager to :class:`OrderBase` which
+            can filter on the completed states.
+        """
+        orders = self.get_all_orders()
+
+        from webshop.core.settings import ORDER_COMPLETED_STATES
+
+        completed = orders.filter(state__in=ORDER_COMPLETED_STATES)
+
+        return completed
+
+    def get_latest_order(self):
+        """ Return the lastest completed order """
+        completed = self.get_completed_orders()
+
+        return completed.order_by('-date_added')[0]
+
     # def get_first_name(self):
     #     """ This attribute should be accessed as a function as the customer's information
     #         might originate somewhere else, for example the
