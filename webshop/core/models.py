@@ -31,7 +31,7 @@ from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
                                   CARTITEM_MODEL, ORDER_MODEL, \
                                   CUSTOMER_MODEL, ORDERSTATE_CHANGE_MODEL, \
                                   ORDER_STATES, DEFAULT_ORDER_STATE
-from webshop.core.basemodels import AbstractPricedItemBase, NamedItemBase, \
+from webshop.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
                                     QuantizedItemBase, AbstractCustomerBase
 
 from webshop.core.util import get_model_from_string
