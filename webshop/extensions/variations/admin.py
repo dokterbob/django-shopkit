@@ -19,7 +19,7 @@
 from django.contrib import admin
 
 from webshop.extensions.variations.settings import PRODUCTVARIATION_MODEL
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 productvariation_class = get_model_from_string(PRODUCTVARIATION_MODEL)
 
 

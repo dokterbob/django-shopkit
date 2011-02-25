@@ -18,7 +18,7 @@
 
 from django.conf import settings
 
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 
 
 class AdvancedPriceTestMixin(object):

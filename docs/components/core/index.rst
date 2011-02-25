@@ -15,7 +15,7 @@ Contents:
    views.rst
    forms.rst
    settings.rst
-   util.rst
+   utils/index.rst
    context_processors.rst
    tests.rst
    exceptions.rst

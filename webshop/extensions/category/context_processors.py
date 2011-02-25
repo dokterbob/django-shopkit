@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 
 from webshop.extensions.category.settings import CATEGORY_MODEL
 category_class = get_model_from_string(CATEGORY_MODEL)

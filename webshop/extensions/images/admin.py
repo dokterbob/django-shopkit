@@ -25,7 +25,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.extensions.images.settings import PRODUCTIMAGE_MODEL
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
 
 try:

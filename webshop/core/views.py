@@ -23,7 +23,7 @@ from django.views.generic.edit import BaseFormView
 
 from django.contrib import messages
 
-from webshop.core.util import get_model_from_string, get_cart_from_request
+from webshop.core.utils import get_model_from_string, get_cart_from_request
 
 from webshop.core.settings import CART_MODEL
 from webshop.core.forms import CartItemAddForm

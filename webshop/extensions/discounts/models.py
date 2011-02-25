@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import AbstractPricedItemBase
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 
 # Get the currently configured currency field, whatever it is
 from webshop.extensions.currency.utils import get_currency_field

@@ -67,7 +67,7 @@ class CategoryBase(models.Model):
         """
 
         from webshop.core.settings import PRODUCT_MODEL
-        from webshop.core.util import get_model_from_string
+        from webshop.core.utils import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
         return product_class.in_shop.filter(category=self)
@@ -115,7 +115,7 @@ class NestedCategoryBase(CategoryBase):
         """
 
         from webshop.core.settings import PRODUCT_MODEL
-        from webshop.core.util import get_model_from_string
+        from webshop.core.utils import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
         return product_class.in_shop.filter(categories=self)
@@ -204,7 +204,7 @@ if USE_MPTT:
             """
 
             from webshop.core.settings import PRODUCT_MODEL
-            from webshop.core.util import get_model_from_string
+            from webshop.core.utils import get_model_from_string
             product_class = get_model_from_string(PRODUCT_MODEL)
 
             in_shop = product_class.in_shop
