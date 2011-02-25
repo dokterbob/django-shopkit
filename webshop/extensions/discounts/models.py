@@ -26,7 +26,9 @@ from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import AbstractPricedItemBase
 from webshop.core.util import get_model_from_string
 
-from webshop.extensions.price.settings import PRICE_MAX_DIGITS, PRICE_DECIMALS
+# Get the currently configured currency field, whatever it is
+from webshop.extensions.currency.utils import get_currency_field
+PriceField = get_currency_field()
 
 from webshop.extensions.discounts.settings import *
 
@@ -204,11 +206,8 @@ class OrderDiscountAmountMixin(models.Model):
     class Meta:
         abstract = True
 
-    order_amount = models.DecimalField(verbose_name=\
-                                            _('order discount amount'),
-                                       max_digits=PRICE_MAX_DIGITS,
-                                       decimal_places=PRICE_DECIMALS,
-                                       null=True, blank=True)
+    order_amount = PriceField(verbose_name=_('order discount amount'),
+                              null=True, blank=True)
     """ Absolute discount on the total of an order. """
 
     @classmethod
@@ -253,10 +252,8 @@ class ItemDiscountAmountMixin(models.Model):
     class Meta:
         abstract = True
 
-    item_amount = models.DecimalField(verbose_name=_('item discount amount'),
-                                      max_digits=PRICE_MAX_DIGITS,
-                                      decimal_places=PRICE_DECIMALS,
-                                      null=True, blank=True)
+    item_amount = PriceField(verbose_name=_('item discount amount'),
+                             null=True, blank=True)
     """
     Absolute discount for items of an order for which this discount
     is valid.
