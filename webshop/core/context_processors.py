@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from webshop.core.util import get_cart_from_request
+from webshop.core.utils import get_cart_from_request
 
 def cart(request):
     """ Request context processor adding the shopping cart to the current
