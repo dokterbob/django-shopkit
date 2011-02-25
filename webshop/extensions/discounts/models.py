@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import AbstractPricedItemBase
 from webshop.core.utils import get_model_from_string
+from webshop.core.utils.fields import PercentageField
 
 # Get the currently configured currency field, whatever it is
 from webshop.extensions.currency.utils import get_currency_field
@@ -301,11 +302,9 @@ class OrderDiscountPercentageMixin(models.Model):
     class Meta:
         abstract = True
 
-    order_percentage = models.DecimalField(verbose_name=\
-                                               _('order discount percentage'),
-                                           max_digits=2,
-                                           decimal_places=2,
-                                           null=True, blank=True)
+    order_percentage = PercentageField(verbose_name=\
+                                        _('order discount percentage'),
+                                       null=True, blank=True)
     """ Percentual discount on the total of an order. """
 
     @classmethod
@@ -350,11 +349,9 @@ class ItemDiscountPercentageMixin(models.Model):
     class Meta:
         abstract = True
 
-    item_percentage = models.DecimalField(verbose_name=\
-                                            _('item discount percentage'),
-                                          max_digits=2,
-                                          decimal_places=2,
-                                          null=True, blank=True)
+    item_percentage = PercentageField(verbose_name=\
+                                        _('item discount percentage'),
+                                      null=True, blank=True)
     """
     Percentual discount for items of an order for which this discount
     is valid.
