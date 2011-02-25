@@ -16,20 +16,25 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
+# Inspired by django-shop:
+# https://github.com/divio/django-shop/blob/master/shop/util/fields.py
+
+from django.db.models.fields import DecimalField
+
+from webshop.extensions.currency.simple.settings import CURRENCY_MAX_DIGITS, \
+                                                        CURRENCY_DECIMALS
 
 
-CURRENCY_MAX_DIGITS = getattr(settings, 'WEBSHOP_CURRENCY_MAX_DIGITS', 6)
-"""
-Maximum number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 6.
-"""
+class PriceField(DecimalField):
+    """
+    A PriceField is simply a subclass of DecimalField with common defaults
+    set by `CURRENCY_MAX_DIGITS` and `CURRENCY_DECIMALS`.
+    """
+    def __init__(self, **kwargs):
+        kwargs['max_digits'] = \
+            kwargs.get('max_digits', CURRENCY_MAX_DIGITS)
 
-CURRENCY_DECIMALS = getattr(settings, 'WEBSHOP_CURRENCY_DECIMALS', 2)
-"""
-Number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 2.
-"""
+        kwargs['decimal_places'] = \
+            kwargs.get('decimal_places', CURRENCY_DECIMALS)
 
+        return super(PriceField, self).__init__(**kwargs)

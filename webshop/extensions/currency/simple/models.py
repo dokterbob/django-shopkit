@@ -16,20 +16,3 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from django.conf import settings
-
-
-CURRENCY_MAX_DIGITS = getattr(settings, 'WEBSHOP_CURRENCY_MAX_DIGITS', 6)
-"""
-Maximum number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 6.
-"""
-
-CURRENCY_DECIMALS = getattr(settings, 'WEBSHOP_CURRENCY_DECIMALS', 2)
-"""
-Number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 2.
-"""
-

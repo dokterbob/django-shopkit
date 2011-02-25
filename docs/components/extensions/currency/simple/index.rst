@@ -13,4 +13,6 @@ Contents:
 
    settings.rst
    utils.rst
+   fields.rst
+
 

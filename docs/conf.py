@@ -55,6 +55,7 @@ setattr(global_settings, 'WEBSHOP_PRODUCTVARIATION_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_PRODUCTIMAGE_MODEL', '#doc')
 setattr(global_settings, 'WEBSHOP_ORDER_STATES', '#doc')
 setattr(global_settings, 'WEBSHOP_ORDERSTATE_CHANGE_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_CURRENCY_PRICE_FIELD', '#doc')
 
 setattr(global_settings, 'WEBSHOP_VAT_PERCENTAGE', 19)
 setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)

@@ -18,18 +18,8 @@
 
 from django.conf import settings
 
-
-CURRENCY_MAX_DIGITS = getattr(settings, 'WEBSHOP_CURRENCY_MAX_DIGITS', 6)
+PRICE_FIELD_NAME = getattr(settings, 'WEBSHOP_CURRENCY_PRICE_FIELD')
+""" 
+String reference to default price field for webshop.
+For example: `webshop.extensions.currency.simple.fields.PriceField`
 """
-Maximum number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 6.
-"""
-
-CURRENCY_DECIMALS = getattr(settings, 'WEBSHOP_CURRENCY_DECIMALS', 2)
-"""
-Number of decimals for
-:class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
-Defaults to: 2.
-"""
-
