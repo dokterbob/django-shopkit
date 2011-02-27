@@ -7,6 +7,7 @@ Contents:
    :maxdepth: 2
 
    price/index.rst
+   shipping/index.rst
    category/index.rst
    vat/index.rst
    currency/index.rst

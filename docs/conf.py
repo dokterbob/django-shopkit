@@ -66,6 +66,9 @@ setattr(global_settings, 'WEBSHOP_DISCOUNT_MODEL', '#doc')
 
 setattr(global_settings, 'WEBSHOP_BRAND_MODEL', '#doc')
 
+setattr(global_settings, 'WEBSHOP_SHIPPING_ADDRESS_MODEL', '#doc')
+setattr(global_settings, 'WEBSHOP_SHIPPING_METHOD_MODEL', '#doc')
+
 setattr(global_settings, 'WEBSHOP_USE_MPTT', True)
 
 from django.core.management import setup_environ
