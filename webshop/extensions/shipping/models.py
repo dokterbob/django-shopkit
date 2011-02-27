@@ -28,7 +28,7 @@ class ShippedOrderMixin(models.Model):
     class Meta:
         abstract = True
 
-    shipping_address = models.ForeignKey(ADDRESS_MODEL, 
+    shipping_address = models.ForeignKey(ADDRESS_MODEL,
                                         related_name='shippable%(class)s_set')
 
 
