@@ -100,7 +100,7 @@ class CheapestShippableItemMixin(object):
         return shipping_method
 
 
-class ShippableOrderBase(ShippableItemMixin, models.Model):
+class ShippableOrderBase(ShippableOrderMixin, ShippableItemMixin):
     """ Base class for orders with a shipping_method. """
 
     class Meta:
@@ -321,4 +321,80 @@ class ItemShippingMethodMixin(models.Model):
 
     def get_cost(self, **kwargs):
         return self.item_cost
+
+
+class MinimumOrderAmountShippingMixin(models.Model):
+    """ Shipping mixin for methods valid only from a specified order amount. """
+
+    class Meta:
+        abstract = True
+
+    minimal_order_price = PriceField(verbose_name=_('minimal order amount'),
+                                     blank=True, null=True)
+
+    @classmethod
+    def get_valid_methods(cls, order_price=None, **kwargs):
+        """
+        Return shipping methods for which the order price is above the
+        minimal order price or ones for which no minimal order price has
+        been specified.
+
+        :param order_price: Price for the current order, used to determine
+                            valid shipping methods.
+        """
+        superclass = super(MinimumOrderAmountShippingMixin, self)
+
+        valid = superclass.get_valid_methods(**kwargs)
+
+        valid_no_min = valid.filter(minimal_order_price__isnull=True)
+
+        if order_price:
+            # Return methods for which the minimal order price is less
+            # than the current `order_price` or ones for which a minimal
+            # order price does not apply.
+            valid = valid.filter(minimal_order_price__lte=order_price) | \
+                    valid_no_min
+        else:
+            # Return methods for which no minimal order price is specified
+            valid = valid_no_min
+
+        return valid
+
+
+class MinimumItemAmountShippingMixin(models.Model):
+    """ Shipping mixin for methods valid only from a specified order amount. """
+
+    class Meta:
+        abstract = True
+
+    minimal_item_price = PriceField(verbose_name=_('minimal item amount'),
+                                     blank=True, null=True)
+
+    @classmethod
+    def get_valid_methods(cls, item_price=None, **kwargs):
+        """
+        Return shipping methods for which the item price is above a
+        minimum price or ones for which no minimal item price has
+        been specified.
+
+        :param item_price: Price for the current `OrderItem`, used to
+                           determine valid shipping methods.
+        """
+        superclass = super(MinimumItemAmountShippingMixin, self)
+
+        valid = superclass.get_valid_methods(**kwargs)
+
+        valid_no_min = valid.filter(minimal_item_price__isnull=True)
+
+        if item_price:
+            # Return methods for which the minimal order price is less
+            # than the current `order_price` or ones for which a minimal
+            # order price does not apply.
+            valid = valid.filter(minimal_item_price__lte=item_price) | \
+                    valid_no_min
+        else:
+            # Return methods for which no minimal order price is specified
+            valid = valid_no_min
+
+        return valid
 

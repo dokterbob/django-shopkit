@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.extensions.shipping.settings import ADDRESS_MODEL
 
-class ShippedOrderMixin(models.Model):
+class ShippableOrderMixin(models.Model):
     class Meta:
         abstract = True
 
@@ -32,7 +32,7 @@ class ShippedOrderMixin(models.Model):
                                         related_name='shippable%(class)s_set')
 
 
-class ShippedCustomerMixin(object):
+class ShippableCustomerMixin(object):
     """
     Customer Mixin class for shops in which orders make use
     of a shipping address.
