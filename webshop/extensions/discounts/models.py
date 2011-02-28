@@ -320,7 +320,7 @@ class OrderDiscountPercentageMixin(models.Model):
         """
 
         superclass = super(OrderDiscountPercentageMixin, self)
-        valid = superclass.get_valid_discounts(*args, **kwargs)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         if not order_discounts is None:
             # If an order discounts criterium has been specified
@@ -371,7 +371,7 @@ class ItemDiscountPercentageMixin(models.Model):
         """
 
         superclass = super(ItemDiscountPercentageMixin, self)
-        valid = superclass.get_valid_discounts(*args, **kwargs)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         if not item_discounts is None:
             # If an order discounts criterium has been specified
@@ -407,7 +407,7 @@ class ProductDiscountMixin(models.Model):
         """ Return valid discounts for a specified product """
 
         valid = \
-            super(ProductDiscountMixin, self).get_valid_discounts(*args, **kwargs)
+            super(ProductDiscountMixin, self).get_valid_discounts(**kwargs)
 
         valid = valid.filter(product=product) | \
                 valid.filter(product__isnull=True)
@@ -431,7 +431,7 @@ class ManyProductDiscountMixin(models.Model):
         """ Return valid discounts for a specified product """
 
         valid = \
-            super(ProductDiscountMixin, self).get_valid_discounts(*args, **kwargs)
+            super(ProductDiscountMixin, self).get_valid_discounts(**kwargs)
 
         valid = valid.filter(products=product) | \
                 valid.filter(products__isnull=True)
