@@ -37,6 +37,9 @@ from webshop.extensions.shipping.advanced.settings import *
 
 class ShippableItemMixin(AbstractPricedItemBase):
     """ Mixin class for shippable items. """
+    
+    class Meta:
+        abstract = True
 
     def get_valid_shipping_methods(self, **kwargs):
         """
