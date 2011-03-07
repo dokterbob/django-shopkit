@@ -121,12 +121,12 @@ class CartBase(AbstractPricedItemBase):
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
     """ Customer who owns this cart, if any. """
     
-    def getCartItems(self):
+    def get_items(self):
         """ Gets all items from the cart with a quantity > 0. """
         
         return self.cartitem_set.filter(quantity__gt=0)
     
-    def getCartItem(self, product):
+    def get_item(self, product):
         """ Either instantiates and returns a CartItem for the 
             Cart-Product combination or fetches it from the
             database. The creation is lazy: the resulting CartItem
@@ -164,7 +164,7 @@ class CartBase(AbstractPricedItemBase):
         """
         assert isinstance(quantity, int), 'Quantity not an integer.'
         
-        cartitem = self.getCartItem(product)
+        cartitem = self.get_item(product)
         
         # We can do this without querying the actual value from the 
         # database.
@@ -183,7 +183,7 @@ class CartBase(AbstractPricedItemBase):
         
         quantity = 0
         
-        for cartitem in self.getCartItems():
+        for cartitem in self.get_items():
             quantity += cartitem.quantity
         
         return quantity
@@ -206,11 +206,11 @@ class CartBase(AbstractPricedItemBase):
         
         logger.debug('Calculating total price for shopping cart.')
         
-        # logger.debug(self.getCartItems()[0].get_total_price())
+        # logger.debug(self.get_items()[0].get_total_price())
         
         price = Decimal("0.0")
         
-        for cartitem in self.getCartItems():
+        for cartitem in self.get_items():
             item_price = cartitem.get_total_price(**kwargs)
             logger.debug('Adding price %f for item \'%s\' to total cart price.' % \
                 (item_price, cartitem))
@@ -278,7 +278,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         
         
     @classmethod
-    def fromCartItem(cls, cartitem, order):
+    def from_cartitem(cls, cartitem, order):
         """ Create an order item from a shopping cart item. """
         
         orderitem = cls(order=order)
@@ -329,9 +329,13 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     """ State of the order, represented by a PositveSmallInteger field.
         Available choices can be configured in WEBSHOP_ORDER_STATES. 
     """
-    
+
+    def get_items(self):
+        """ Get all order items (with a quantity greater than 0). """
+        return self.orderitems_set.filter(quantity__gt=0)
+
     @classmethod
-    def fromCart(cls, cart, customer):
+    def from_cart(cls, cart, customer):
         """ 
         Instantiate an order based on the basis of a
         shopping cart, copying all the items. 
@@ -347,8 +351,8 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         orderitem_class = get_model_from_string(ORDERITEM_MODEL)
         
         for cartitem in cart.cartitem_set.all():
-            orderitem = orderitem_class.fromCartItem(cartitem=cartitem,
-                                                     order=order)
+            orderitem = orderitem_class.from_cartitem(cartitem=cartitem,
+                                                      order=order)
             
             assert orderitem, 'Something went wrong creating an \
                                OrderItem from a CartItem.'
