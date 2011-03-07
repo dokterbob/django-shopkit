@@ -161,7 +161,7 @@ class OrderedItemBase(models.Model):
 
     sort_order = models.PositiveSmallIntegerField(
                                  verbose_name=('sort order'),
-                                 unique=True, blank=True,
+                                 unique=True, blank=True, db_index=True,
                                  help_text=_('Change this to alter the order \
                                               in which items are displayed.'))
 
@@ -240,7 +240,7 @@ class OrderedInlineItemBase(models.Model):
 
     sort_order = models.PositiveSmallIntegerField(
                                  verbose_name=('sort order'),
-                                 blank=True,
+                                 blank=True, db_index=True,
                                  help_text=_('Change this to alter the order \
                                               in which items are displayed.'))
 
@@ -255,7 +255,7 @@ class ActiveItemBase(models.Model):
         abstract = True
 
     active = models.BooleanField(verbose_name=_('active'),
-                                 default=True)
+                                 default=True, db_index=True)
     """ Whether the item is active in the frontend. """
 
 
@@ -292,7 +292,7 @@ class DatedItemBase(models.Model):
     date_added = models.DateTimeField(auto_now_add=True,
                                       verbose_name=_('creation date'))
     date_modified = models.DateTimeField(auto_now=True,
-                                       verbose_name=_('modification date'))
+                                         verbose_name=_('modification date'))
 
 
 class PublishDateItemBase(models.Model):
@@ -304,4 +304,5 @@ class PublishDateItemBase(models.Model):
         get_latest_by = 'date_publish'
  
     date_publish = models.DateTimeField(default=datetime.datetime.now(),
-                                        verbose_name=_('publication date'))
+                                        verbose_name=_('publication date'),
+                                        db_index=True)
