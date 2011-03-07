@@ -29,8 +29,9 @@ from django.db import models
 
 from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
                                   CARTITEM_MODEL, ORDER_MODEL, \
-                                  CUSTOMER_MODEL, ORDERSTATE_CHANGE_MODEL, \
-                                  ORDER_STATES, DEFAULT_ORDER_STATE
+                                  ORDERITEM_MODEL, CUSTOMER_MODEL, \
+                                  ORDERSTATE_CHANGE_MODEL, ORDER_STATES, \
+                                  DEFAULT_ORDER_STATE
 from webshop.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
                                     QuantizedItemBase, AbstractCustomerBase
 
@@ -44,17 +45,14 @@ class UserCustomerBase(AbstractCustomerBase, User):
     
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
-    
-    # 
-    # def __unicode__(self):
-    #     """ Unicode representation of a UserCustomer is the representation of the
-    #         user, if one has been set. Otherwise, return the primary key of self 
-    #         instaed.
-    #     """
-    #     if self.user:
-    #         return unicode(self.user)
-    #     
-    #     return self.pk
+
+
+    def __unicode__(self):
+        """ Unicode representation of a UserCustomer is the representation of the
+            user, if one has been set.
+        """
+        if self.user:
+            return unicode(self.user)
 
 
 class ProductBase(AbstractPricedItemBase):
@@ -152,7 +150,7 @@ class CartBase(AbstractPricedItemBase):
         
         return cartitem
         
-    def addProduct(self, product, quantity=1):
+    def add_item(self, product, quantity=1):
         """ Adds the specified product in the specified quantity
             to the current shopping Cart. This effectively creates
             a CartItem for the Product-Cart combination or updates
@@ -238,55 +236,16 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
-    
-    def _propertiesFromCartItem(self, cartitem):
-        """ 
-        This method copies all relevant properties from a `CartItem` over
-        to the current `OrderItem` instance. 
-        
-        When the automatic mechanism here doesn't work as advertised 
-        (because it is probably too generic), it should be overridden in a
-        subclass.
-        """
-        
-        # This should be redundant
-        # self.product=cartitem.product 
-        # self.quantity=cartitem.quantity
 
-        # We should consider iterating over all the fields (properties)
-        # of the cartitem and copying the information to the order item.
-        #
-        # However, we need to skip AutoField instances in any case.
-        #
-        # Also: we should read all properties - not just fields - from the
-        # CartItem and see whether matching fields exist for the OrderItem.
 
-        cartitem_keys = cartitem.__dict__.keys()
-        orderitem_fields = self._meta.fields
-        
-        from django.db.models.fields import AutoField
-
-        for orderitem_field in orderitem_fields:
-            # Skip AutoField instances
-            if not isinstance(orderitem_field, AutoField):            
-                attname = orderitem_field.attname
-                
-                if attname in cartitem_keys:
-                     cartitem_value = cartitem[attname]
-                     
-                     setattr(self, attname, cartitem_value)            
-        
-        
     @classmethod
     def from_cartitem(cls, cartitem, order):
-        """ Create an order item from a shopping cart item. """
-        
-        orderitem = cls(order=order)
+        """
+        Create an order item from a shopping cart item. The result is *not*
+        automatically saved.
+        """
 
-        orderitem._propertiesFromCartItem(cartitem)        
-        
-        orderitem.save()
-        
+        orderitem = cls(order=order)
         return orderitem
 
 
@@ -339,27 +298,30 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         """ 
         Instantiate an order based on the basis of a
         shopping cart, copying all the items. 
-        
+
         .. todo::
             We should copy any eventual matching fields from the
             cart into the order.
         
         """
         order = cls(customer=customer)
+
+        # Save in order to be able to associate items
         order.save()
 
         orderitem_class = get_model_from_string(ORDERITEM_MODEL)
-        
+
         for cartitem in cart.cartitem_set.all():
             orderitem = orderitem_class.from_cartitem(cartitem=cartitem,
                                                       order=order)
-            
+            orderitem.save()
+
             assert orderitem, 'Something went wrong creating an \
                                OrderItem from a CartItem.'
-        
-        
+
+
         return order
-    
+
     def save(self, *args, **kwargs):
         """ 
         

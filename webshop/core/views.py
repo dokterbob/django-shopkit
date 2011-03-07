@@ -135,7 +135,7 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
         product = form.cleaned_data['product']
         quantity = form.cleaned_data['quantity']
         
-        self.object = cart.addProduct(product, quantity)
+        self.object = cart.add_item(product, quantity)
         
         # Make sure that we know whether we updated an existing item
         updated = self.object.pk or False
