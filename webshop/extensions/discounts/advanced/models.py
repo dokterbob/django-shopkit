@@ -30,6 +30,7 @@ from webshop.extensions.currency.utils import get_currency_field
 PriceField = get_currency_field()
 
 from webshop.extensions.discounts.settings import *
+from webshop.extensions.discounts.models import *
 
 
 class DiscountBase(models.Model):
