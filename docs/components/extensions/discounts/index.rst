@@ -10,8 +10,9 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-   admin.rst
+   
+   basemodels.rst
    models.rst
    settings.rst
+   advanced/index.rst
 

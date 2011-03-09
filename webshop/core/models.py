@@ -264,14 +264,14 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         these should be copied over to the `OrderItem` in overrides of this
         function as follows::
 
-        class OrderItem(...):
-            @classmethod
-            def from_cartitem(cls, cartitem, order):
-                orderitem = super(OrderItem, cls).from_cartitem(cartitem, order)
+            class OrderItem(...):
+                @classmethod
+                def from_cartitem(cls, cartitem, order):
+                    orderitem = super(OrderItem, cls).from_cartitem(cartitem, order)
 
-                orderitem.<someproperty> = cartitem.<someproperty>
+                    orderitem.<someproperty> = cartitem.<someproperty>
 
-                return orderitem
+                    return orderitem
 
         """
 
