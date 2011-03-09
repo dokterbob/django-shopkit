@@ -248,6 +248,9 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         """
 
         orderitem = cls(order=order)
+        orderitem.piece_price = cartitem.get_piece_price()
+        orderitem.product = cartitem.product
+
         return orderitem
 
 
