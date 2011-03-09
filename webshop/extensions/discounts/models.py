@@ -45,7 +45,7 @@ class DiscountedOrderMixin(DiscountedItemBase, models.Model):
     that apply to specific order items.
     """
 
-    def get_total_discount(self):
+    def get_total_discount(self, **kwargs):
         """
         Return the total discount. This consists of the sum of discounts
         applicable to orders and the discounts applicable to items.
@@ -53,13 +53,13 @@ class DiscountedOrderMixin(DiscountedItemBase, models.Model):
         discount = self.order_discount
 
         for item in self.get_items():
-            discount += item.get_discount()
+            discount += item.get_discount(**kwargs)
 
         # Make sure the discount is never higher than the price of 
         # the oringal item
-        price = self.get_price()
-        if discount > self.get_price():
-            return self.get_price()
+        price = self.get_price(**kwargs)
+        if discount > price:
+            return price
 
         return discount
 
@@ -84,7 +84,7 @@ class DiscountedOrderItemMixin(DiscountedItemBase, models.Model):
     discount = PriceField(verbose_name=_('discount'))
     """ The amount of discount applied to this item. """
 
-    def get_discount(self):
+    def get_discount(self, **kwargs):
         """
         Wrapper around the `discount` property, providing for a generic API.
         """

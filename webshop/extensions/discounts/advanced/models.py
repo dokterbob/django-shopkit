@@ -573,7 +573,7 @@ class CalculatedOrderDiscountMixin(object):
 
         # Now, add discounts on the total order
         valid_discounts = self.get_valid_discounts(**kwargs)
-        price = self.get_price()
+        price = self.get_price(**kwargs)
         
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
@@ -623,7 +623,7 @@ class CalculatedItemDiscountMixin(object):
         """
 
         valid_discounts = self.get_valid_discounts(**kwargs)
-        price = self.get_price()
+        price = self.get_price(**kwargs)
 
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
