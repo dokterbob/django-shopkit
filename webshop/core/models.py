@@ -233,10 +233,12 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     order = models.ForeignKey(ORDER_MODEL)
     """ Order this item belongs to. """
-    
+
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
 
+    piece_price = PriceField(verbose_name=_('price per piece'))
+    """ Price per piece for the current item. """
 
     @classmethod
     def from_cartitem(cls, cartitem, order):
@@ -247,6 +249,22 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
         orderitem = cls(order=order)
         return orderitem
+
+
+    def get_price(self, **kwargs):
+        """ Wraps `get_total_price()`. """
+
+        return self.get_total_price(**kwargs)
+
+    def get_total_price(self, **kwargs):
+        """ Gets the tatal price for the items in the cart. """
+
+        return self.quantity*self.get_piece_price(**kwargs)
+
+    def get_piece_price(self, **kwargs):
+        """ Gets the price per piece for a given quantity of items. """
+
+        return self.piece_price
 
 
 class OrderStateChangeBase(models.Model):
