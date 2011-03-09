@@ -26,7 +26,6 @@ from django.utils.translation import ugettext_lazy as _
 from webshop.extensions.currency.utils import get_currency_field
 PriceField = get_currency_field()
 
-from webshop.extensions.discounts.settings import *
 from webshop.extensions.discounts.basemodels import DiscountedItemBase
 
 
@@ -55,7 +54,7 @@ class DiscountedOrderMixin(DiscountedItemBase, models.Model):
         for item in self.get_items():
             discount += item.get_discount(**kwargs)
 
-        # Make sure the discount is never higher than the price of 
+        # Make sure the discount is never higher than the price of
         # the oringal item
         price = self.get_price(**kwargs)
         if discount > price:
@@ -64,14 +63,16 @@ class DiscountedOrderMixin(DiscountedItemBase, models.Model):
         return discount
 
     @classmethod
-    def from_cart(cart):
+    def from_cart(cls, cart):
         """
         Create an order from the shopping cart, accounting for possible
-        order discounts.
+        order discounts. Instantiates an order but does no saving.
         """
-        order = super(DiscountedOrderMixin, self).from_cart(cart)
+        order = super(DiscountedOrderMixin, cls).from_cart(cart)
 
         order.order_discount = cart.get_order_discount()
+
+        return order
 
 
 class DiscountedOrderItemMixin(DiscountedItemBase, models.Model):
@@ -91,12 +92,14 @@ class DiscountedOrderItemMixin(DiscountedItemBase, models.Model):
         return self.discount
 
     @classmethod
-    def from_cartitem(self, cartitem):
+    def from_cartitem(cls, cartitem):
         """
         Create a discounted `OrderItem` from a `CartItem`, storing the
         discount amount in the `OrderItem`'s `discount` property.
         """
-        superclass = super(DiscountedOrderItemMixin, self)
+        superclass = super(DiscountedOrderItemMixin, cls)
         orderitem = superclass.from_itemcart(cartitem)
 
         orderitem.discount = cartitem.get_discount()
+
+        return orderitem

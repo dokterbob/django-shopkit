@@ -19,17 +19,24 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from datetime import datetime
+
+from decimal import Decimal
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.utils.fields import PercentageField
 
+from webshop.core.basemodels import AbstractPricedItemBase
+
 # Get the currently configured currency field, whatever it is
 from webshop.extensions.currency.utils import get_currency_field
 PriceField = get_currency_field()
 
-from webshop.extensions.discounts.settings import *
+from webshop.extensions.discounts.settings import \
+    COUPON_LENGTH, COUPON_CHARACTERS
 from webshop.extensions.discounts.models import *
 
 
@@ -97,7 +104,7 @@ class OrderDiscountAmountMixin(models.Model):
                                `order_amount` specified are let through.
         """
 
-        superclass = super(OrderDiscountAmountMixin, self)
+        superclass = super(OrderDiscountAmountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
         if not order_discounts is None:
@@ -146,7 +153,7 @@ class ItemDiscountAmountMixin(models.Model):
                                `item_amount` specified are let through.
         """
 
-        superclass = super(ItemDiscountAmountMixin, self)
+        superclass = super(ItemDiscountAmountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
         if not item_discounts is None:
@@ -193,7 +200,7 @@ class OrderDiscountPercentageMixin(models.Model):
                                `order_amount` specified are let through.
         """
 
-        superclass = super(OrderDiscountPercentageMixin, self)
+        superclass = super(OrderDiscountPercentageMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
         if not order_discounts is None:
@@ -244,7 +251,7 @@ class ItemDiscountPercentageMixin(models.Model):
                                `item_amount` specified are let through.
         """
 
-        superclass = super(ItemDiscountPercentageMixin, self)
+        superclass = super(ItemDiscountPercentageMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
         if not item_discounts is None:
@@ -280,8 +287,8 @@ class ProductDiscountMixin(models.Model):
     def get_valid_discounts(cls, product, **kwargs):
         """ Return valid discounts for a specified product """
 
-        valid = \
-            super(ProductDiscountMixin, self).get_valid_discounts(**kwargs)
+        superclass = super(ProductDiscountMixin, cls)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         valid = valid.filter(product=product) | \
                 valid.filter(product__isnull=True)
@@ -304,8 +311,8 @@ class ManyProductDiscountMixin(models.Model):
     def get_valid_discounts(cls, product, **kwargs):
         """ Return valid discounts for a specified product """
 
-        valid = \
-            super(ProductDiscountMixin, self).get_valid_discounts(**kwargs)
+        superclass = super(ProductDiscountMixin, cls)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         valid = valid.filter(products=product) | \
                 valid.filter(products__isnull=True)
@@ -341,12 +348,12 @@ class DateRangeDiscountMixin(models.Model):
             Test this code.
         """
 
-        valid = \
-            super(DateRangeDiscountMixin, self).get_valid_discounts(**kwargs)
+        superclass = super(DateRangeDiscountMixin, cls)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         # If no date is set, take today.
         if not date:
-            date = datetime.datetime.today()
+            date = datetime.today()
 
         # Get valid discounts for the current situation
         valid = valid.filter(start_date__gte=date, end_date__lte=date) | \
@@ -382,8 +389,8 @@ if CATEGORIES:
         def get_valid_discounts(cls, category, **kwargs):
             """ Return valid discounts for a specified product """
 
-            valid = \
-                super(CategoryDiscountMixin, self).get_valid_prices(**kwargs)
+            superclass = super(CategoryDiscountMixin, cls)
+            valid = superclass.get_valid_prices(**kwargs)
 
             valid = valid.filter(category=category) | \
                     valid.filter(category__isnull=True)
@@ -406,8 +413,8 @@ if CATEGORIES:
         def get_valid_discounts(cls, category, **kwargs):
             """ Return valid discounts for a specified product """
 
-            valid = \
-                super(ManyCategoryDiscountMixin, self).get_valid_prices(**kwargs)
+            superclass = super(ManyCategoryDiscountMixin, cls)
+            valid = superclass.get_valid_prices(**kwargs)
 
             valid = valid.filter(categories=category) | \
                     valid.filter(categories__isnull=True)
@@ -473,8 +480,8 @@ class CouponDiscountMixin(models.Model):
             Write tests for this.
         """
 
-        valid = \
-            super(CouponDiscountMixin, self).get_valid_discounts(**kwargs)
+        superclass = super(CouponDiscountMixin, cls)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
             valid = valid.filter(coupon_code=coupon_code) | \
@@ -544,8 +551,8 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
             Write tests for this.
         """
 
-        valid = \
-            super(LimitedUseDiscountMixin, self).get_valid_discounts(**kwargs)
+        superclass = super(LimitedUseDiscountMixin, cls)
+        valid = superclass.get_valid_discounts(**kwargs)
 
         valid = valid.filter(use_limit__lte=models.F('used'))| \
                 valid.filter(use_limit__isnull=True)

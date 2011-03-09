@@ -19,28 +19,11 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-
 from webshop.core.basemodels import AbstractPricedItemBase
-
-# Get the currently configured currency field, whatever it is
-from webshop.extensions.currency.utils import get_currency_field
-PriceField = get_currency_field()
-
-from webshop.extensions.discounts.settings import *
 
 
 class DiscountedItemBase(AbstractPricedItemBase):
     """ Mixin class for discounted items. """
-
-    # def get_valid_discounts(self, **kwargs):
-    #     """ Return valid discounts for the current order. """
-    #     discount_class = get_model_from_string(DISCOUNT_MODEL)
-    # 
-    #     discounts = discount_class.get_valid_discounts(**kwargs)
-    # 
-    #     return discounts
 
     def get_discount(self, **kwargs):
         """
