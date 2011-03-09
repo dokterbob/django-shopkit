@@ -42,7 +42,8 @@ class ShippedOrderMixin(ShippedItemBase, models.Model):
                                         related_name='shippable%(class)s_set')
     """ Shipping address for this order"""
 
-    order_shipping_costs = PriceField(_('whole order shipping cost'))
+    order_shipping_costs = PriceField(verbose_name=\
+                                        _('whole order shipping cost'))
     """
     Shipping costs relating to the whole order and not individual items.
     """
@@ -87,7 +88,7 @@ class ShippedOrderItemMixin(ShippedItemBase, models.Model):
     class Meta:
         abstract = True
 
-    shipping_costs = PriceField(_('shipping cost'))
+    shipping_costs = PriceField(verbose_name=_('shipping cost'))
     """ Shipping costs for this item. """
 
     def get_shipping_costs(self, **kwargs):

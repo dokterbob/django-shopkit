@@ -103,7 +103,7 @@ class CheapestShippableItemMixin(object):
         return shipping_method
 
 
-class ShippableOrderBase(ShippableOrderMixin, ShippableItemMixin):
+class ShippableOrderBase(ShippableItemMixin):
     """ Base class for orders with a shipping_method. """
 
     class Meta:
