@@ -40,6 +40,11 @@ from webshop.core.utils import get_model_from_string
 # Get the currently configured currency field, whatever it is
 from webshop.extensions.currency.utils import get_currency_field
 PriceField = get_currency_field()
+"""
+..todo::
+    As this import makes the core depend on the currency extension, we should
+    probably integrate this functionality into the core.
+"""
 
 
 """ Abstract base models for essential shop components. """
