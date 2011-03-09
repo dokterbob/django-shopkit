@@ -37,6 +37,10 @@ from webshop.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
 
 from webshop.core.utils import get_model_from_string
 
+# Get the currently configured currency field, whatever it is
+from webshop.extensions.currency.utils import get_currency_field
+PriceField = get_currency_field()
+
 
 """ Abstract base models for essential shop components. """
 
@@ -194,12 +198,6 @@ class CartBase(AbstractPricedItemBase):
     def get_total_price(self, **kwargs):
         """ 
         Gets the total price for all items in the cart. 
-        
-        .. todo::
-            Add either caching or aggregation. Preferably the former.
-            This can be achieved by keeping something like a serial or timestamp
-            in the Cart and CartItem models.
-        
         """
         
         logger.debug('Calculating total price for shopping cart.')
@@ -215,6 +213,13 @@ class CartBase(AbstractPricedItemBase):
             price += item_price
         
         return price
+
+    def get_order_line(self):
+        """
+        Get a string representation of this `OrderItem` for use in list views.
+        """
+
+        return unicode(self.product)
 
 
 class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
@@ -240,19 +245,37 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     piece_price = PriceField(verbose_name=_('price per piece'))
     """ Price per piece for the current item. """
 
+    order_line = models.CharField(verbose_name=_('description'),
+                                  max_length=255)
+    """ Description of this OrderItem as shown on the bill. """
+
     @classmethod
     def from_cartitem(cls, cartitem, order):
         """
-        Create an order item from a shopping cart item. The result is *not*
-        automatically saved.
+        Create and populate an order item from a shopping cart item.
+        The result is *not* automatically saved.
+
+        When the `CartItem` model has extra properties, such as variations,
+        these should be copied over to the `OrderItem` in overrides of this
+        function as follows::
+
+        class OrderItem(...):
+            @classmethod
+            def from_cartitem(cls, cartitem, order):
+                orderitem = super(OrderItem, cls).from_cartitem(cartitem, order)
+
+                orderitem.<someproperty> = cartitem.<someproperty>
+
+                return orderitem
+
         """
 
         orderitem = cls(order=order)
         orderitem.piece_price = cartitem.get_piece_price()
+        orderitem.order_line = cartitem.get_order_line()
         orderitem.product = cartitem.product
 
         return orderitem
-
 
     def get_price(self, **kwargs):
         """ Wraps `get_total_price()`. """
