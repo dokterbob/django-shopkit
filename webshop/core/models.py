@@ -55,15 +55,6 @@ class UserCustomerBase(AbstractCustomerBase, User):
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
 
-
-    def __unicode__(self):
-        """ Unicode representation of a UserCustomer is the representation of the
-            user, if one has been set.
-        """
-        if self.user:
-            return unicode(self.user)
-
-
 class ProductBase(AbstractPricedItemBase):
     """ Abstract base class for products in the webshop. """
 
