@@ -25,6 +25,9 @@ from webshop.core.basemodels import AbstractPricedItemBase
 class DiscountedItemBase(AbstractPricedItemBase):
     """ Mixin class for discounted items. """
 
+    class Meta:
+        abstract = True
+
     def get_discount(self, **kwargs):
         """
         Return the most sensible discount related to this item. By default,
@@ -55,6 +58,9 @@ class DiscountedCartBase(DiscountedItemBase):
     """
     Base class for shopping carts which can have discounts applied to them.
     """
+
+    class Meta:
+        abstract = True
 
     def get_total_discount(self, **kwargs):
         """
@@ -88,6 +94,9 @@ class DiscountedCartItemBase(DiscountedItemBase):
     Base class for shopping cart items which can have discounts applied to
     them.
     """
+
+    class Meta:
+        abstract = True
 
     def get_discount(self, **kwargs):
         """
