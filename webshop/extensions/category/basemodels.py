@@ -118,7 +118,7 @@ class NestedCategoryBase(CategoryBase):
         from webshop.core.utils import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
-        return product_class.in_shop.filter(categories=self)
+        return product_class.in_shop.filter(categories__in=self)
 
     def get_parent_list(self, reversed=False):
         """ Return a list of all parent categories of the current category.
@@ -208,8 +208,9 @@ if USE_MPTT:
             product_class = get_model_from_string(PRODUCT_MODEL)
 
             in_shop = product_class.in_shop
+            descendants = self.get_descendants(include_self=True)
 
-            return in_shop.filter(categories=self.get_descendants(include_self=True))
+            return in_shop.filter(categories__in=descendants)
 
         def __unicode__(self):
             """ The unicode representation of a nested category is that of
