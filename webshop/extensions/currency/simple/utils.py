@@ -21,9 +21,10 @@ logger = logging.getLogger(__name__)
 
 from decimal import Decimal
 
-# Pick the current locale from the LANG environment variable
+from webshop.extensions.currency.simple.settings import CURRENCY_LOCALE
+
 import locale
-locale.setlocale(locale.LC_MONETARY, '')
+locale.setlocale(locale.LC_MONETARY, CURRENCY_LOCALE)
 
 
 def format_price(amount):

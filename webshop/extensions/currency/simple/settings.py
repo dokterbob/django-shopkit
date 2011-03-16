@@ -33,3 +33,9 @@ Number of decimals for
 Defaults to: 2.
 """
 
+CURRENCY_LOCALE = getattr(settings, 'WEBSHOP_CURRENCY_LOCALE', '')
+"""
+Locale used for currency formatting. Defaults to the currently selected
+locale.
+"""
+
