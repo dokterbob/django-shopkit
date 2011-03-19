@@ -306,9 +306,6 @@ class OrderStateChangeBase(models.Model):
     """ State of the order, represented by a PositveSmallInteger field.
         Available choices can be configured in WEBSHOP_ORDER_STATES. 
     """
-    
-    notes = models.TextField(blank=True, verbose_name=('notes'))
-    """ Any notes manually added to a state change. """
 
 
 class OrderBase(AbstractPricedItemBase, DatedItemBase):
