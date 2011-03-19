@@ -54,6 +54,12 @@ class DiscountedItemBase(AbstractPricedItemBase):
         return self.get_price(**kwargs) - self.get_total_discount(**kwargs)
 
 
+
+""" 
+.. todo::
+    It is not clear whether the latter two models have any function at all
+    Consider deleting them.
+"""
 class DiscountedCartBase(DiscountedItemBase):
     """
     Base class for shopping carts which can have discounts applied to them.
