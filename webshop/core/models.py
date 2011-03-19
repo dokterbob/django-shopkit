@@ -370,7 +370,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         
         """
         
-        result = super(self, OrderBase).save(*args, **kwargs)
+        result = super(OrderBase, self).save(*args, **kwargs)
 
         orderstate_change_class = \
             get_model_from_string(ORDERSTATE_CHANGE_MODEL)
