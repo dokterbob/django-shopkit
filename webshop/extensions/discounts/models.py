@@ -29,7 +29,59 @@ PriceField = get_currency_field()
 from webshop.extensions.discounts.basemodels import DiscountedItemBase
 
 
-class DiscountedOrderMixin(DiscountedItemBase, models.Model):
+class DiscountedCartMixin(DiscountedItemBase):
+    """
+    Base class for shopping carts which can have discounts applied to them.
+    """
+
+    class Meta:
+        abstract = True
+
+    def get_total_discount(self, **kwargs):
+        """
+        Return the total discount. This consists of the sum of discounts
+        applicable to orders and the discounts applicable to items.
+        """
+        discount = self.get_order_discount(**kwargs)
+
+        for item in self.get_items():
+            discount += item.get_discount(**kwargs)
+
+        # Make sure the discount is never higher than the price of 
+        # the oringal item
+        price = self.get_price(**kwargs)
+        if discount > price:
+            return price
+
+        return discount
+
+    def get_order_discount(self, **kwargs):
+        """
+        Calculate the whole order discount, as distinct from discount
+        that apply to specific order items. This method must be implemented
+        in subclasses.
+        """
+        raise NotImplementedError
+
+
+class DiscountedCartItemMixin(DiscountedItemBase):
+    """
+    Base class for shopping cart items which can have discounts applied to
+    them.
+    """
+
+    class Meta:
+        abstract = True
+
+    def get_discount(self, **kwargs):
+        """
+        Get the discount applicable to this item. This method must be
+        implemented in subclasses.
+        """
+        raise NotImplementedError
+
+
+class DiscountedOrderMixin(DiscountedItemBase):
     """
     Base class for orders which can have discounts applied to them. This
     stores rather thab calculates the discounts for order persistence.
@@ -75,7 +127,7 @@ class DiscountedOrderMixin(DiscountedItemBase, models.Model):
         return order
 
 
-class DiscountedOrderItemMixin(DiscountedItemBase, models.Model):
+class DiscountedOrderItemMixin(DiscountedItemBase):
     """
     Mixin class for order items which can have discounts applied to them.
     """
