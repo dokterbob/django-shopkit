@@ -186,6 +186,7 @@ class CartBase(AbstractPricedItemBase):
 
         cartitem = self.get_item(product, **kwargs)
 
+        assert cartitem.product == product
         assert cartitem.product.pk, 'No pk for product, please save first'
 
         # We can do this without querying the actual value from the
@@ -194,6 +195,7 @@ class CartBase(AbstractPricedItemBase):
         cartitem.quantity += quantity
 
         cartitem.save()
+        assert cartitem.pk
 
         return cartitem
 
