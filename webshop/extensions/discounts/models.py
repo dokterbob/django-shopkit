@@ -19,7 +19,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 # Get the currently configured currency field, whatever it is
@@ -47,7 +46,7 @@ class DiscountedCartMixin(DiscountedItemBase):
         for item in self.get_items():
             discount += item.get_discount(**kwargs)
 
-        # Make sure the discount is never higher than the price of 
+        # Make sure the discount is never higher than the price of
         # the oringal item
         price = self.get_price(**kwargs)
         if discount > price:
@@ -90,7 +89,7 @@ class DiscountedOrderMixin(DiscountedItemBase):
     class Meta:
         abstract = True
 
-    order_discount = PriceField(verbose_name=_('whole order discount'))
+    order_discount = PriceField(verbose_name=_('order discount'))
     """
     Whole order discount, as distinct from discount
     that apply to specific order items.
@@ -117,14 +116,35 @@ class DiscountedOrderMixin(DiscountedItemBase):
     @classmethod
     def from_cart(cls, cart):
         """
-        Create an order from the shopping cart, accounting for possible
-        order discounts. Instantiates an order but does no saving.
+        Create an order from the shopping cart, calculating possible
+        discounts. Instantiates an order but does no saving.
         """
         order = super(DiscountedOrderMixin, cls).from_cart(cart)
 
-        order.order_discount = cart.get_order_discount()
+        order.update_discount()
 
         return order
+
+    def get_order_discount(self):
+        """
+        Return the discount for this order. This basically returns the
+        `order_discount` property. To recalculate/update this value, call the
+        `update_discount` method.
+        """
+        return self.order_discount
+
+    def update_discount(self, items=False):
+        """
+        Update order discounts - does *not* save the object. If items is
+        specified, discounts for related `OrderItem`'s are updated as well.
+        """
+        # Make sure we call the superclass here
+        superclass = super(DiscountedOrderMixin, self)
+        self.order_discount = superclass.get_order_discount()
+
+        if items:
+            for item in self.get_items():
+                item.update_discount()
 
 
 class DiscountedOrderItemMixin(DiscountedItemBase):
@@ -137,12 +157,6 @@ class DiscountedOrderItemMixin(DiscountedItemBase):
     discount = PriceField(verbose_name=_('discount'))
     """ The amount of discount applied to this item. """
 
-    def get_discount(self, **kwargs):
-        """
-        Wrapper around the `discount` property, providing for a generic API.
-        """
-        return self.discount
-
     @classmethod
     def from_cartitem(cls, cartitem):
         """
@@ -152,6 +166,21 @@ class DiscountedOrderItemMixin(DiscountedItemBase):
         superclass = super(DiscountedOrderItemMixin, cls)
         orderitem = superclass.from_itemcart(cartitem)
 
-        orderitem.discount = cartitem.get_discount()
+        orderitem.update_discount()
 
         return orderitem
+
+    def get_discount(self, **kwargs):
+        """
+        Return the discount for this item. This basically returns the
+        `discount` property. To recalculate/update this value, call the
+        `update_discount` method.
+        """
+        return self.discount
+
+    def update_discount(self):
+        """ Update the discount - does *not* save the object. """
+
+        # Make sure we call the superclass here
+        superclass = super(DiscountedOrderItemMixin, self)
+        self.discount = superclass.get_discount()
