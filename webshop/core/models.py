@@ -107,6 +107,12 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         
         return self.product.get_price(quantity=self.quantity, **kwargs)
 
+    def get_order_line(self):
+        """ 
+        Natural (unicode) representation of this cart item in an order
+        overview.
+        """
+        return unicode(self)
 
 class CartBase(AbstractPricedItemBase):
     """ Abstract base class for shopping carts. """
@@ -365,18 +371,13 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
     def get_items(self):
         """ Get all order items (with a quantity greater than 0). """
-        return self.orderitems_set.filter(quantity__gt=0)
+        return self.orderitem_set.filter(quantity__gt=0)
 
     @classmethod
     def from_cart(cls, cart, customer):
         """ 
         Instantiate an order based on the basis of a
         shopping cart, copying all the items. 
-
-        .. todo::
-            We should copy any eventual matching fields from the
-            cart into the order.
-        
         """
         order = cls(customer=customer)
 
@@ -426,7 +427,30 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
             orderstate_change_class(state=self.state, order=self).save()
         
         return result
-        
+
+    def get_price(self, **kwargs):
+        """ Wraps the `get_total_price` function. """
+
+        return self.get_total_price(**kwargs)
+
+    def get_total_price(self, **kwargs):
+        """
+        Gets the total price for all items in the order.
+        """
+
+        logger.debug('Calculating total price for order.')
+
+        # logger.debug(self.get_items()[0].get_total_price())
+
+        price = Decimal("0.0")
+
+        for orderitem in self.get_items():
+            item_price = orderitem.get_total_price(**kwargs)
+            logger.debug('Adding price %f for item \'%s\' to total price.' % \
+                (item_price, orderitem))
+            price += item_price
+
+        return price
 
 
 class PaymentBase(models.Model):

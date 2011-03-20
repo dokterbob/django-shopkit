@@ -46,7 +46,6 @@ class StockedCartItemMixin(StockedCartItemMixinBase):
         """
         Determine whether or not this item is available.
         """
-        
         return self.get_stocked_item().is_available()
 
 

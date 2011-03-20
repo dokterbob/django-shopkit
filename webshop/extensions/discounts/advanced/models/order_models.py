@@ -41,9 +41,23 @@ from webshop.extensions.discounts.basemodels import \
     DiscountedOrderBase, DiscountedOrderItemBase
 
 from webshop.extensions.discounts.settings import DISCOUNT_MODEL
+from webshop.core.utils import get_model_from_string
 
 
-class CalculatedOrderDiscountMixin(object):
+class CalculatedDiscountMixin(object):
+    """
+    Base class for items for which the discount is calculated using
+    a `Discount` model.
+    """
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the given arguments. """
+
+        discount_class = get_model_from_string(DISCOUNT_MODEL)
+        return discount_class.get_valid_discounts(**kwargs)
+
+
+class CalculatedOrderDiscountMixin(CalculatedDiscountMixin):
     """
     Mixin class for discounted objects for which an order discount can be
     calculated by calling `get_order_discount` and valid discounts can be
@@ -71,7 +85,7 @@ class CalculatedOrderDiscountMixin(object):
         return total_discount
 
 
-class CalculatedItemDiscountMixin(object):
+class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
     """
     Mixin class for discounted objects for which an item discount can be
     calculated by calling `get_order_discount` and valid discounts can be
@@ -81,6 +95,9 @@ class CalculatedItemDiscountMixin(object):
     def get_valid_discounts(self, **kwargs):
         """ Return valid discounts for the current order. """
         superclass = super(CalculatedItemDiscountMixin, self)
+
+        assert not 'product' in kwargs
+
         return superclass.get_valid_discounts(product=self.product,
                                               item_discounts=True,
                                               **kwargs)
@@ -113,13 +130,22 @@ class CalculatedDiscountedItemBase(models.Model):
 
     discounts = models.ManyToManyField(DISCOUNT_MODEL)
 
+    def get_valid_discounts(self, **kwargs):
+        """
+        Return valid discounts for this item.
+        Must be implemented elsewhere.
+        """
+
+        raise NotImplementedError
+
     def update_discount(self):
         """
         Call `update_discount` on the superclass to calculate the amount of
         discount, then store valid `Discount` objects for this order item.
         """
-        super(DiscountedOrderMixin, self).update_discount()
+        super(CalculatedDiscountedItemBase, self).update_discount()
 
+        assert self.pk, 'Object not saved, need PK for assigning discounts'
         self.discounts = self.get_valid_discounts()
 
 
@@ -140,9 +166,9 @@ class DiscountedCartItemMixin(CalculatedItemDiscountMixin,
     class Meta:
         abstract = True
 
-class DiscountedOrderMixin(CalculatedDiscountedItemBase,
+class DiscountedOrderMixin(DiscountedOrderBase,
                            CalculatedOrderDiscountMixin,
-                           DiscountedOrderBase):
+                           CalculatedDiscountedItemBase):
     """
     Mixin class for `Order` objects which have their discount calculated.
     """
@@ -150,8 +176,8 @@ class DiscountedOrderMixin(CalculatedDiscountedItemBase,
         abstract = True
 
 
-class DiscountedOrderItemMixin(CalculatedDiscountedItemBase,
-                               CalculatedItemDiscountMixin,
+class DiscountedOrderItemMixin(CalculatedItemDiscountMixin,
+                               CalculatedDiscountedItemBase,
                                DiscountedOrderItemBase):
     """
     Mixin class for `OrderItem` objects which have their discount calculated.

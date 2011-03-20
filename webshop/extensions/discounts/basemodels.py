@@ -121,7 +121,8 @@ class DiscountedOrderBase(DiscountedItemBase):
     class Meta:
         abstract = True
 
-    order_discount = PriceField(verbose_name=_('order discount'))
+    order_discount = PriceField(verbose_name=_('order discount'),
+                                default='0.00')
     """
     Whole order discount, as distinct from discount
     that apply to specific order items.
@@ -146,12 +147,12 @@ class DiscountedOrderBase(DiscountedItemBase):
         return discount
 
     @classmethod
-    def from_cart(cls, cart):
+    def from_cart(cls, *args, **kwargs):
         """
         Create an order from the shopping cart, calculating possible
         discounts. Instantiates an order but does no saving.
         """
-        order = super(DiscountedOrderBase, cls).from_cart(cart)
+        order = super(DiscountedOrderBase, cls).from_cart(*args, **kwargs)
 
         order.update_discount()
 
@@ -172,7 +173,11 @@ class DiscountedOrderBase(DiscountedItemBase):
         """
         # Make sure we call the superclass here
         superclass = super(DiscountedOrderBase, self)
+
         self.order_discount = superclass.get_order_discount()
+
+        logger.debug(u'Updating order discount for %s to %s',
+                     self, self.order_discount)
 
         if items:
             for item in self.get_items():
@@ -186,17 +191,27 @@ class DiscountedOrderItemBase(DiscountedItemBase):
     class Meta:
         abstract = True
 
-    discount = PriceField(verbose_name=_('discount'))
+    discount = PriceField(verbose_name=_('discount'), default='0.00')
     """ The amount of discount applied to this item. """
 
     @classmethod
-    def from_cartitem(cls, cartitem):
+    def from_cartitem(cls, *args, **kwargs):
         """
         Create a discounted `OrderItem` from a `CartItem`, storing the
         discount amount in the `OrderItem`'s `discount` property.
+
+        ..todo::
+            This is *not* a nice coding, we should figure out an elegant
+            way around this.
+
         """
         superclass = super(DiscountedOrderItemBase, cls)
-        orderitem = superclass.from_itemcart(cartitem)
+        orderitem = superclass.from_cartitem(*args, **kwargs)
+
+        # If we do not save, we cannot possibly do M2M relations, which
+        # we intend to do in some cases within .update_discount.
+        if not orderitem.pk:
+            orderitem.save()
 
         orderitem.update_discount()
 
@@ -216,4 +231,7 @@ class DiscountedOrderItemBase(DiscountedItemBase):
         # Make sure we call the superclass here
         superclass = super(DiscountedOrderItemBase, self)
         self.discount = superclass.get_discount()
+
+        logger.debug(u'Updating item discount for %s to %s',
+                     self, self.discount)
 

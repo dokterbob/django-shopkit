@@ -287,12 +287,15 @@ class ProductDiscountMixin(models.Model):
     """ Product this discount relates to. """
 
     @classmethod
-    def get_valid_discounts(cls, product, **kwargs):
+    def get_valid_discounts(cls, **kwargs):
         """ Return valid discounts for a specified product """
 
         superclass = super(ProductDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
+        product = kwargs.get('product', None)
+        # When a product has been specified, allow discounts for this
+        # specific product and discounts for which no product is specified
         valid = valid.filter(product=product) | \
                 valid.filter(product__isnull=True)
 
@@ -311,12 +314,16 @@ class ManyProductDiscountMixin(models.Model):
     """ Products this discount relates to. """
 
     @classmethod
-    def get_valid_discounts(cls, product, **kwargs):
+    def get_valid_discounts(cls, **kwargs):
         """ Return valid discounts for a specified product """
 
-        superclass = super(ProductDiscountMixin, cls)
+        superclass = super(ManyProductDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
+        # Note: products=product here might be wrong -> products__in=product
+        product = kwargs.get('product', None)
+        # When a product has been specified, allow discounts for this
+        # specific product and discounts for which no product is specified
         valid = valid.filter(products=product) | \
                 valid.filter(products__isnull=True)
 
@@ -341,7 +348,7 @@ class DateRangeDiscountMixin(models.Model):
                                   of this discount.'))
 
     @classmethod
-    def get_valid_discounts(cls, date=None, **kwargs):
+    def get_valid_discounts(cls, **kwargs):
         """
         Return valid discounts for a specified date, taking the current
         date if no date is specified. When no start or end date are specified,
@@ -354,6 +361,7 @@ class DateRangeDiscountMixin(models.Model):
         superclass = super(DateRangeDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
+        date = kwargs.get('date', None)
         # If no date is set, take today.
         if not date:
             date = datetime.today()
@@ -389,12 +397,13 @@ if CATEGORIES:
         """ Category this discount relates to. """
 
         @classmethod
-        def get_valid_discounts(cls, category, **kwargs):
+        def get_valid_discounts(cls, **kwargs):
             """ Return valid discounts for a specified product """
 
             superclass = super(CategoryDiscountMixin, cls)
-            valid = superclass.get_valid_prices(**kwargs)
+            valid = superclass.get_valid_discounts(**kwargs)
 
+            category = kwargs.get('category', None)
             valid = valid.filter(category=category) | \
                     valid.filter(category__isnull=True)
 
@@ -413,12 +422,13 @@ if CATEGORIES:
         """ Categories this discount relates to. """
 
         @classmethod
-        def get_valid_discounts(cls, category, **kwargs):
+        def get_valid_discounts(cls, **kwargs):
             """ Return valid discounts for a specified product """
 
             superclass = super(ManyCategoryDiscountMixin, cls)
-            valid = superclass.get_valid_prices(**kwargs)
+            valid = superclass.get_valid_discounts(**kwargs)
 
+            category = kwargs.get('category', None)
             valid = valid.filter(categories=category) | \
                     valid.filter(categories__isnull=True)
 
