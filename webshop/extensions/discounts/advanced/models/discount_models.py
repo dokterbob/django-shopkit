@@ -56,7 +56,7 @@ class DiscountBase(models.Model):
         all discounts are valid.
         """
 
-        raise cls.objects.all()
+        return cls.objects.all()
 
     def is_valid(self, **kwargs):
         """
