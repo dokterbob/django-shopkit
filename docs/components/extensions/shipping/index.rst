@@ -10,4 +10,6 @@ Shipping
    advanced/index.rst
    settings.rst
    models.rst
+   basemodels.rst
+
 
