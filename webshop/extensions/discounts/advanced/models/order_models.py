@@ -36,14 +36,19 @@ from decimal import Decimal
 
 from webshop.extensions.discounts.settings import COUPON_LENGTH
 
+from webshop.extensions.discounts.basemodels import \
+    DiscountedCartBase, DiscountedCartItemBase, \
+    DiscountedOrderBase, DiscountedOrderItemBase
+
+from webshop.extensions.discounts.settings import DISCOUNT_MODEL
+
 
 class CalculatedOrderDiscountMixin(object):
     """
-    Base class for orders or carts for which the discount is the
-    order discount is calculated rather than retrieved from persistent
-    storage.
+    Mixin class for discounted objects for which an order discount can be
+    calculated by calling `get_order_discount` and valid discounts can be
+    obtained by calling `get_valid_discounts`.
     """
-
     def get_valid_discounts(self, **kwargs):
         """ Return valid discounts for the current order. """
         superclass = super(CalculatedOrderDiscountMixin, self)
@@ -66,30 +71,11 @@ class CalculatedOrderDiscountMixin(object):
         return total_discount
 
 
-class DiscountCouponMixin(models.Model):
-    """
-    Mixin class for orders or cart for which discounts are calculated based
-    on a given coupon code.
-    """
-
-    class Meta:
-        abstract = True
-
-    coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
-                                   max_length=COUPON_LENGTH, blank=True)
-    """ Coupon code entered for the current order. """
-
-    def get_valid_discounts(self, **kwargs):
-        """ Return valid discounts for the current order. """
-        superclass = super(DiscountCouponMixin, self)
-        return superclass.get_valid_discounts(coupon_code=self.coupon_code,
-                                              **kwargs)
-
-
 class CalculatedItemDiscountMixin(object):
     """
-    Base class for order or cart items for which the discount is
-    calculated rather than retrieved from persistent storage.
+    Mixin class for discounted objects for which an item discount can be
+    calculated by calling `get_order_discount` and valid discounts can be
+    obtained by calling `get_valid_discounts`.
     """
 
     def get_valid_discounts(self, **kwargs):
@@ -114,3 +100,81 @@ class CalculatedItemDiscountMixin(object):
                                                     **kwargs)
 
         return total_discount
+
+
+class CalculatedDiscountedItemBase(models.Model):
+    """
+    Mixin class for `Order`'s and `OrderItem`'s for which calculated discounts
+    are persistently stored in a `discounts` property upon calling the
+    `update_discount` method.
+    """
+    class Meta:
+        abstract = True
+
+    discounts = models.ManyToManyField(DISCOUNT_MODEL)
+
+    def update_discount(self):
+        """
+        Call `update_discount` on the superclass to calculate the amount of
+        discount, then store valid `Discount` objects for this order item.
+        """
+        super(DiscountedOrderMixin, self).update_discount()
+
+        self.discounts = self.get_valid_discounts()
+
+
+class DiscountedCartMixin(CalculatedOrderDiscountMixin,
+                          DiscountedCartBase):
+    """
+    Mixin class for `Cart` objects which have their discount calculated.
+    """
+    class Meta:
+        abstract = True
+
+
+class DiscountedCartItemMixin(CalculatedItemDiscountMixin,
+                              DiscountedCartItemBase):
+    """
+    Mixin class for `Cart` objects which have their discount calculated.
+    """
+    class Meta:
+        abstract = True
+
+class DiscountedOrderMixin(CalculatedDiscountedItemBase,
+                           CalculatedOrderDiscountMixin,
+                           DiscountedOrderBase):
+    """
+    Mixin class for `Order` objects which have their discount calculated.
+    """
+    class Meta:
+        abstract = True
+
+
+class DiscountedOrderItemMixin(CalculatedDiscountedItemBase,
+                               CalculatedItemDiscountMixin,
+                               DiscountedOrderItemBase):
+    """
+    Mixin class for `OrderItem` objects which have their discount calculated.
+    """
+    class Meta:
+        abstract = True
+
+
+class DiscountCouponMixin(models.Model):
+    """
+    Model mixin class for orders or cart for which discounts are calculated based
+    on a given coupon code.
+    """
+
+    class Meta:
+        abstract = True
+
+    coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
+                                   max_length=COUPON_LENGTH, blank=True)
+    """ Coupon code entered for the current order. """
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current order. """
+        superclass = super(DiscountCouponMixin, self)
+        return superclass.get_valid_discounts(coupon_code=self.coupon_code,
+                                              **kwargs)
