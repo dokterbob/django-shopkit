@@ -115,99 +115,136 @@ class CartBase(AbstractPricedItemBase):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
-    
+
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
     """ Customer who owns this cart, if any. """
-    
+
     def get_items(self):
-        """ Gets all items from the cart with a quantity > 0. """
-        
+        """ Gets items from the cart with a quantity > 0. """
+
         return self.cartitem_set.filter(quantity__gt=0)
-    
-    def get_item(self, product):
-        """ Either instantiates and returns a CartItem for the 
+
+    def get_item(self, product, create=True, **kwargs):
+        """ Either instantiates and returns a CartItem for the
             Cart-Product combination or fetches it from the
             database. The creation is lazy: the resulting CartItem
-            is not automatically saved. """
-        
+            is not automatically saved.
+
+            :param:create:
+                Whether or not to create a new object if no object was found.
+
+            :param:**kwargs:
+                If `kwargs` are specified, these signify filters or instantiation
+                parameters for getting or creating the item.
+        """
+
         # It makes more sense to execute this code on a higher level
         # instead of everytime a cart item is requested.
         cartitem_class = get_model_from_string(CARTITEM_MODEL)
-        
+
         # Note that we won't use 'get_or_create' here as it automatically
         # saves the object.
         try:
-            cartitem = cartitem_class.objects.get(cart=self, 
-                                                  product=product)
-            
-            logger.debug('Found existing cart item for product \'%s\'' % product)
-            
-        except cartitem_class.DoesNotExist:
-            logger.debug('Product \'%s\' not already in Cart, creating new item.' % product)
+            cartitem = cartitem_class.objects.get(cart=self,
+                                                  product=product,
+                                                  **kwargs)
 
-            cartitem = cartitem_class(cart=self,
-                                      product=product)
-        
+            logger.debug('Found existing cart item for product \'%s\'' \
+                            % product)
+
+        except cartitem_class.DoesNotExist:
+            if create:
+                logger.debug('Product \'%s\' not already in Cart, creating item.' \
+                                % product)
+
+                cartitem = cartitem_class(cart=self,
+                                          product=product,
+                                          **kwargs)
+            else:
+                return None
+
         return cartitem
-        
-    def add_item(self, product, quantity=1):
+
+    def add_item(self, product, quantity=1, **kwargs):
         """ Adds the specified product in the specified quantity
             to the current shopping Cart. This effectively creates
             a CartItem for the Product-Cart combination or updates
             it when a CartItem already exists.
-            
-            It returns an _unsaved_ instance of a CartItem, so the
-            called is able to determine whether the product was already
-            in the shopping cart or not. 
+
+            When `kwargs` are specified, these are passed along to
+            `get_item` and signify properties of the `CartItem`.
+
+            :returns: added `CartItem`
         """
         assert isinstance(quantity, int), 'Quantity not an integer.'
-        
-        cartitem = self.get_item(product)
-        
-        # We can do this without querying the actual value from the 
+
+        cartitem = self.get_item(product, **kwargs)
+
+        assert cartitem.product.pk, 'No pk for product, please save first'
+
+        # We can do this without querying the actual value from the
         # database.
         # cartitem.quantity = models.F('quantity') + quantity
         cartitem.quantity += quantity
-        
+
+        cartitem.save()
+
         return cartitem
-    
+
+    def remove_item(self, product, **kwargs):
+        """
+        Remove item from cart.
+
+        :returns:
+            True if the item was deleted succesfully, False if the item
+            could not be found.
+        """
+
+        cartitem = self.get_item(product, create=False, **kwargs)
+
+        if cartitem:
+            cartitem.delete()
+            return True
+
+        return False
+
     def get_total_items(self):
-        """ 
-        Gets the total quantity of products in the shopping cart. 
-        
+        """
+        Gets the total quantity of products in the shopping cart.
+
         .. todo::
             Use aggregation here.
         """
-        
+
         quantity = 0
-        
+
         for cartitem in self.get_items():
             quantity += cartitem.quantity
-        
+
         return quantity
-    
+
     def get_price(self, **kwargs):
         """ Wraps the `get_total_price` function. """
-        
+
         return self.get_total_price(**kwargs)
-    
+
     def get_total_price(self, **kwargs):
-        """ 
-        Gets the total price for all items in the cart. 
         """
-        
+        Gets the total price for all items in the cart.
+        """
+
         logger.debug('Calculating total price for shopping cart.')
-        
+
         # logger.debug(self.get_items()[0].get_total_price())
-        
+
         price = Decimal("0.0")
-        
+
         for cartitem in self.get_items():
             item_price = cartitem.get_total_price(**kwargs)
             logger.debug('Adding price %f for item \'%s\' to total cart price.' % \
                 (item_price, cartitem))
             price += item_price
-        
+
         return price
 
     def get_order_line(self):
