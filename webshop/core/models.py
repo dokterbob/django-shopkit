@@ -51,7 +51,7 @@ PriceField = get_currency_field()
 
 class UserCustomerBase(AbstractCustomerBase, User):
     """ Abstract base class for customers which can also be Django users. """
-    
+
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
 
@@ -62,7 +62,7 @@ class ProductBase(AbstractPricedItemBase):
         verbose_name = _('product')
         verbose_name_plural = ('products')
         abstract = True
-    
+
     objects = models.Manager()
     in_shop = objects
     """ The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
@@ -83,32 +83,32 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     cart = models.ForeignKey(CART_MODEL)
     """ Shopping cart this item belongs to. """
-    
+
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this shopping cart item. """
-    
+
     def __unicode__(self):
         """ A natural representation for a cart item is the product. """
-        
+
         return unicode(self.product)
-    
+
     def get_price(self, **kwargs):
         """ Wraps `get_total_price()`. """
-        
+
         return self.get_total_price(**kwargs)
-    
+
     def get_total_price(self, **kwargs):
         """ Gets the tatal price for the items in the cart. """
-        
+
         return self.quantity*self.get_piece_price(**kwargs)
-    
+
     def get_piece_price(self, **kwargs):
         """ Gets the price per piece for a given quantity of items. """
-        
+
         return self.product.get_price(quantity=self.quantity, **kwargs)
 
     def get_order_line(self):
-        """ 
+        """
         Natural (unicode) representation of this cart item in an order
         overview.
         """
@@ -264,7 +264,7 @@ class CartBase(AbstractPricedItemBase):
 
 
 class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
-    """ 
+    """
     Abstract base class for order items. An `OrderItem` should, ideally, copy all
     specific properties from the shopping cart as an order should not change
     at all when the objects they relate to change.
@@ -289,6 +289,11 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     order_line = models.CharField(verbose_name=_('description'),
                                   max_length=255)
     """ Description of this OrderItem as shown on the bill. """
+
+    def __unicode__(self):
+        """ A natural representation for a cart item is the product. """
+
+        return unicode(self.product)
 
     @classmethod
     def from_cartitem(cls, cartitem, order):
@@ -315,6 +320,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         orderitem.piece_price = cartitem.get_piece_price()
         orderitem.order_line = cartitem.get_order_line()
         orderitem.product = cartitem.product
+        orderitem.quantity = cartitem.quantity
 
         return orderitem
 
@@ -336,20 +342,20 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
 class OrderStateChangeBase(models.Model):
     """ Abstract base class for logging order state changes. """
-    
+
     class Meta:
         verbose_name = _('order state change')
         verbose_name_plural = _('order state changes')
         abstract = True
-    
+
     order = models.ForeignKey(ORDER_MODEL)
     date = models.DateTimeField(auto_now_add=True, verbose_name=_('date'))
     """ Date at which the state change ocurred. """
-    
-    state = models.PositiveSmallIntegerField(_('status'), 
+
+    state = models.PositiveSmallIntegerField(_('status'),
                                              choices=ORDER_STATES)
     """ State of the order, represented by a PositveSmallInteger field.
-        Available choices can be configured in WEBSHOP_ORDER_STATES. 
+        Available choices can be configured in WEBSHOP_ORDER_STATES.
     """
 
 
@@ -363,23 +369,38 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
     """ Customer whom this order belongs to. """
-    
-    state = models.PositiveSmallIntegerField(_('status'), 
+
+    state = models.PositiveSmallIntegerField(_('status'),
                                              choices=ORDER_STATES,
                                              default=DEFAULT_ORDER_STATE)
     """ State of the order, represented by a PositveSmallInteger field.
-        Available choices can be configured in WEBSHOP_ORDER_STATES. 
+        Available choices can be configured in WEBSHOP_ORDER_STATES.
     """
 
     def get_items(self):
         """ Get all order items (with a quantity greater than 0). """
         return self.orderitem_set.filter(quantity__gt=0)
 
+    def get_total_items(self):
+        """
+        Gets the total quantity of products in the shopping cart.
+
+        .. todo::
+            Use aggregation here.
+        """
+
+        quantity = 0
+
+        for orderitem in self.get_items():
+            quantity += orderitem.quantity
+
+        return quantity
+
     @classmethod
     def from_cart(cls, cart, customer):
-        """ 
+        """
         Instantiate an order based on the basis of a
-        shopping cart, copying all the items. 
+        shopping cart, copying all the items.
         """
         order = cls(customer=customer)
 
@@ -395,21 +416,24 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
             assert orderitem, 'Something went wrong creating an \
                                OrderItem from a CartItem.'
+            assert orderitem.pk
 
+        assert cart.cartitem_set.count() == order.orderitem_set.count()
+        assert len(cart.get_items()) == len(order.get_items())
 
         return order
 
     def save(self, *args, **kwargs):
-        """ 
-        
-        Make sure we log a state change where applicable. 
-        
+        """
+
+        Make sure we log a state change where applicable.
+
         .. todo::
             Create a classmethod for creating an OrderState from an order class
             and state.
-        
+
         """
-        
+
         result = super(OrderBase, self).save(*args, **kwargs)
 
         orderstate_change_class = \
@@ -417,17 +441,22 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         try:
             latest_statechange = self.orderstatechange_set.all().latest('date')
-            
+
             if latest_statechange.state != self.state:
                 # There's a new state change to be made
-                
+                logger.debug(u'Updating state %s for order %s',
+                             self.get_state_display(), self)
+
                 orderstate_change_class(state=self.state, order=self).save()
-            
+
         except orderstate_change_class.DoesNotExist:
             # No pre-existing state change exists, create new one.
 
+            logger.debug(u'Creating new state %s for order %s',
+                         self.get_state_display(), self)
+
             orderstate_change_class(state=self.state, order=self).save()
-        
+
         return result
 
     def get_price(self, **kwargs):
@@ -454,10 +483,15 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         return price
 
+    def __unicode__(self):
+        """ Textual representation of order. """
+
+        return u"Order by %s on %s" % (self.customer, self.date_added.date())
+
 
 class PaymentBase(models.Model):
     """ Abstract base class for payments. """
-    
+
     order = models.ForeignKey(ORDER_MODEL)
     """ Order this payment belongs to. """
 
