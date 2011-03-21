@@ -358,6 +358,19 @@ class OrderStateChangeBase(models.Model):
         Available choices can be configured in WEBSHOP_ORDER_STATES.
     """
 
+    @classmethod
+    def get_latest(cls, order):
+        """ 
+        Get the latest state change for a particular order, instantiate
+        (but not save) a new one if necessary.
+        """
+        try:
+            return cls.objects.all().latest('date')
+        except cls.DoesNotExist:
+            logger.debug(u'Latest state change for %s not found, \
+                           instantiating one.', order)
+            return cls()
+
 
 class OrderBase(AbstractPricedItemBase, DatedItemBase):
     """ Abstract base class for orders. """
@@ -425,37 +438,30 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
     def save(self, *args, **kwargs):
         """
-
         Make sure we log a state change where applicable.
-
-        .. todo::
-            Create a classmethod for creating an OrderState from an order class
-            and state.
-
         """
+
+        existed_before = bool(self.pk)
 
         result = super(OrderBase, self).save(*args, **kwargs)
 
         orderstate_change_class = \
             get_model_from_string(ORDERSTATE_CHANGE_MODEL)
 
-        try:
-            latest_statechange = self.orderstatechange_set.all().latest('date')
+        latest_statechange = orderstate_change_class.get_latest(order=self)
 
-            if latest_statechange.state != self.state:
-                # There's a new state change to be made
-                logger.debug(u'Updating state %s for order %s',
-                             self.get_state_display(), self)
-
-                orderstate_change_class(state=self.state, order=self).save()
-
-        except orderstate_change_class.DoesNotExist:
-            # No pre-existing state change exists, create new one.
-
-            logger.debug(u'Creating new state %s for order %s',
-                         self.get_state_display(), self)
+        if not self.state or latest_statechange.state != self.state:
+            # There's a new state change to be made
+            logger.debug(u'Saving state change from %s to %s for %s',
+                         latest_statechange.get_state_display(),
+                         self.get_state_display(),
+                         self)
 
             orderstate_change_class(state=self.state, order=self).save()
+        else:
+            logger.debug(u'Same state for %s as before, not saving change.',
+                         self.state)
+            assert not existed_before
 
         return result
 
@@ -486,7 +492,8 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return u"Order by %s on %s" % (self.customer, self.date_added.date())
+        return u"Order %d by %s on %s" % \
+            (self.pk, self.customer, self.date_added.date())
 
 
 class PaymentBase(models.Model):
