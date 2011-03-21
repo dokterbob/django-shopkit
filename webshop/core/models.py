@@ -32,6 +32,7 @@ from webshop.core.settings import PRODUCT_MODEL, CART_MODEL, \
                                   ORDERITEM_MODEL, CUSTOMER_MODEL, \
                                   ORDERSTATE_CHANGE_MODEL, ORDER_STATES, \
                                   DEFAULT_ORDER_STATE
+from webshop.core import signals
 from webshop.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
                                     QuantizedItemBase, AbstractCustomerBase
 
@@ -46,6 +47,8 @@ PriceField = get_currency_field()
     probably integrate this functionality into the core.
 """
 
+from webshop.core.listeners import *
+
 
 """ Abstract base models for essential shop components. """
 
@@ -54,6 +57,7 @@ class UserCustomerBase(AbstractCustomerBase, User):
 
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
+
 
 class ProductBase(AbstractPricedItemBase):
     """ Abstract base class for products in the webshop. """
@@ -113,6 +117,7 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         overview.
         """
         return unicode(self)
+
 
 class CartBase(AbstractPricedItemBase):
     """ Abstract base class for shopping carts. """
@@ -358,18 +363,24 @@ class OrderStateChangeBase(models.Model):
         Available choices can be configured in WEBSHOP_ORDER_STATES.
     """
 
+    message = models.CharField(_('message'),
+                               blank=True, null=True, max_length=255)
+
     @classmethod
     def get_latest(cls, order):
-        """ 
-        Get the latest state change for a particular order, instantiate
-        (but not save) a new one if necessary.
+        """
+        Get the latest state change for a particular order, or `None` if no
+        `StateChange` is available.
         """
         try:
-            return cls.objects.all().latest('date')
+            return cls.objects.filter(order=order).latest('date')
         except cls.DoesNotExist:
-            logger.debug(u'Latest state change for %s not found, \
-                           instantiating one.', order)
-            return cls()
+            logger.debug(u'Latest state change for %s not found', order)
+            return None
+
+    def __unicode__(self):
+        return _(u'%s on %s to %s: %s') % \
+            (self.order, self.date, self.state, self.message)
 
 
 class OrderBase(AbstractPricedItemBase, DatedItemBase):
@@ -436,32 +447,62 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         return order
 
-    def save(self, *args, **kwargs):
+    def _update_state(self, message=None):
         """
-        Make sure we log a state change where applicable.
+        Update the order state, optionaly attach a message to the state
+        change. When no message has been given and the order state is the
+        same as the previous order state, no action is performed.
         """
 
-        existed_before = bool(self.pk)
-
-        result = super(OrderBase, self).save(*args, **kwargs)
+        assert self.pk, 'Cannot update state for unsaved order.'
 
         orderstate_change_class = \
             get_model_from_string(ORDERSTATE_CHANGE_MODEL)
 
         latest_statechange = orderstate_change_class.get_latest(order=self)
 
-        if not self.state or latest_statechange.state != self.state:
-            # There's a new state change to be made
-            logger.debug(u'Saving state change from %s to %s for %s',
-                         latest_statechange.get_state_display(),
-                         self.get_state_display(),
-                         self)
-
-            orderstate_change_class(state=self.state, order=self).save()
+        if latest_statechange:
+            latest_state = latest_statechange.state
         else:
-            logger.debug(u'Same state for %s as before, not saving change.',
-                         self.state)
-            assert not existed_before
+            latest_state = None
+
+        logger.debug('Considering state change: %s %s %s',
+                     self,
+                     latest_state,
+                     self.state)
+        if latest_state is None or latest_state != self.state or message:
+            state_change = orderstate_change_class(state=self.state,
+                                                   order=self,
+                                                   message=message)
+            state_change.save()
+
+            # There's a new state change to be made
+            logger.debug(u'Saved state change from %s to %s for %s with message \'%s\'',
+                         latest_state,
+                         self.state,
+                         self,
+                         message)
+
+            # Send order_state_change signal
+            signals.order_state_change.send(sender=self,
+                                            old_state=latest_state,
+                                            new_state=self.state,
+                                            state_change=state_change)
+
+
+
+        else:
+            logger.debug(u'Same state %s for %s, not saving change.',
+                         self.state, self)
+
+    def save(self, *args, **kwargs):
+        """
+        Make sure we log a state change where applicable.
+        """
+
+        result = super(OrderBase, self).save(*args, **kwargs)
+
+        self._update_state()
 
         return result
 
@@ -492,7 +533,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return u"Order %d by %s on %s" % \
+        return _(u"%d by %s on %s") % \
             (self.pk, self.customer, self.date_added.date())
 
 
