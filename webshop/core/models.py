@@ -141,10 +141,10 @@ class CartBase(AbstractPricedItemBase):
             database. The creation is lazy: the resulting CartItem
             is not automatically saved.
 
-            :param:create:
+            :param create:
                 Whether or not to create a new object if no object was found.
 
-            :param:**kwargs:
+            :param kwargs:
                 If `kwargs` are specified, these signify filters or instantiation
                 parameters for getting or creating the item.
         """

@@ -19,3 +19,17 @@
 from django.dispatch import Signal
 
 order_state_change = Signal()
+""" 
+Signal called whenever an order changes from one state to another.
+
+Listeners should have the following signature::
+
+    def mylistener(sender, old_state, new_state, state_change, **kwargs):
+        ...
+
+
+:param sender: `Order` object
+:param old_state: (raw value) of old state
+:param new_state: (raw value) of new state
+:param state_change: `OrderStateChange` pertaining to the state change
+"""

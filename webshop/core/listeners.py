@@ -21,10 +21,11 @@ logger = logging.getLogger(__name__)
 
 from webshop.core.signals import order_state_change
 
-
-logger.debug('Registering debug logging signal listener.')
-
 def state_change_logger(sender, old_state, new_state, state_change, **kwargs):
+    """
+    Debugging listener for `order_state_change`,
+    logging each and every state change.
+    """
     logger.debug('State change signal: from %s to %s for %s',
                  old_state, new_state, sender)
 
