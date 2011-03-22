@@ -421,12 +421,12 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         return quantity
 
     @classmethod
-    def from_cart(cls, cart, customer):
+    def from_cart(cls, cart):
         """
         Instantiate an order based on the basis of a
         shopping cart, copying all the items.
         """
-        order = cls(customer=customer)
+        order = cls(customer=cart.customer)
 
         # Save in order to be able to associate items
         order.save()
