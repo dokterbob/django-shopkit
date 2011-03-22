@@ -132,7 +132,7 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
         return total_discount
 
 
-class CalculatedDiscountedItemMixin(models.Model):
+class CalculatedDiscountedItemBase(models.Model):
     """
     Mixin class for `Order`'s and `OrderItem`'s for which calculated discounts
     are persistently stored in a `discounts` property upon calling the
