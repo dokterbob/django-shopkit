@@ -66,7 +66,14 @@ class CalculatedOrderDiscountMixin(CalculatedDiscountMixin):
     def get_valid_discounts(self, **kwargs):
         """ Return valid discounts for the current order. """
         superclass = super(CalculatedOrderDiscountMixin, self)
-        return superclass.get_valid_discounts(order_discounts=True, **kwargs)
+
+        discounts = \
+            superclass.get_valid_discounts(order_discounts=True, **kwargs)
+
+        logger.debug(u'Returning %s as valid order discounts for %s',
+                     discounts, self)
+
+        return discounts
 
     def get_order_discount(self, **kwargs):
         """
@@ -98,9 +105,15 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
 
         assert not 'product' in kwargs
 
-        return superclass.get_valid_discounts(product=self.product,
-                                              item_discounts=True,
-                                              **kwargs)
+        discounts = \
+            superclass.get_valid_discounts(product=self.product,
+                                           item_discounts=True,
+                                           **kwargs)
+
+        logger.debug(u'Returning %s as valid order item discounts for %s',
+                     discounts, self)
+
+        return discounts
 
 
     def get_total_discount(self, **kwargs):
@@ -119,7 +132,7 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
         return total_discount
 
 
-class CalculatedDiscountedItemBase(models.Model):
+class CalculatedDiscountedItemMixin(models.Model):
     """
     Mixin class for `Order`'s and `OrderItem`'s for which calculated discounts
     are persistently stored in a `discounts` property upon calling the
@@ -130,23 +143,20 @@ class CalculatedDiscountedItemBase(models.Model):
 
     discounts = models.ManyToManyField(DISCOUNT_MODEL)
 
-    def get_valid_discounts(self, **kwargs):
-        """
-        Return valid discounts for this item.
-        Must be implemented elsewhere.
-        """
-
-        raise NotImplementedError
-
     def update_discount(self):
         """
         Call `update_discount` on the superclass to calculate the amount of
         discount, then store valid `Discount` objects for this order item.
         """
-        super(CalculatedDiscountedItemBase, self).update_discount()
+        super(CalculatedDiscountedItemMixin, self).update_discount()
 
         assert self.pk, 'Object not saved, need PK for assigning discounts'
         self.discounts = self.get_valid_discounts()
+
+        assert self.get_discount() == Decimal('0.00') or \
+            (self.get_discount() and self.discounts)
+
+        logger.debug('Storing discounts %s for %s', self.discounts, self)
 
 
 class DiscountedCartMixin(CalculatedOrderDiscountMixin,
