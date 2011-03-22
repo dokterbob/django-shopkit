@@ -16,14 +16,6 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-# This file is part of django-webshop.
-# 
-# django-webshop: a webshop application framework, similar to the way that
-# Django is a web application framework. It, essentially, is a toolkit for
-# building customized webshop applications using Django, for 'perfectionists
-# with deadlines'.
-# Copyright (C) 2010 Mathijs de Bruin
-
 import distribute_setup
 distribute_setup.use_setuptools()
 
