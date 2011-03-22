@@ -104,7 +104,12 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
     def get_total_price(self, **kwargs):
         """ Gets the tatal price for the items in the cart. """
 
-        return self.quantity*self.get_piece_price(**kwargs)
+        piece_price = self.get_piece_price(**kwargs)
+        assert isinstance(piece_price, Decimal)
+
+        price = self.quantity*piece_price
+
+        return price
 
     def get_piece_price(self, **kwargs):
         """ Gets the price per piece for a given quantity of items. """
@@ -234,6 +239,7 @@ class CartBase(AbstractPricedItemBase):
         for cartitem in self.get_items():
             quantity += cartitem.quantity
 
+        assert isinstance(quantity, int)
         return quantity
 
     def get_price(self, **kwargs):
@@ -256,6 +262,8 @@ class CartBase(AbstractPricedItemBase):
             item_price = cartitem.get_total_price(**kwargs)
             logger.debug('Adding price %f for item \'%s\' to total cart price.' % \
                 (item_price, cartitem))
+            assert isinstance(item_price, Decimal)
+
             price += item_price
 
         return price
@@ -337,7 +345,12 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     def get_total_price(self, **kwargs):
         """ Gets the tatal price for the items in the cart. """
 
-        return self.quantity*self.get_piece_price(**kwargs)
+        piece_price = self.get_piece_price(**kwargs)
+        assert isinstance(piece_price, Decimal)
+
+        price = self.quantity*piece_price
+
+        return price
 
     def get_piece_price(self, **kwargs):
         """ Gets the price per piece for a given quantity of items. """
@@ -416,6 +429,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         quantity = 0
 
         for orderitem in self.get_items():
+            assert isinstance(orderitem.quantity, int)
             quantity += orderitem.quantity
 
         return quantity
@@ -526,6 +540,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
             item_price = orderitem.get_total_price(**kwargs)
             logger.debug('Adding price %f for item \'%s\' to total price.' % \
                 (item_price, orderitem))
+            assert isinstance(item_price, Decimal)
             price += item_price
 
         return price

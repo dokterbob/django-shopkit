@@ -19,6 +19,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from decimal import Decimal
+
 from webshop.core.basemodels import AbstractPricedItemBase
 
 from django.utils.translation import ugettext_lazy as _
@@ -41,6 +43,10 @@ class DiscountedItemBase(AbstractPricedItemBase):
         `get_total_discount`.
         """
 
+        discount = self.get_total_discount(**kwargs)
+
+        logger.debug('Total discount for %s: %s', self, discount)
+
         return self.get_total_discount(**kwargs)
 
     def get_total_discount(self, **kwargs):
@@ -51,13 +57,21 @@ class DiscountedItemBase(AbstractPricedItemBase):
 
         raise NotImplementedError
 
-    def get_price_with_discount(self, **kwargs):
-        """ Get the price with the discount applied. """
-        assert self.get_total_discount(**kwargs) < self.get_price(**kwargs), \
-            'Discount is higher than item price - discounted price would be\
-             negative!'
+    def get_price_without_discount(self, **kwargs):
+        return super(DiscountedItemBase, self).get_price(**kwargs)
 
-        return self.get_price(**kwargs) - self.get_total_discount(**kwargs)
+    def get_price(self, **kwargs):
+        """ Get the price with the discount applied. """
+        undiscounted = self.get_price_without_discount(**kwargs)
+        discount = self.get_total_discount(**kwargs)
+
+        # # import ipdb; ipdb.set_trace()
+        # if discount > undiscounted:
+        #     import ipdb; ipdb.set_trace()
+        assert discount <= undiscounted, \
+            'Discount is higher than item price - discounted price negative!'
+
+        return undiscounted - discount
 
 
 class DiscountedCartBase(DiscountedItemBase):
@@ -76,13 +90,17 @@ class DiscountedCartBase(DiscountedItemBase):
         discount = self.get_order_discount(**kwargs)
 
         for item in self.get_items():
-            discount += item.get_discount(**kwargs)
+            item_discount = item.get_discount(**kwargs)
+            assert isinstance(item_discount, Decimal)
+            discount += item_discount
 
         # Make sure the discount is never higher than the price of
         # the oringal item
-        price = self.get_price(**kwargs)
+        price = self.get_price_without_discount(**kwargs)
         if discount > price:
-            return price
+            logger.info('Discount %s higher than price %s. Lowering to price.',
+                       discount, price)
+            discount = price
 
         return discount
 
@@ -122,7 +140,7 @@ class DiscountedOrderBase(DiscountedItemBase):
         abstract = True
 
     order_discount = PriceField(verbose_name=_('order discount'),
-                                default='0.00')
+                                default=Decimal('0.00'))
     """
     Whole order discount, as distinct from discount
     that apply to specific order items.
@@ -136,12 +154,16 @@ class DiscountedOrderBase(DiscountedItemBase):
         discount = self.order_discount
 
         for item in self.get_items():
-            discount += item.get_discount(**kwargs)
+            item_discount = item.get_discount(**kwargs)
+            assert isinstance(item_discount, Decimal)
+            discount += item_discount
 
         # Make sure the discount is never higher than the price of
         # the oringal item
-        price = self.get_price(**kwargs)
+        price = self.get_price_without_discount(**kwargs)
         if discount > price:
+            logger.info('Discount %s higher than price %s. Lowering to price.',
+                       discount, price)
             return price
 
         return discount
@@ -166,10 +188,9 @@ class DiscountedOrderBase(DiscountedItemBase):
         """
         return self.order_discount
 
-    def update_discount(self, items=False):
+    def update_discount(self):
         """
-        Update order discounts - does *not* save the object. If items is
-        specified, discounts for related `OrderItem`'s are updated as well.
+        Update order discounts - does *not* save the object.
         """
         # Make sure we call the superclass here
         superclass = super(DiscountedOrderBase, self)
@@ -179,10 +200,6 @@ class DiscountedOrderBase(DiscountedItemBase):
         logger.debug(u'Updating order discount for %s to %s',
                      self, self.order_discount)
 
-        if items:
-            for item in self.get_items():
-                item.update_discount()
-
 
 class DiscountedOrderItemBase(DiscountedItemBase):
     """
@@ -191,7 +208,8 @@ class DiscountedOrderItemBase(DiscountedItemBase):
     class Meta:
         abstract = True
 
-    discount = PriceField(verbose_name=_('discount'), default='0.00')
+    discount = PriceField(verbose_name=_('discount'),
+                          default=Decimal('0.00'))
     """ The amount of discount applied to this item. """
 
     @classmethod

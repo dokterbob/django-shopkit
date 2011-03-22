@@ -140,6 +140,9 @@ class OrderDiscountAmountMixin(models.Model):
 
         return discount
 
+    def __unicode__(self):
+        return _(u'%s on order') % self.order_amount
+
 
 class ItemDiscountAmountMixin(models.Model):
     """
@@ -194,6 +197,9 @@ class ItemDiscountAmountMixin(models.Model):
             discount += self.item_amount
 
         return discount
+
+    def __unicode__(self):
+        return _(u'%s on order item') % self.item_amount
 
 
 class OrderDiscountPercentageMixin(models.Model):
@@ -251,6 +257,9 @@ class OrderDiscountPercentageMixin(models.Model):
             discount += (self.order_percentage/100)*order_price
 
         return discount
+
+    def __unicode__(self):
+        return _(u'%s%% on order') % self.order_percentage
 
 
 class ItemDiscountPercentageMixin(models.Model):
@@ -311,6 +320,9 @@ class ItemDiscountPercentageMixin(models.Model):
             discount += (self.item_percentage/100)*item_price
 
         return discount
+
+    def __unicode__(self):
+        return _(u'%s on order item') % self.item_percentage
 
 
 class ProductDiscountMixin(models.Model):

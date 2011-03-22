@@ -82,7 +82,7 @@ class CalculatedOrderDiscountMixin(CalculatedDiscountMixin):
 
         # Now, add discounts on the total order
         valid_discounts = self.get_valid_discounts(**kwargs)
-        price = self.get_price(**kwargs)
+        price = self.get_price_without_discount(**kwargs)
 
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
@@ -122,7 +122,7 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
         """
 
         valid_discounts = self.get_valid_discounts(**kwargs)
-        price = self.get_price(**kwargs)
+        price = self.get_price_without_discount(**kwargs)
 
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
@@ -148,15 +148,17 @@ class CalculatedDiscountedItemBase(models.Model):
         Call `update_discount` on the superclass to calculate the amount of
         discount, then store valid `Discount` objects for this order item.
         """
-        super(CalculatedDiscountedItemMixin, self).update_discount()
+        super(CalculatedDiscountedItemBase, self).update_discount()
 
         assert self.pk, 'Object not saved, need PK for assigning discounts'
-        self.discounts = self.get_valid_discounts()
+        discounts = self.get_valid_discounts()
 
         assert self.get_discount() == Decimal('0.00') or \
-            (self.get_discount() and self.discounts)
+            (self.get_discount() and discounts)
 
-        logger.debug('Storing discounts %s for %s', self.discounts, self)
+        logger.debug('Storing discounts %s for %s', discounts, self)
+
+        self.discounts = discounts
 
 
 class DiscountedCartMixin(CalculatedOrderDiscountMixin,
@@ -176,9 +178,9 @@ class DiscountedCartItemMixin(CalculatedItemDiscountMixin,
     class Meta:
         abstract = True
 
-class DiscountedOrderMixin(DiscountedOrderBase,
+class DiscountedOrderMixin(CalculatedDiscountedItemBase, DiscountedOrderBase,
                            CalculatedOrderDiscountMixin,
-                           CalculatedDiscountedItemBase):
+                           ):
     """
     Mixin class for `Order` objects which have their discount calculated.
     """
