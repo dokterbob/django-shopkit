@@ -122,13 +122,6 @@ class DiscountedCartItemBase(DiscountedItemBase):
     class Meta:
         abstract = True
 
-    def get_discount(self, **kwargs):
-        """
-        Get the discount applicable to this item. This method must be
-        implemented in subclasses.
-        """
-        raise NotImplementedError
-
 
 class DiscountedOrderBase(DiscountedItemBase):
     """
