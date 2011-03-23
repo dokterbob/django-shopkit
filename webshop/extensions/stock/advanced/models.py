@@ -52,29 +52,22 @@ class StockedItemBase(object):
         return self.get_stocked_item().is_available(quantity)
 
 
-class StockedCartItemMixin(models.Model, StockedItemBase, StockedCartItemBase):
+class StockedCartItemMixin(StockedItemBase, StockedCartItemBase):
     """
     Mixin class for `CartItem`'s containing items for which stock is kept.
     """
-    class Meta:
-        abstract = True
+    pass
 
-
-class StockedCartMixin(models.Model, StockedCartBase):
+class StockedCartMixin(StockedCartBase):
     """
     Mixin class for `Cart`'s containing items for which stock is kept.
     """
-    class Meta:
-        abstract = True
+    pass
 
-
-class StockedOrderItemMixin(models.Model, StockedItemBase, StockedOrderItemBase):
+class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
     """
     Mixin class for `OrderItem`'s containing items for which stock is kept.
     """
-
-    class Meta:
-        abstract = True
 
     def register_confirmation(self):
         """
@@ -94,14 +87,11 @@ class StockedOrderItemMixin(models.Model, StockedItemBase, StockedOrderItemBase)
         stocked_item.save()
 
 
-class StockedOrderMixin(models.Model):
+class StockedOrderMixin(object):
     """
     Mixin class for `Order`'s containing items for which stock is kept.
     """
-
-    class Meta:
-        abstract = True
-
+    pass
 
 class StockedItemMixin(models.Model, StockedItemBase):
     """

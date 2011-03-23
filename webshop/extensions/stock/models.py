@@ -58,8 +58,6 @@ class StockedCartBase(object):
         no stock items are available.
         """
 
-        import ipdb; ipdb.set_trace()
-
         # Stock is available, just return the superclass value
         cartitem = super(StockedCartBase, self).add_item(product,
                                                          quantity,
@@ -68,7 +66,7 @@ class StockedCartBase(object):
         # Check whether enough stock is available
         if not cartitem.is_available(cartitem.quantity):
             # Substract the quantity again. Inefficient but necessary for now
-            cartitem -= quantity
+            cartitem.quantity -= quantity
             cartitem.save()
 
             # Raise error
