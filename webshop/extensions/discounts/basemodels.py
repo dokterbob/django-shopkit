@@ -47,7 +47,7 @@ class DiscountedItemBase(AbstractPricedItemBase):
 
         logger.debug('Total discount for %s: %s', self, discount)
 
-        return self.get_total_discount(**kwargs)
+        return discount
 
     def get_total_discount(self, **kwargs):
         """
