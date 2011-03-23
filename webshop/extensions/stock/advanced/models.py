@@ -16,43 +16,96 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from webshop.extensions.stock.models import StockedCartItemMixinBase
-from webshop.extensions.stock.simple.settings import STOCK_CHOICES, \
-                                                     STOCK_DEFAULT, \
-                                                     STOCK_ORDERABLE
+from webshop.extensions.stock.models import StockedCartItemBase, \
+                                            StockedCartBase, \
+                                            StockedOrderItemBase
 
-class StockedCartItemMixin(StockedCartItemMixinBase):
+
+class StockedItemBase(object):
     """
-    Mixin class for shopping carts containing items which can be out of stock.
+    Generic base class for `CartItem`'s or `OrderItem`'s for which the stock
+    is represented by a stocked item somehow.
     """
-    
     def get_stocked_item(self):
-        """ 
-        Get the :class:`StockedItemMixin <websop.extensions.simple.StockedItemMixin>` 
+        """
+        Get the :class:`StockedItemMixin <websop.extensions.simple.StockedItemMixin>`
         subclass instance whose `is_available` method should determine whether
         we are out of stock.
-        
+
         This method
         should be overridden in order to be able to specify whether the cart
         item is available or not.
         """
-        
+
         raise NotImplementedError
-    
-    def is_available(self):
+
+    def is_available(self, quantity):
         """
         Determine whether or not this item is available.
         """
-        return self.get_stocked_item().is_available()
+        return self.get_stocked_item().is_available(quantity)
 
 
-class StockedItemMixin(models.Model):
+class StockedCartItemMixin(models.Model, StockedItemBase, StockedCartItemBase):
     """
-    ..todo::
-        Describe this.
+    Mixin class for `CartItem`'s containing items for which stock is kept.
+    """
+    class Meta:
+        abstract = True
+
+
+class StockedCartMixin(models.Model, StockedCartBase):
+    """
+    Mixin class for `Cart`'s containing items for which stock is kept.
+    """
+    class Meta:
+        abstract = True
+
+
+class StockedOrderItemMixin(models.Model, StockedItemBase, StockedOrderItemBase):
+    """
+    Mixin class for `OrderItem`'s containing items for which stock is kept.
+    """
+
+    class Meta:
+        abstract = True
+
+    def register_confirmation(self):
+        """
+        Register lowering of the current item's stock.
+        """
+
+        super(StockedOrderItemMixin, self).register_confirmation()
+
+        stocked_item = self.get_stocked_item()
+
+        logger.debug('Lowering stock of %d for %s with %d',
+                     stocked_item.stock,
+                     stocked_item,
+                     self.quantity)
+
+        stocked_item.stock -= self.quantity
+        stocked_item.save()
+
+
+class StockedOrderMixin(models.Model):
+    """
+    Mixin class for `Order`'s containing items for which stock is kept.
+    """
+
+    class Meta:
+        abstract = True
+
+
+class StockedItemMixin(models.Model, StockedItemBase):
+    """
+    Item for which stock is kept in an integer `stock` field.
     """
 
     class Meta:
@@ -63,12 +116,15 @@ class StockedItemMixin(models.Model):
     SmallIntegerField storing the amount of items in stock.
     """
 
-    def is_available(self):
+    def is_available(self, quantity):
         """
         Method used to determine whether or not the current item is in an
         orderable state.
         """
-        if self.stock:
+        logger.debug('Checking whether quantity %d of %s is stocked',
+                     quantity, self)
+
+        if self.stock >= quantity:
             return True
 
         return False

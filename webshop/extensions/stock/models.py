@@ -19,7 +19,7 @@
 from webshop.extensions.stock.exceptions import NoStockAvailableException
 
 
-class StockedCartItemMixinBase(object):
+class StockedCartItemBase(object):
     """
     Base class for cart items for which the stock can be maintained.
     By default the `is_available` method returns `True`, this method can be
@@ -37,7 +37,7 @@ class StockedCartItemMixinBase(object):
 
     """
 
-    def is_available(self):
+    def is_available(self, quantity):
         """
         The `is_available` method can be used to determine whether a cart
         item is eligible to be saved or not.
@@ -45,14 +45,61 @@ class StockedCartItemMixinBase(object):
         return True
 
 
-    def save(self, *args, **kwargs):
+class StockedCartBase(object):
+    """
+    Base class for shopping carts for which stock is kept.
+    """
+
+    def add_item(self, product, quantity=1, **kwargs):
         """
-        This save method will raise a :class:`NoStockAvailableException` when
+        Attempt to add item to cart.
+
+        This method will raise a :class:`NoStockAvailableException` when
         no stock items are available.
         """
-        if not self.is_available():
-            raise NoStockAvailableException(object=self)
 
-        super(StockedCartItemMixinBase, self).save(*args, **kwargs)
+        import ipdb; ipdb.set_trace()
 
+        # Stock is available, just return the superclass value
+        cartitem = super(StockedCartBase, self).add_item(product,
+                                                         quantity,
+                                                         **kwargs)
 
+        # Check whether enough stock is available
+        if not cartitem.is_available(cartitem.quantity):
+            # Substract the quantity again. Inefficient but necessary for now
+            cartitem -= quantity
+            cartitem.save()
+
+            # Raise error
+            raise NoStockAvailableException(item=self)
+
+        return cartitem
+
+class StockedOrderItemBase(object):
+    """
+    Mixin base class for `OrderItem`'s containing items for which stock is kept.
+    """
+    def register_confirmation(self):
+        """
+        Before registering confirmation, first make sure enough stock is
+        available. This should have already been checked when adding the
+        product to the shopping cart but who knows: somebody might have
+        already bought the product in the meanwhile.
+
+        For this to work well, it is important that this
+        `register_confirmation` function is called before that of discounts
+        and other possible accounting functions.
+
+        .. todo::
+            Consider adding a seperate method for checking whether order
+            items are actually available for shipping *before* this method
+            is called.
+
+        """
+
+        # Check whether enough stock is available
+        if not self.is_available(self.quantity):
+            raise NoStockAvailableException(item=self)
+
+        super(StockedOrderItemBase, self).register_confirmation()
