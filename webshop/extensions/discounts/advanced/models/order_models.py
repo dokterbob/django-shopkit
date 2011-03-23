@@ -178,9 +178,9 @@ class DiscountedCartItemMixin(CalculatedItemDiscountMixin,
     class Meta:
         abstract = True
 
-class DiscountedOrderMixin(CalculatedDiscountedItemBase, DiscountedOrderBase,
-                           CalculatedOrderDiscountMixin,
-                           ):
+class DiscountedOrderMixin(CalculatedDiscountedItemBase,
+                           DiscountedOrderBase,
+                           CalculatedOrderDiscountMixin):
     """
     Mixin class for `Order` objects which have their discount calculated.
     """
