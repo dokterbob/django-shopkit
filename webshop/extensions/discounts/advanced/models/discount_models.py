@@ -89,6 +89,11 @@ class DiscountBase(models.Model):
         """
         return Decimal('0.00')
 
+    def __unicode__(self):
+        """
+        Natural representation of discount. For now, just use the pk.
+        """
+        return self.pk
 
 class OrderDiscountAmountMixin(models.Model):
     """
@@ -547,7 +552,7 @@ class CouponDiscountMixin(models.Model):
         valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
-            valid = valid.filter(coupon_code=coupon_code) | \
+            valid = valid.filter(use_coupon=True, coupon_code=coupon_code) | \
                     valid.filter(coupon_code__isnull=True)
         else:
             valid = valid.filter(coupon_code__isnull=True)
@@ -571,18 +576,21 @@ class AccountedUseDiscountMixin(models.Model):
                                             default=0)
     """ The number of times this discount has been used. """
 
-    def register_use(self, count=1):
-        """
-        Register the usage of this particular discount, effectively
-        adding `count` to the used property.
+    @classmethod
+    def register_use(cls, qs, count=1):
+        """ Register `count` uses of discounts in queryset `qs`. """
+        qs.update(used=models.F('used') + count)
 
-        .. todo::
-            We might as well use Django's hip method of updating this value
-            without actually requiring the current value to be known.
-        """
-        self.used += 1
-        # self.used = models.F('used) + 1
-        self.save()
+    # def register_use(self, count=1):
+    #     """
+    #     Register the usage of this particular discount, effectively
+    #     adding `count` to the used property.
+    #
+    #     As the register_use classmethod for querysets is (much) more
+    #     efficient, in practice, this method has been deprecated.
+    #     """
+    #     self.used = models.F('used') + count
+    #     self.save()
 
 
 class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
@@ -603,21 +611,26 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
     not given, no limit is imposed.
     """
 
+    def get_uses_left(self):
+        """ Return the amount of uses left. """
+        leftover = self.use_limit - self.used
+
+        assert leftover >= 0
+
+        return leftover
+
     @classmethod
     def get_valid_discounts(cls, **kwargs):
         """
         Return currently valid discounts: ones for which either no use
         limit has been set or for which the amount of uses lies under the
         limit.
-
-        .. todo::
-            Write tests for this.
         """
 
         superclass = super(LimitedUseDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
-        valid = valid.filter(use_limit__lte=models.F('used'))| \
+        valid = valid.filter(use_limit__gt=models.F('used')) | \
                 valid.filter(use_limit__isnull=True)
 
         return valid

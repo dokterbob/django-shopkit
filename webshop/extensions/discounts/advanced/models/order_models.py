@@ -198,6 +198,30 @@ class DiscountedOrderItemMixin(CalculatedItemDiscountMixin,
         abstract = True
 
 
+class AccountedDiscountedItemMixin(object):
+    """
+    Model mixin class for orders for which the use is automatically accounted
+    upon confirmation.
+    """
+    def register_confirmation(self):
+        """
+        Register discount usage.
+        """
+
+        # Call registration for superclass
+        super(AccountedDiscountedItemMixin, self).register_confirmation()
+
+        # Make sure we're of the proper type so we have a discounts property
+        assert isinstance(self, CalculatedDiscountedItemBase)
+
+        discount_class = get_model_from_string(DISCOUNT_MODEL)
+
+        discounts = self.discounts.all()
+
+        # Register discount usage for order
+        discount_class.register_use(discounts)
+
+
 class DiscountCouponMixin(models.Model):
     """
     Model mixin class for orders or cart for which discounts are calculated based

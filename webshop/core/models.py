@@ -357,6 +357,17 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
         return self.piece_price
 
+    def register_confirmation(self):
+        """
+        Register confirmation of the current `OrderItem`. This can be
+        overridden in subclasses to perform functionality such as stock
+        keeping or discount usage administration. By default it merely
+        emits a debug message.
+
+        When overriding, be sure to call the superclass.
+        """
+        logger.debug('Registering order item confirmation for %s', self)
+
 
 class OrderStateChangeBase(models.Model):
     """ Abstract base class for logging order state changes. """
@@ -440,6 +451,9 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         Instantiate an order based on the basis of a
         shopping cart, copying all the items.
         """
+
+        assert cart.customer
+
         order = cls(customer=cart.customer)
 
         # Save in order to be able to associate items
@@ -519,6 +533,27 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         self._update_state()
 
         return result
+
+    def register_confirmation(self):
+        """
+        Method which performs actions to be taken upon order confirmation.
+
+        By default, this method writes a log message and calls the
+        `register_confirmation` method on all order items. Subclasses can use
+        this to perform actions such as updating the
+        stock or registering the use of a discount. When overriding, make sure
+        this method calls its supermethods.
+
+        In general, it makes sense to connect this method to a change in order
+        state such that it is called automatically. For example::
+
+        ..todo::
+            Write a code example here.
+        """
+        logger.debug('Registering order confirmation for %s', self)
+
+        for item in self.get_items():
+            item.register_confirmation()
 
     def get_price(self, **kwargs):
         """ Wraps the `get_total_price` function. """
