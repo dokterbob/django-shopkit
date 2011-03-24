@@ -65,9 +65,6 @@ class DiscountedItemBase(AbstractPricedItemBase):
         undiscounted = self.get_price_without_discount(**kwargs)
         discount = self.get_total_discount(**kwargs)
 
-        # # import ipdb; ipdb.set_trace()
-        # if discount > undiscounted:
-        #     import ipdb; ipdb.set_trace()
         assert discount <= undiscounted, \
             'Discount is higher than item price - discounted price negative!'
 
