@@ -78,6 +78,14 @@ class StockedOrderItemBase(object):
     """
     Mixin base class for `OrderItem`'s containing items for which stock is kept.
     """
+    def check_stock(self):
+        """
+        Check whether the stock for the current order item is available.
+        This should be called right before `register_confirmation`.
+        """
+        if not self.is_available(self.quantity):
+            raise NoStockAvailableException(item=self)
+
     def register_confirmation(self):
         """
         Before registering confirmation, first make sure enough stock is
@@ -88,16 +96,20 @@ class StockedOrderItemBase(object):
         For this to work well, it is important that this
         `register_confirmation` function is called before that of discounts
         and other possible accounting functions.
-
-        .. todo::
-            Consider adding a seperate method for checking whether order
-            items are actually available for shipping *before* this method
-            is called.
-
         """
 
         # Check whether enough stock is available
-        if not self.is_available(self.quantity):
-            raise NoStockAvailableException(item=self)
+        assert self.is_available(self.quantity), \
+            'No stock available, you should have called `check_stock`.'
 
         super(StockedOrderItemBase, self).register_confirmation()
+
+
+class StockedOrderBase(object):
+    """
+    Mixin base class for `Order`'s with items for which stock is kept.
+    """
+    def check_stock(self):
+        """ Check the stock for all items in this order. """
+        for item in self.get_items():
+            item.check_stock()

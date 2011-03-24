@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from webshop.extensions.stock.models import StockedCartItemBase, \
-                                            StockedCartBase, \
-                                            StockedOrderItemBase
+from webshop.extensions.stock.models import \
+    StockedCartItemBase, StockedCartBase, StockedOrderItemBase, \
+    StockedOrderBase
 
 
 class StockedItemBase(object):
@@ -58,11 +58,13 @@ class StockedCartItemMixin(StockedItemBase, StockedCartItemBase):
     """
     pass
 
+
 class StockedCartMixin(StockedCartBase):
     """
     Mixin class for `Cart`'s containing items for which stock is kept.
     """
     pass
+
 
 class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
     """
@@ -87,11 +89,12 @@ class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
         stocked_item.save()
 
 
-class StockedOrderMixin(object):
+class StockedOrderMixin(StockedOrderBase):
     """
     Mixin class for `Order`'s containing items for which stock is kept.
     """
     pass
+
 
 class StockedItemMixin(models.Model, StockedItemBase):
     """
