@@ -21,18 +21,15 @@ logger = logging.getLogger(__name__)
 
 from decimal import Decimal
 
-from django.db import models
-
 from webshop.core.basemodels import AbstractPricedItemBase
 from webshop.core.utils import get_model_from_string
-
-# Get the currently configured currency field, whatever it is
-from webshop.extensions.currency.utils import get_currency_field
-PriceField = get_currency_field()
 
 from webshop.extensions.shipping.advanced.settings import \
     SHIPPING_METHOD_MODEL
 
+from webshop.extensions.shipping.basemodels import \
+    ShippedCartBase, ShippedCartItemBase, \
+    ShippedOrderBase, ShippedOrderItemBase 
 
 class ShippableItemMixin(AbstractPricedItemBase):
     """ Mixin class for shippable items. """
@@ -40,17 +37,6 @@ class ShippableItemMixin(AbstractPricedItemBase):
     class Meta:
         abstract = True
 
-    def get_valid_shipping_methods(self, **kwargs):
-        """
-        Return all available shipping methods for the current item. By default
-        this returns *all* shipping methods, so subclasses should act as a
-        filter on this.
-        """
-        shipping_method_class = get_model_from_string(SHIPPING_METHOD_MODEL)
-
-        shipping_methods = shipping_method_class.get_valid_shipping_methods(**kwargs)
-
-        return shipping_methods
 
     def get_shipping_method(self, **kwargs):
         """
@@ -102,7 +88,19 @@ class CheapestShippableItemMixin(object):
         return shipping_method
 
 
-class ShippableOrderBase(ShippableItemMixin):
+class ShippedCartMixin(ShippableItemMixin, ShippedCartBase):
+    """ Base class for shopping carts with shippable items. """
+    class Meta:
+        abstract = True
+
+
+class ShippedCartItemMixin(ShippableItemMixin, ShippedCartItemBase):
+    """ Base class for shopping cart items which are shippable. """
+    class Meta:
+        abstract = True
+
+
+class ShippedOrderMixin(ShippableItemMixin, ShippedOrderBase):
     """ Base class for orders with a shipping_method. """
 
     class Meta:
@@ -110,7 +108,7 @@ class ShippableOrderBase(ShippableItemMixin):
 
     def get_valid_shipping_methods(self, **kwargs):
         """ Return valid shipping_methods for the current order. """
-        superclass = super(ShippableOrderBase, self)
+        superclass = super(ShippedOrderMixin, self)
         return superclass.get_valid_shipping_methods(order_methods=True,
                                                      **kwargs)
 
@@ -120,7 +118,7 @@ class ShippableOrderBase(ShippableItemMixin):
         total costs for the order with the costs for individual items.
         """
 
-        superclass = super(ShippableOrderBase, self)
+        superclass = super(ShippedOrderMixin, self)
 
         shipping_cost = superclass.get_shipping_cost(**kwargs)
 
@@ -130,7 +128,7 @@ class ShippableOrderBase(ShippableItemMixin):
         return shipping_cost
 
 
-class ShippableOrderItemBase(ShippableItemMixin, models.Model):
+class ShippedOrderItemMixin(ShippableItemMixin, ShippedOrderItemBase):
     """
     Base class for orderitems which can have individual shipping costs
     applied to them.
@@ -141,7 +139,7 @@ class ShippableOrderItemBase(ShippableItemMixin, models.Model):
 
     def get_valid_shipping_methods(self, **kwargs):
         """ Return valid discounts for the current order. """
-        superclass = super(ShippableOrderItemBase, self)
+        superclass = super(ShippedOrderItemMixin, self)
         return superclass.get_valid_shipping_methods(product=self.product,
                                                      order_methods=True,
                                                      **kwargs)

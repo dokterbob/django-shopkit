@@ -132,7 +132,7 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
         return total_discount
 
 
-class CalculatedDiscountedItemBase(models.Model):
+class PersistentDiscountedItemBase(models.Model):
     """
     Mixin class for `Order`'s and `OrderItem`'s for which calculated discounts
     are persistently stored in a `discounts` property upon calling the
@@ -148,7 +148,7 @@ class CalculatedDiscountedItemBase(models.Model):
         Call `update_discount` on the superclass to calculate the amount of
         discount, then store valid `Discount` objects for this order item.
         """
-        super(CalculatedDiscountedItemBase, self).update_discount()
+        super(PersistentDiscountedItemBase, self).update_discount()
 
         assert self.pk, 'Object not saved, need PK for assigning discounts'
         discounts = self.get_valid_discounts()
@@ -178,7 +178,7 @@ class DiscountedCartItemMixin(CalculatedItemDiscountMixin,
     class Meta:
         abstract = True
 
-class DiscountedOrderMixin(CalculatedDiscountedItemBase,
+class DiscountedOrderMixin(PersistentDiscountedItemBase,
                            DiscountedOrderBase,
                            CalculatedOrderDiscountMixin):
     """
@@ -189,7 +189,7 @@ class DiscountedOrderMixin(CalculatedDiscountedItemBase,
 
 
 class DiscountedOrderItemMixin(CalculatedItemDiscountMixin,
-                               CalculatedDiscountedItemBase,
+                               PersistentDiscountedItemBase,
                                DiscountedOrderItemBase):
     """
     Mixin class for `OrderItem` objects which have their discount calculated.
@@ -212,7 +212,7 @@ class AccountedDiscountedItemMixin(object):
         super(AccountedDiscountedItemMixin, self).register_confirmation()
 
         # Make sure we're of the proper type so we have a discounts property
-        assert isinstance(self, CalculatedDiscountedItemBase)
+        assert isinstance(self, PersistentDiscountedItemBase)
 
         discount_class = get_model_from_string(DISCOUNT_MODEL)
 
