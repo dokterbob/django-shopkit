@@ -33,9 +33,10 @@ PriceField = get_currency_field()
 from webshop.extensions.shipping.advanced.settings import \
     SHIPPING_METHOD_MODEL
 
+
 class ShippableItemMixin(AbstractPricedItemBase):
     """ Mixin class for shippable items. """
-    
+
     class Meta:
         abstract = True
 
