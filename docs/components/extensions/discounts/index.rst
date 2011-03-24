@@ -12,7 +12,6 @@ Contents:
    :maxdepth: 2
    
    basemodels.rst
-   models.rst
    settings.rst
    advanced/index.rst
 

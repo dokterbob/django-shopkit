@@ -545,7 +545,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         this method calls its supermethods.
 
         In general, it makes sense to connect this method to a change in order
-        state such that it is called automatically. For example::
+        state such that it is called automatically. For example:
 
         ..todo::
             Write a code example here.
