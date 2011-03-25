@@ -21,6 +21,9 @@ logger = logging.getLogger(__name__)
 
 from decimal import Decimal
 
+from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from webshop.core.basemodels import AbstractPricedItemBase
 from webshop.core.utils import get_model_from_string
 
@@ -59,30 +62,60 @@ class CheapestShippingMixin(AutomaticShippingMixin):
             This code is probably a bit too low-level.
         """
 
-        assert 'order_methods' in kwargs or 'items_methods' in kwargs, \
-            'We need either a restriction to order shipping methods or \
-             item shipping methods in order to find the cheapest method.'
+        assert 'order_methods' in kwargs or 'item_methods' in kwargs, \
+            'We need either a restriction to order shipping methods or '+ \
+            'item shipping methods in order to find the cheapest method.'
 
         shipping_method_class = get_model_from_string(SHIPPING_METHOD_MODEL)
 
+        shipping_address = getattr(self, 'shipping_address', None)
+        if not 'country' in kwargs and shipping_address:
+            assert self.shipping_address.country
+
+            country = self.shipping_address.country
+
+            logger.debug('Using country %s to find cheapest shipping method for %s',
+                         country, self)
+
+            kwargs['country'] = country
+
         shipping_method = shipping_method_class.get_cheapest(**kwargs)
+
+        logger.debug('Found shipping method %s for %s', shipping_method, self)
 
         return shipping_method
 
+
 class CalculatedShippingItemMixin(object):
     def get_shipping_method(self, **kwargs):
-        superclass = super(CalculatedShippingOrderMixin, self)
+        superclass = super(CalculatedShippingItemMixin, self)
 
         method = superclass.get_shipping_method(item_methods=True)
 
         return method
 
-    def get_shipping_costs(self, **kwargs):
-       return self.get_shipping_method(**kwargs).get_cost()
+    def get_total_shipping_costs(self, **kwargs):
+        method = self.get_shipping_method(**kwargs)
+
+        if method:
+            costs = method.get_cost()
+            logger.info('Shipping method %s found for object %s '+
+                        '',
+                        method, kwargs, self)
+
+        else:
+            logger.info('No shipping method found for kwargs %s and object %s',
+                        kwargs, self)
+
+            costs = Decimal('0.00')
+
+        assert isinstance(costs, Decimal)
+
+        return costs
 
 class CalculatedShippingOrderMixin(CalculatedShippingItemMixin):
     def get_shipping_method(self, **kwargs):
-        superclass = super(CalculatedShippingOrderMixin, self)
+        superclass = super(CalculatedShippingItemMixin, self)
 
         method = superclass.get_shipping_method(order_methods=True)
 
@@ -90,72 +123,88 @@ class CalculatedShippingOrderMixin(CalculatedShippingItemMixin):
 
     def get_order_shipping_costs(self, **kwargs):
         superclass = super(CalculatedShippingOrderMixin, self)
-        return superclass.get_shipping_costs()
-
-# class CalculatedShippingOrderMixin(CalculatedShippingMixin):
-#     def get_valid_shipping_methods(self, **kwargs):
-#         """ Return valid shipping_methods for the current order. """
-#         superclass = super(ShippedCartMixin, self)
-#         return superclass.get_valid_shipping_methods(order_methods=True,
-#                                                      **kwargs)
-#
-# def get_shipping_costs(self, **kwargs):
-#     """
-#     Return the shipping costs for the current item, based on the
-#     shipping method returned by `get_shipping_method`. If `None` was
-#     returned, the shipping costs are `Decimal('0.0')`.
-#     """
-#
-#     method = self.get_shipping_method(**kwargs)
-#     if method:
-#         return method.get_cost()
-#
-#     return Decimal('0.00')
+        return superclass.get_total_shipping_costs()
 
 
-# class CalculatedOrderShippingMixin(object):
-# class CheapestShippableItemMixin(object):
-#
+class PersistentShippedItemBase(models.Model):
+    """
+    Mixin class for `Order`'s and `OrderItem`'s for which the shipping method
+    is stored persistently upon calling the `update_shipping` method.
+    """
 
-class ShippedCartMixin(CalculatedShippingOrderMixin, ShippedCartBase):
+    class Meta:
+        abstract = True
+
+    shipping_method = models.ForeignKey(SHIPPING_METHOD_MODEL,
+                                        verbose_name=_('shipping method'),
+                                        null=True, blank=True)
+
+    def update_shipping(self):
+        """
+        Call `update_shipping` on the superclass and get the shipping method,
+        store the resulting `ShippingMethod` on the `shipping_method`
+        property.
+        """
+        super(PersistentShippedItemBase, self).update_shipping()
+
+        assert self.pk, 'Object not saved, need PK for assigning method'
+
+        method = self.get_shipping_method()
+
+        assert self.get_shipping_costs() == Decimal('0.00') or \
+            (self.get_shipping_costs() and method)
+
+        logger.debug('Storing shipping method %s for %s', method, self)
+
+        self.shipping_method = method
+
+
+class ShippedCartMixin(CalculatedShippingOrderMixin, CheapestShippingMixin, ShippedCartBase):
     """ Base class for shopping carts with shippable items. """
     class Meta:
         abstract = True
 
-    def get_valid_shipping_methods(self, **kwargs):
-        """ Return valid shipping_methods for the current order. """
-        superclass = super(ShippedCartMixin, self)
-        return superclass.get_valid_shipping_methods(order_methods=True,
-                                                     **kwargs)
+    # def get_valid_shipping_methods(self, **kwargs):
+    #     """ Return valid shipping_methods for the current order. """
+    #     superclass = super(ShippedCartMixin, self)
+    #     return superclass.get_valid_shipping_methods(order_methods=True,
+    #                                                  **kwargs)
 
 
-class ShippedCartItemMixin(CalculatedShippingItemMixin, ShippedCartItemBase):
+class ShippedCartItemMixin(CalculatedShippingItemMixin, CheapestShippingMixin, ShippedCartItemBase):
     """ Base class for shopping cart items which are shippable. """
     class Meta:
         abstract = True
 
-    def get_valid_shipping_methods(self, **kwargs):
-        """ Return valid shipping_methods for the current order item. """
-        superclass = super(ShippedCartItemMixin, self)
-        return superclass.get_valid_shipping_methods(item_methods=True,
-                                                     product=self.product,
-                                                     **kwargs)
+    # def get_valid_shipping_methods(self, **kwargs):
+    #     """ Return valid shipping_methods for the current order item. """
+    #     superclass = super(ShippedCartItemMixin, self)
+    #     return superclass.get_valid_shipping_methods(item_methods=True,
+    #                                                  product=self.product,
+    #                                                  **kwargs)
 
 
-class ShippedOrderMixin(CalculatedShippingOrderMixin, ShippedOrderBase):
+# class ShippedOrderMixin(CalculatedShippingOrderMixin, CheapestShippingMixin, ShippedOrderBase):
+class ShippedOrderMixin(PersistentShippedItemBase,
+                        ShippedOrderBase,
+                        CalculatedShippingOrderMixin,
+                        CheapestShippingMixin):
     """ Base class for orders with a shipping_method. """
 
     class Meta:
         abstract = True
 
-    def get_valid_shipping_methods(self, **kwargs):
-        """ Return valid shipping_methods for the current order. """
-        superclass = super(ShippedOrderMixin, self)
-        return superclass.get_valid_shipping_methods(order_methods=True,
-                                                     **kwargs)
+    # def get_valid_shipping_methods(self, **kwargs):
+    #     """ Return valid shipping_methods for the current order. """
+    #     superclass = super(ShippedOrderMixin, self)
+    #     return superclass.get_valid_shipping_methods(order_methods=True,
+    #                                                  **kwargs)
 
 
-class ShippedOrderItemMixin(CalculatedShippingItemMixin, ShippedOrderItemBase):
+class ShippedOrderItemMixin(PersistentShippedItemBase,
+                            CalculatedShippingItemMixin,
+                            CheapestShippingMixin,
+                            ShippedOrderItemBase):
     """
     Base class for orderitems which can have individual shipping costs
     applied to them.
@@ -164,9 +213,9 @@ class ShippedOrderItemMixin(CalculatedShippingItemMixin, ShippedOrderItemBase):
     class Meta:
         abstract = True
 
-    def get_valid_shipping_methods(self, **kwargs):
-        """ Return valid shipping_methods for the current order item. """
-        superclass = super(ShippedCartItemMixin, self)
-        return superclass.get_valid_shipping_methods(item_methods=True,
-                                                     product=self.product,
-                                                     **kwargs)
+    # def get_valid_shipping_methods(self, **kwargs):
+    #     """ Return valid shipping_methods for the current order item. """
+    #     superclass = super(ShippedCartItemMixin, self)
+    #     return superclass.get_valid_shipping_methods(item_methods=True,
+    #                                                  product=self.product,
+    #                                                  **kwargs)

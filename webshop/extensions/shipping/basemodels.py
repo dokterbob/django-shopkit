@@ -47,7 +47,7 @@ class ShippedItemBase(AbstractPricedItemBase):
         """
         shipping_costs = self.get_total_shipping_costs(**kwargs)
 
-        logger.debug('Total shipping cots for %s: %s',
+        logger.debug('Total shipping costs for %s: %s',
                      self, shipping_costs)
 
         return shipping_costs
@@ -57,18 +57,18 @@ class ShippedItemBase(AbstractPricedItemBase):
         Return the total shipping applicable for this item. Must be
         implemented in subclasses.
         """
+
         raise NotImplementedError
 
     def get_price_without_shipping(self, **kwargs):
         """ Get the price without shipping costs. """
         return super(ShippedItemBase, self).get_price(**kwargs)
-        
+
     def get_price(self, **kwargs):
         """ Get the price with shipping costs applied. """
         without = self.get_price_without_shipping(**kwargs)
         shipping_costs = self.get_shipping_costs(**kwargs)
 
-        
         return without + shipping_costs
 
 
@@ -121,12 +121,12 @@ class ShippedOrderBase(ShippedItemBase):
     class Meta:
         abstract = True
 
-    shipping_address = models.ForeignKey(ADDRESS_MODEL,
+    shipping_address = models.ForeignKey(ADDRESS_MODEL, null=True, blank=True,
                                         related_name='shippable%(class)s_set')
     """ Shipping address for this order"""
 
-    order_shipping_costs = PriceField(verbose_name=\
-                                        _('order shipping costs'))
+    order_shipping_costs = PriceField(default=Decimal('0.00'),
+                                      verbose_name=_('order shipping costs'))
     """
     Shipping costs relating to the whole order and not individual items.
     """
@@ -152,28 +152,19 @@ class ShippedOrderBase(ShippedItemBase):
 
         return costs
 
-    @classmethod
-    def from_cart(cls, cart):
-        """
-        Create an order from the shopping cart, accounting for possible
-        shipping costs. Instantiates an order but does no saving.
-        """
-        order = super(ShippedOrderBase, cls).from_cart(cart)
-        
-        order.update_shipping()
-
-        return order
-    
     def update_shipping(self):
-        """ Update the shipping costs - does *not* save the object. """
+        """ Update the shipping costs for order and order items. """
 
         # Make sure we call the superclass here
         superclass = super(ShippedOrderBase, self)
-
+        
         self.order_shipping_costs = superclass.get_order_shipping_costs()
 
         logger.debug(u'Updating order shipping costs for %s to %s',
                      self, self.order_shipping_costs)
+
+        for item in self.get_items():
+            item.update_shipping()
 
 
 class ShippedOrderItemBase(ShippedItemBase):
@@ -184,26 +175,14 @@ class ShippedOrderItemBase(ShippedItemBase):
     class Meta:
         abstract = True
 
-    shipping_costs = PriceField(verbose_name=_('shipping cost'))
+    shipping_costs = PriceField(default=Decimal('0.00'),
+                                verbose_name=_('shipping cost'))
     """ Shipping costs for this item. """
 
     def get_shipping_costs(self, **kwargs):
         """ Return the shipping costs for this item. """
         return self.shipping_costs
 
-    @classmethod
-    def from_cartitem(cls, cartitem):
-        """
-        Create a discounted `OrderItem` from a `CartItem`, storing the
-        shipping costs in the `OrderItem`'s `shipping_costs` property.
-        """
-        orderitem = super(ShippedOrderItemBase, cls).from_cartitem(cartitem)
-        
-        orderitem.update_shipping()
-        # orderitem.shipping_costs = cartitem.get_shipping_costs()
-
-        return orderitem
-    
     def update_shipping(self):
         """ Update shipping costs - does *not* save the object. """
 
@@ -213,5 +192,4 @@ class ShippedOrderItemBase(ShippedItemBase):
         self.shipping_costs = superclass.get_shipping_costs()
 
         logger.debug(u'Updating order shipping costs for %s to %s',
-                     self, self.order_shipping_costs)
-        
+                     self, self.shipping_costs)

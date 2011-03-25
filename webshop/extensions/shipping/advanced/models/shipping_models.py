@@ -40,8 +40,7 @@ class ShippingMethodBase(models.Model):
         all methods are valid.
         """
 
-        raise cls.objects.all()
-
+        return cls.objects.all()
 
     def is_valid(self, **kwargs):
         """
@@ -49,7 +48,7 @@ class ShippingMethodBase(models.Model):
         given circumstances.
         """
 
-        valid = self.get_valid_discounts(**kwargs)
+        valid = self.get_valid_methods(**kwargs)
 
         assert self.pk, \
         "This method has not yet been saved, which is required in order \
@@ -60,9 +59,9 @@ class ShippingMethodBase(models.Model):
         return valid.exists()
 
 
-    def get_shipping_cost(self, **kwargs):
+    def get_cost(self, **kwargs):
         """
-        Get the total shipping costs resulting from by this `ShippingMethod`.
+        Get the total shipping costs resulting from this `ShippingMethod`.
         This method should be implemented by subclasses of
         `:class:ShippingMethodBase`.
         """
@@ -82,9 +81,6 @@ class OrderShippingMethodMixin(models.Model):
                             null=True, blank=True)
     """
     Total shipping cost for orders for which this method applies.
-
-    .. todo::
-        Make design decision: should null=blank=True here?
     """
 
     @classmethod
@@ -100,11 +96,14 @@ class OrderShippingMethodMixin(models.Model):
         """
 
         superclass = super(OrderShippingMethodMixin, cls)
-        valid = superclass.get_valid_discounts(**kwargs)
+        valid = superclass.get_valid_methods(**kwargs)
 
         if not order_methods is None:
             # If an order methods criterium has been specified
             valid = valid.filter(order_cost__isnull=not order_methods)
+
+        logger.debug('Valid order shipping methods for kwargs %s: %s',
+                     kwargs, valid)
 
         return valid
 
@@ -122,7 +121,7 @@ class OrderShippingMethodMixin(models.Model):
             if not shipping_methods.exists():
                 return None
 
-            cheapest = shipping_methods.order_by('-order_cost')[0]
+            cheapest = shipping_methods.order_by('order_cost')[0]
 
             return cheapest
         else:
@@ -149,9 +148,6 @@ class ItemShippingMethodMixin(models.Model):
                             null=True, blank=True)
     """
     Total shipping cost for items for which this method applies.
-
-    .. todo::
-        Make design decision: should null=blank=True here?
     """
 
     @classmethod
@@ -167,11 +163,14 @@ class ItemShippingMethodMixin(models.Model):
         """
 
         superclass = super(ItemShippingMethodMixin, cls)
-        valid = superclass.get_valid_discounts(**kwargs)
+        valid = superclass.get_valid_methods(**kwargs)
 
         if not item_methods is None:
             # If an item methods criterium has been specified
             valid = valid.filter(item_cost__isnull=not item_methods)
+
+        logger.debug('Valid item shipping methods for kwargs \'%s\': %s',
+                     kwargs, valid)
 
         return valid
 
@@ -191,7 +190,7 @@ class ItemShippingMethodMixin(models.Model):
             if not shipping_methods.exists():
                 return None
 
-            cheapest = shipping_methods.order_by('-item_cost')[0]
+            cheapest = shipping_methods.order_by('item_cost')[0]
 
             return cheapest
         else:
