@@ -29,14 +29,14 @@ from webshop.extensions.shipping.advanced.settings import \
 
 from webshop.extensions.shipping.basemodels import \
     ShippedCartBase, ShippedCartItemBase, \
-    ShippedOrderBase, ShippedOrderItemBase 
+    ShippedOrderBase, ShippedOrderItemBase
 
-class ShippableItemMixin(AbstractPricedItemBase):
-    """ Mixin class for shippable items. """
 
-    class Meta:
-        abstract = True
-
+class AutomaticShippingMixin(object):
+    """
+    Mixin class for shippable items for which the choice of method is
+    automatic.
+    """
 
     def get_shipping_method(self, **kwargs):
         """
@@ -47,26 +47,8 @@ class ShippableItemMixin(AbstractPricedItemBase):
         """
         raise NotImplementedError
 
-    def get_shipping_cost(self, **kwargs):
-        """
-        Return the shipping costs for the current item, based on the
-        shipping method returned by `get_shipping_method`. If `None` was
-        returned, the shipping costs are `Decimal('0.0')`.
-        """
 
-        method = self.get_shipping_method(**kwargs)
-        if method:
-            return method.get_cost()
-
-        return Decimal('0.0')
-
-    def get_price_with_shipping(self, **kwargs):
-        """ Get the current price with shipping method added. applied. """
-
-        return self.get_price(**kwargs) + self.get_shipping_cost(**kwargs)
-
-
-class CheapestShippableItemMixin(object):
+class CheapestShippingMixin(AutomaticShippingMixin):
     """ Shippable item which defaults to using the """
 
     def get_shipping_method(self, **kwargs):
@@ -87,20 +69,80 @@ class CheapestShippableItemMixin(object):
 
         return shipping_method
 
+class CalculatedShippingItemMixin(object):
+    def get_shipping_method(self, **kwargs):
+        superclass = super(CalculatedShippingOrderMixin, self)
 
-class ShippedCartMixin(ShippableItemMixin, ShippedCartBase):
+        method = superclass.get_shipping_method(item_methods=True)
+
+        return method
+
+    def get_shipping_costs(self, **kwargs):
+       return self.get_shipping_method(**kwargs).get_cost()
+
+class CalculatedShippingOrderMixin(CalculatedShippingItemMixin):
+    def get_shipping_method(self, **kwargs):
+        superclass = super(CalculatedShippingOrderMixin, self)
+
+        method = superclass.get_shipping_method(order_methods=True)
+
+        return method
+
+    def get_order_shipping_costs(self, **kwargs):
+        superclass = super(CalculatedShippingOrderMixin, self)
+        return superclass.get_shipping_costs()
+
+# class CalculatedShippingOrderMixin(CalculatedShippingMixin):
+#     def get_valid_shipping_methods(self, **kwargs):
+#         """ Return valid shipping_methods for the current order. """
+#         superclass = super(ShippedCartMixin, self)
+#         return superclass.get_valid_shipping_methods(order_methods=True,
+#                                                      **kwargs)
+#
+# def get_shipping_costs(self, **kwargs):
+#     """
+#     Return the shipping costs for the current item, based on the
+#     shipping method returned by `get_shipping_method`. If `None` was
+#     returned, the shipping costs are `Decimal('0.0')`.
+#     """
+#
+#     method = self.get_shipping_method(**kwargs)
+#     if method:
+#         return method.get_cost()
+#
+#     return Decimal('0.00')
+
+
+# class CalculatedOrderShippingMixin(object):
+# class CheapestShippableItemMixin(object):
+#
+
+class ShippedCartMixin(CalculatedShippingOrderMixin, ShippedCartBase):
     """ Base class for shopping carts with shippable items. """
     class Meta:
         abstract = True
 
+    def get_valid_shipping_methods(self, **kwargs):
+        """ Return valid shipping_methods for the current order. """
+        superclass = super(ShippedCartMixin, self)
+        return superclass.get_valid_shipping_methods(order_methods=True,
+                                                     **kwargs)
 
-class ShippedCartItemMixin(ShippableItemMixin, ShippedCartItemBase):
+
+class ShippedCartItemMixin(CalculatedShippingItemMixin, ShippedCartItemBase):
     """ Base class for shopping cart items which are shippable. """
     class Meta:
         abstract = True
 
+    def get_valid_shipping_methods(self, **kwargs):
+        """ Return valid shipping_methods for the current order item. """
+        superclass = super(ShippedCartItemMixin, self)
+        return superclass.get_valid_shipping_methods(item_methods=True,
+                                                     product=self.product,
+                                                     **kwargs)
 
-class ShippedOrderMixin(ShippableItemMixin, ShippedOrderBase):
+
+class ShippedOrderMixin(CalculatedShippingOrderMixin, ShippedOrderBase):
     """ Base class for orders with a shipping_method. """
 
     class Meta:
@@ -112,23 +154,8 @@ class ShippedOrderMixin(ShippableItemMixin, ShippedOrderBase):
         return superclass.get_valid_shipping_methods(order_methods=True,
                                                      **kwargs)
 
-    def get_shipping_cost(self, **kwargs):
-        """
-        Return the total shipping costs for this order. This sums up
-        total costs for the order with the costs for individual items.
-        """
 
-        superclass = super(ShippedOrderMixin, self)
-
-        shipping_cost = superclass.get_shipping_cost(**kwargs)
-
-        for item in self.orderitem_set.all():
-            shipping_cost += item.get_shipping_cost()
-
-        return shipping_cost
-
-
-class ShippedOrderItemMixin(ShippableItemMixin, ShippedOrderItemBase):
+class ShippedOrderItemMixin(CalculatedShippingItemMixin, ShippedOrderItemBase):
     """
     Base class for orderitems which can have individual shipping costs
     applied to them.
@@ -138,8 +165,8 @@ class ShippedOrderItemMixin(ShippableItemMixin, ShippedOrderItemBase):
         abstract = True
 
     def get_valid_shipping_methods(self, **kwargs):
-        """ Return valid discounts for the current order. """
-        superclass = super(ShippedOrderItemMixin, self)
-        return superclass.get_valid_shipping_methods(product=self.product,
-                                                     order_methods=True,
+        """ Return valid shipping_methods for the current order item. """
+        superclass = super(ShippedCartItemMixin, self)
+        return superclass.get_valid_shipping_methods(item_methods=True,
+                                                     product=self.product,
                                                      **kwargs)
