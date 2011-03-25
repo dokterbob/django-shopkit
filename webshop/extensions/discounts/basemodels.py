@@ -158,18 +158,6 @@ class DiscountedOrderBase(DiscountedItemBase):
 
         return discount
 
-    @classmethod
-    def from_cart(cls, *args, **kwargs):
-        """
-        Create an order from the shopping cart, calculating possible
-        discounts. Instantiates an order but does no saving.
-        """
-        order = super(DiscountedOrderBase, cls).from_cart(*args, **kwargs)
-
-        order.update_discount()
-
-        return order
-
     def get_order_discount(self):
         """
         Return the discount for this order. This basically returns the
@@ -179,9 +167,8 @@ class DiscountedOrderBase(DiscountedItemBase):
         return self.order_discount
 
     def update_discount(self):
-        """
-        Update order discounts - does *not* save the object.
-        """
+        """ Update discounts for order and order items """
+
         # Make sure we call the superclass here
         superclass = super(DiscountedOrderBase, self)
 
@@ -189,6 +176,9 @@ class DiscountedOrderBase(DiscountedItemBase):
 
         logger.debug(u'Updating order discount for %s to %s',
                      self, self.order_discount)
+
+        for item in self.get_items():
+            item.update_discount()
 
 
 class DiscountedOrderItemBase(DiscountedItemBase):
@@ -202,29 +192,6 @@ class DiscountedOrderItemBase(DiscountedItemBase):
                           default=Decimal('0.00'))
     """ The amount of discount applied to this item. """
 
-    @classmethod
-    def from_cartitem(cls, *args, **kwargs):
-        """
-        Create a discounted `OrderItem` from a `CartItem`, storing the
-        discount amount in the `OrderItem`'s `discount` property.
-
-        ..todo::
-            This is *not* a nice coding, we should figure out an elegant
-            way around this.
-
-        """
-        superclass = super(DiscountedOrderItemBase, cls)
-        orderitem = superclass.from_cartitem(*args, **kwargs)
-
-        # If we do not save, we cannot possibly do M2M relations, which
-        # we intend to do in some cases within .update_discount.
-        if not orderitem.pk:
-            orderitem.save()
-
-        orderitem.update_discount()
-
-        return orderitem
-
     def get_discount(self, **kwargs):
         """
         Return the discount for this item. This basically returns the
@@ -234,7 +201,7 @@ class DiscountedOrderItemBase(DiscountedItemBase):
         return self.discount
 
     def update_discount(self):
-        """ Update the discount - does *not* save the object. """
+        """ Update the discount """
 
         # Make sure we call the superclass here
         superclass = super(DiscountedOrderItemBase, self)
