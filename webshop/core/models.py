@@ -357,7 +357,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
         return self.piece_price
 
-    def register_confirmation(self):
+    def confirm(self):
         """
         Register confirmation of the current `OrderItem`. This can be
         overridden in subclasses to perform functionality such as stock
@@ -534,7 +534,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         return result
 
-    def register_confirmation(self):
+    def confirm(self):
         """
         Method which performs actions to be taken upon order confirmation.
 
@@ -553,7 +553,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         logger.debug('Registering order confirmation for %s', self)
 
         for item in self.get_items():
-            item.register_confirmation()
+            item.confirm()
 
     def get_price(self, **kwargs):
         """ Wraps the `get_total_price` function. """

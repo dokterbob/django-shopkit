@@ -71,12 +71,12 @@ class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
     Mixin class for `OrderItem`'s containing items for which stock is kept.
     """
 
-    def register_confirmation(self):
+    def confirm(self):
         """
         Register lowering of the current item's stock.
         """
 
-        super(StockedOrderItemMixin, self).register_confirmation()
+        super(StockedOrderItemMixin, self).confirm()
 
         stocked_item = self.get_stocked_item()
 

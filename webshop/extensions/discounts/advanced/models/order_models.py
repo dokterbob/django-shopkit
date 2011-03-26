@@ -203,13 +203,13 @@ class AccountedDiscountedItemMixin(object):
     Model mixin class for orders for which the use is automatically accounted
     upon confirmation.
     """
-    def register_confirmation(self):
+    def confirm(self):
         """
         Register discount usage.
         """
 
         # Call registration for superclass
-        super(AccountedDiscountedItemMixin, self).register_confirmation()
+        super(AccountedDiscountedItemMixin, self).confirm()
 
         # Make sure we're of the proper type so we have a discounts property
         assert isinstance(self, PersistentDiscountedItemBase)
