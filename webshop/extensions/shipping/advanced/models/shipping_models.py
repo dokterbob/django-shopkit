@@ -211,7 +211,7 @@ class MinimumOrderAmountShippingMixin(models.Model):
         abstract = True
 
     minimal_order_price = PriceField(verbose_name=_('minimal order amount'),
-                                     blank=True, null=True)
+                                     blank=True, null=True, db_index=True)
 
     @classmethod
     def get_valid_methods(cls, order_price=None, **kwargs):
@@ -249,7 +249,7 @@ class MinimumItemAmountShippingMixin(models.Model):
         abstract = True
 
     minimal_item_price = PriceField(verbose_name=_('minimal item amount'),
-                                     blank=True, null=True)
+                                     blank=True, null=True, db_index=True)
 
     @classmethod
     def get_valid_methods(cls, item_price=None, **kwargs):

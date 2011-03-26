@@ -501,7 +501,8 @@ class CouponDiscountMixin(models.Model):
                                    max_length=COUPON_LENGTH, blank=True,
                                    help_text=_('If left empty and a coupon \
                                                 is used, a code will \
-                                                be automatically generated.'))
+                                                be automatically generated.'),
+                                   db_index=True)
     """ Code for this coupon, which will be automatically generated upon saving. """
 
     @staticmethod
@@ -573,7 +574,7 @@ class AccountedUseDiscountMixin(models.Model):
         abstract = True
 
     used = models.PositiveSmallIntegerField(verbose_name=_('times used'),
-                                            default=0)
+                                            default=0, db_index=True)
     """ The number of times this discount has been used. """
 
     @classmethod
@@ -604,6 +605,7 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
 
     use_limit = models.PositiveSmallIntegerField(verbose_name=_('use limit'),
                                                  blank=True, null=True,
+                                                 db_index=True,
                                                  help_text= \
                       _('Maximum number of times this discount may be used.'))
     """
