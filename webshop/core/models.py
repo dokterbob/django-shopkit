@@ -38,6 +38,8 @@ from webshop.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
 
 from webshop.core.utils import get_model_from_string
 
+from webshop.core.exceptions import AlreadyConfirmedException
+
 # Get the currently configured currency field, whatever it is
 from webshop.extensions.currency.utils import get_currency_field
 PriceField = get_currency_field()
@@ -425,6 +427,16 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         Available choices can be configured in WEBSHOP_ORDER_STATES.
     """
 
+    confirmed = models.BooleanField(_('confirmed'),
+                                    default=False,
+                                    editable=False)
+    """
+    Whether or not the order has been confirmed by calling the
+    `confirm()` method. This field exists in order to prevent potentially
+    disastrous double registration of confirmation, where an `Order`'s stock
+    would be lowered twice etcetera.
+    """
+
     def get_items(self):
         """ Get all order items (with a quantity greater than 0). """
         return self.orderitem_set.filter(quantity__gt=0)
@@ -534,6 +546,21 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         return result
 
+    def prepare_confirm(self):
+        """
+        Run necessary checks in order to confirm whether an order can be
+        safely confirmed. By default this method only checks whether or not
+        the order has already been confirmed, but could be potentially
+        overridden by methods checking the item's stock etcetera.
+
+        :raises: AlreadyConfirmedException
+        """
+
+        # Check whether this order is already confirmed, in which case
+        # we should raise an exception.
+        if self.confirmed:
+            raise AlreadyConfirmedException(self)
+
     def confirm(self):
         """
         Method which performs actions to be taken upon order confirmation.
@@ -544,13 +571,28 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         stock or registering the use of a discount. When overriding, make sure
         this method calls its supermethods.
 
+        When subclassing this method, please make sure you implement proper
+        safety checks in the overrides of the `prepare_confirm()` method as
+        this method should *not* raise errors under normal circumstances as
+        this could lead to potential data/state inconsistencies.
+
         In general, it makes sense to connect this method to a change in order
         state such that it is called automatically. For example:
 
         ..todo::
             Write a code example here.
+
         """
+        assert not self.confirmed, \
+            'Order already confirmed, you should run prepare_confirm() first!'
+
         logger.debug('Registering order confirmation for %s', self)
+
+        # Confirm registration before doing anything else: when an Exception
+        # *does* occur in the process, we do not want to risk being able
+        # to call `confirm()` again.
+        self.confirmed = True
+        self.save()
 
         for item in self.get_items():
             item.confirm()

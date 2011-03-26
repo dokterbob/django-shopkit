@@ -86,6 +86,17 @@ class StockedOrderItemBase(object):
         if not self.is_available(self.quantity):
             raise NoStockAvailableException(item=self)
 
+    def prepare_confirm(self):
+        """
+        Extend confirmation preparation by checking whether stock is
+        available for this order.
+
+        :raises: NoStockAvailableException
+        """
+
+        super(StockedOrderItemBase, self).prepare_confirm()
+        self.check_stock()
+
     def confirm(self):
         """
         Before registering confirmation, first make sure enough stock is
@@ -100,7 +111,7 @@ class StockedOrderItemBase(object):
 
         # Check whether enough stock is available
         assert self.is_available(self.quantity), \
-            'No stock available, you should have called `check_stock`.'
+            'No stock available, you should have called `prepare_confirm()`.'
 
         super(StockedOrderItemBase, self).confirm()
 

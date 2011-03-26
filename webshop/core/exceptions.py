@@ -19,3 +19,16 @@
 class WebshopExceptionBase(Exception):
     """ Base class for exception in django-webshop. """
     pass
+
+
+class AlreadyConfirmedException(Exception):
+    """
+    Exception raised when confirmation is attempted for an order which has
+    already been confirmed.
+    """
+
+    def __init__(self, order):
+        self.order = order
+
+    def __str__(self):
+        return _('Order %s has already been confirmed', self.order)
