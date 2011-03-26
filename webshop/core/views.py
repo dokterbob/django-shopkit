@@ -23,6 +23,8 @@ from django.views.generic.edit import BaseFormView
 
 from django.contrib import messages
 
+from django.utils.translation import ugettext_lazy as _
+
 from webshop.core.utils import get_model_from_string, get_cart_from_request
 
 from webshop.core.settings import CART_MODEL
@@ -146,11 +148,11 @@ class CartAddBase(CartAddFormMixin, BaseFormView):
         if updated:
             # Object updated
             messages.add_message(self.request, messages.SUCCESS, 
-                'Updated \'%s\' in shopping cart.' % product)
+                _('Updated \'%s\' in shopping cart.') % product)
         else:
             # Object updated
             messages.add_message(self.request, messages.SUCCESS, 
-                'Added \'%s\' to shopping cart.' % product)
+                _('Added \'%s\' to shopping cart.') % product)
         
         return super(BaseFormView, self).form_valid(form)
 
