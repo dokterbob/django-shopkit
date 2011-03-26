@@ -137,6 +137,30 @@ class CartBase(AbstractPricedItemBase):
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
     """ Customer who owns this cart, if any. """
 
+    @classmethod
+    def from_request(cls, request):
+        """
+        Get an existing `Cart` object from the session or return a blank one.
+
+        :returns: `Cart` object corresponding with this request
+        """
+        cart_pk = request.session.get('cart_pk', None)
+        if cart_pk:
+            try:
+                return cls.objects.get(pk=cart_pk)
+            except cls.DoesNotExist:
+                pass
+
+        return cls()
+
+    def to_request(self, request):
+        """
+        Store a reference to the current `Cart` object in the session.
+        """
+        assert self.pk, 'Cart object not saved'
+
+        request.session['cart_pk'] = self.pk
+
     def get_items(self):
         """ Gets items from the cart with a quantity > 0. """
 

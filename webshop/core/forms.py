@@ -39,7 +39,6 @@ def get_product_choices():
 product_choices = SimpleLazyObject(get_product_choices)
 """ get_product_choices wrapped up in a SimpleLazyObject. """
 
-
 class CartItemAddForm(forms.Form):
     """ Form for adding CartItems to a Cart. """
     

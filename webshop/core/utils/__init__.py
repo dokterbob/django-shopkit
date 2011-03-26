@@ -40,39 +40,3 @@ def get_model_from_string(model):
         '%s does not refer to a known Model class.' % model
 
     return model_class
-
-
-def get_cart_from_request(request):
-    """ Gets the shopping cart from the request or creates a 
-        new one if no shopping cart previously exists.
-
-        .. todo::
-            It should not be necessary to save this cart - this code
-            can be more optimal.
-
-            This should be accounted for in some base class for cart
-            views, where the pk of a cart is only added to the session
-            if it exists at the end of the request - just before sending
-            it out to 'the people'.
-
-        .. todo::
-            This method should be a class method of CartBase so it
-            can be easily overridden.
-
-    """
-
-    # Construct a cart class from the string value in settings.
-    cart_class = get_model_from_string(CART_MODEL)
-
-    cart_pk = request.session.get('cart_pk', None)
-    
-    cart, created = cart_class.objects.get_or_create(pk=cart_pk)
-    
-    if created:
-        logger.debug(u'Created shopping cart, saving to session.')
-        
-        request.session['cart_pk'] = cart.pk
-    else:
-        logger.debug(u'Shopping cart found, pk=%d.' % cart.pk)
-    
-    return cart
