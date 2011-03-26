@@ -80,7 +80,7 @@ class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
 
         stocked_item = self.get_stocked_item()
 
-        logger.debug('Lowering stock of %d for %s with %d',
+        logger.debug(u'Lowering stock of %d for %s with %d',
                      stocked_item.stock,
                      stocked_item,
                      self.quantity)
@@ -114,7 +114,7 @@ class StockedItemMixin(models.Model, StockedItemBase):
         Method used to determine whether or not the current item is in an
         orderable state.
         """
-        logger.debug('Checking whether quantity %d of %s is stocked',
+        logger.debug(u'Checking whether quantity %d of %s is stocked',
                      quantity, self)
 
         if self.stock >= quantity:

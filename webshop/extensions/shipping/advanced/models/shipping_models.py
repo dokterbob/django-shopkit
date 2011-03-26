@@ -102,7 +102,7 @@ class OrderShippingMethodMixin(models.Model):
             # If an order methods criterium has been specified
             valid = valid.filter(order_cost__isnull=not order_methods)
 
-        logger.debug('Valid order shipping methods for kwargs %s: %s',
+        logger.debug(u'Valid order shipping methods for kwargs %s: %s',
                      kwargs, valid)
 
         return valid
@@ -169,7 +169,7 @@ class ItemShippingMethodMixin(models.Model):
             # If an item methods criterium has been specified
             valid = valid.filter(item_cost__isnull=not item_methods)
 
-        logger.debug('Valid item shipping methods for kwargs \'%s\': %s',
+        logger.debug(u'Valid item shipping methods for kwargs \'%s\': %s',
                      kwargs, valid)
 
         return valid

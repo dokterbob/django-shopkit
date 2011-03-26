@@ -167,12 +167,12 @@ class CartBase(AbstractPricedItemBase):
                                                   product=product,
                                                   **kwargs)
 
-            logger.debug('Found existing cart item for product \'%s\'' \
+            logger.debug(u'Found existing cart item for product \'%s\'' \
                             % product)
 
         except cartitem_class.DoesNotExist:
             if create:
-                logger.debug('Product \'%s\' not already in Cart, creating item.' \
+                logger.debug(u'Product \'%s\' not already in Cart, creating item.' \
                                 % product)
 
                 cartitem = cartitem_class(cart=self,
@@ -254,7 +254,7 @@ class CartBase(AbstractPricedItemBase):
         Gets the total price for all items in the cart.
         """
 
-        logger.debug('Calculating total price for shopping cart.')
+        logger.debug(u'Calculating total price for shopping cart.')
 
         # logger.debug(self.get_items()[0].get_total_price())
 
@@ -262,7 +262,7 @@ class CartBase(AbstractPricedItemBase):
 
         for cartitem in self.get_items():
             item_price = cartitem.get_total_price(**kwargs)
-            logger.debug('Adding price %f for item \'%s\' to total cart price.' % \
+            logger.debug(u'Adding price %f for item \'%s\' to total cart price.' % \
                 (item_price, cartitem))
             assert isinstance(item_price, Decimal)
 
@@ -368,7 +368,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
         When overriding, be sure to call the superclass.
         """
-        logger.debug('Registering order item confirmation for %s', self)
+        logger.debug(u'Registering order item confirmation for %s', self)
 
 
 class OrderStateChangeBase(models.Model):
@@ -506,7 +506,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         else:
             latest_state = None
 
-        logger.debug('Considering state change: %s %s %s',
+        logger.debug(u'Considering state change: %s %s %s',
                      self,
                      latest_state,
                      self.state)
@@ -586,7 +586,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         assert not self.confirmed, \
             'Order already confirmed, you should run prepare_confirm() first!'
 
-        logger.debug('Registering order confirmation for %s', self)
+        logger.debug(u'Registering order confirmation for %s', self)
 
         # Confirm registration before doing anything else: when an Exception
         # *does* occur in the process, we do not want to risk being able
@@ -607,7 +607,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         Gets the total price for all items in the order.
         """
 
-        logger.debug('Calculating total price for order.')
+        logger.debug(u'Calculating total price for order.')
 
         # logger.debug(self.get_items()[0].get_total_price())
 
@@ -615,7 +615,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         for orderitem in self.get_items():
             item_price = orderitem.get_total_price(**kwargs)
-            logger.debug('Adding price %f for item \'%s\' to total price.' % \
+            logger.debug(u'Adding price %f for item \'%s\' to total price.' % \
                 (item_price, orderitem))
             assert isinstance(item_price, Decimal)
             price += item_price

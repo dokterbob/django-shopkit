@@ -50,11 +50,11 @@ class LimitedAdminInlineMixin(object):
 
         qs = formset.form.base_fields[field].queryset
         if empty:
-            logger.debug('Limiting the queryset to none')
+            logger.debug(u'Limiting the queryset to none')
             formset.form.base_fields[field].queryset = qs.none()
         else:
             qs = qs.filter(**filters)
-            logger.debug('Limiting queryset for formset to: %s', qs)
+            logger.debug(u'Limiting queryset for formset to: %s', qs)
 
             formset.form.base_fields[field].queryset = qs
 

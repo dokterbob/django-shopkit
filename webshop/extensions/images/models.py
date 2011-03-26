@@ -24,11 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 
 try:
     from sorl.thumbnail import ImageField    
-    logger.debug('Sorl-thumbnail found: using it.')
+    logger.debug(u'Sorl-thumbnail found: using it.')
 
 except ImportError:
     ImageField = models.ImageField
-    logger.debug('Sorl-thumbnail not found. Skipping.')
+    logger.debug(u'Sorl-thumbnail not found. Skipping.')
 
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import OrderedInlineItemBase

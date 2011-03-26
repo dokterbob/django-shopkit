@@ -174,7 +174,7 @@ class NestedCategoryBase(CategoryBase):
 Blabla
 """
 if USE_MPTT:
-    logger.debug('Enabling MPTTCategoryBase with category tree optimalization')
+    logger.debug(u'Enabling MPTTCategoryBase with category tree optimalization')
 
     from mptt.models import MPTTModel
 
@@ -238,6 +238,6 @@ if USE_MPTT:
             return result
 
 else:
-    logger.debug('Not using mptt for nested categories: not in INSTALLED_APPS')
+    logger.debug(u'Not using mptt for nested categories: not in INSTALLED_APPS')
 
 

@@ -26,7 +26,7 @@ def state_change_logger(sender, old_state, new_state, state_change, **kwargs):
     Debugging listener for `order_state_change`,
     logging each and every state change.
     """
-    logger.debug('State change signal: from %s to %s for %s',
+    logger.debug(u'State change signal: from %s to %s for %s',
                  old_state, new_state, sender)
 
 order_state_change.connect(state_change_logger)

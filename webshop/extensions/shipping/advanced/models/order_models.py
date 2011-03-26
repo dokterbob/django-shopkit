@@ -74,14 +74,14 @@ class CheapestShippingMixin(AutomaticShippingMixin):
 
             country = self.shipping_address.country
 
-            logger.debug('Using country %s to find cheapest shipping method for %s',
+            logger.debug(u'Using country %s to find cheapest shipping method for %s',
                          country, self)
 
             kwargs['country'] = country
 
         shipping_method = shipping_method_class.get_cheapest(**kwargs)
 
-        logger.debug('Found shipping method %s for %s', shipping_method, self)
+        logger.debug(u'Found shipping method %s for %s', shipping_method, self)
 
         return shipping_method
 
@@ -99,12 +99,12 @@ class CalculatedShippingItemMixin(object):
 
         if method:
             costs = method.get_cost()
-            logger.info('Shipping method %s found for object %s '+
+            logger.info(u'Shipping method %s found for object %s '+
                         '',
                         method, kwargs, self)
 
         else:
-            logger.info('No shipping method found for kwargs %s and object %s',
+            logger.info(u'No shipping method found for kwargs %s and object %s',
                         kwargs, self)
 
             costs = Decimal('0.00')
@@ -154,7 +154,7 @@ class PersistentShippedItemBase(models.Model):
         assert self.get_shipping_costs() == Decimal('0.00') or \
             (self.get_shipping_costs() and method)
 
-        logger.debug('Storing shipping method %s for %s', method, self)
+        logger.debug(u'Storing shipping method %s for %s', method, self)
 
         self.shipping_method = method
 

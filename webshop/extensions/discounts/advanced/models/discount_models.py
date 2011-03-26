@@ -436,7 +436,7 @@ try:
 except ImportError:
     # Apparantly, no category model is defined for this webshop
     CATEGORIES = False
-    logger.info('No category model defined, not loading category discounts.')
+    logger.info(u'No category model defined, not loading category discounts.')
 
 
 if CATEGORIES:
@@ -526,7 +526,7 @@ class CouponDiscountMixin(models.Model):
             # the code.
             code += COUPON_CHARACTERS[random.randint(0, len(COUPON_CHARACTERS)-1)]
 
-        logger.debug('Generated coupon code \'%s\'', code)
+        logger.debug(u'Generated coupon code \'%s\'', code)
 
         return code
 

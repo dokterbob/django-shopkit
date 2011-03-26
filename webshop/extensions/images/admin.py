@@ -34,14 +34,14 @@ try:
     from sorl.thumbnail.default import backend as sorl_backend
 
     SORL_THUMBNAIL = True
-    logger.debug('Sorl-thumbnail found: using it.')
+    logger.debug(u'Sorl-thumbnail found: using it.')
 
 except ImportError:
     class AdminInlineImageMixin(object):
         pass
 
     SORL_THUMBNAIL = False
-    logger.debug('Sorl-thumbnail not found. Skipping.')
+    logger.debug(u'Sorl-thumbnail not found. Skipping.')
 
 
 class ProductImageInline(AdminInlineImageMixin, admin.TabularInline):

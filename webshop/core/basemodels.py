@@ -227,7 +227,7 @@ class OrderedInlineItemBase(models.Model):
             related = self.get_related_ordering()
             self.sort_order = self.get_next_ordering(related)
             
-            logger.debug('Generated sort_order %d for object %s',
+            logger.debug(u'Generated sort_order %d for object %s',
                 self.sort_order, self)
 
         

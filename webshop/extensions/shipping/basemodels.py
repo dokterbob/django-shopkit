@@ -47,7 +47,7 @@ class ShippedItemBase(AbstractPricedItemBase):
         """
         shipping_costs = self.get_total_shipping_costs(**kwargs)
 
-        logger.debug('Total shipping costs for %s: %s',
+        logger.debug(u'Total shipping costs for %s: %s',
                      self, shipping_costs)
 
         return shipping_costs

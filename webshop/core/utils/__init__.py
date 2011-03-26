@@ -69,10 +69,10 @@ def get_cart_from_request(request):
     cart, created = cart_class.objects.get_or_create(pk=cart_pk)
     
     if created:
-        logger.debug('Created shopping cart, saving to session.')
+        logger.debug(u'Created shopping cart, saving to session.')
         
         request.session['cart_pk'] = cart.pk
     else:
-        logger.debug('Shopping cart found, pk=%d.' % cart.pk)
+        logger.debug(u'Shopping cart found, pk=%d.' % cart.pk)
     
     return cart

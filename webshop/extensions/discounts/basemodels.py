@@ -45,7 +45,7 @@ class DiscountedItemBase(AbstractPricedItemBase):
 
         discount = self.get_total_discount(**kwargs)
 
-        logger.debug('Total discount for %s: %s', self, discount)
+        logger.debug(u'Total discount for %s: %s', self, discount)
 
         return discount
 
@@ -95,7 +95,7 @@ class DiscountedCartBase(DiscountedItemBase):
         # the oringal item
         price = self.get_price_without_discount(**kwargs)
         if discount > price:
-            logger.info('Discount %s higher than price %s. Lowering to price.',
+            logger.info(u'Discount %s higher than price %s. Lowering to price.',
                        discount, price)
             discount = price
 
@@ -152,7 +152,7 @@ class DiscountedOrderBase(DiscountedItemBase):
         # the oringal item
         price = self.get_price_without_discount(**kwargs)
         if discount > price:
-            logger.info('Discount %s higher than price %s. Lowering to price.',
+            logger.info(u'Discount %s higher than price %s. Lowering to price.',
                        discount, price)
             return price
 

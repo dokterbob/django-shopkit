@@ -156,7 +156,7 @@ class PersistentDiscountedItemBase(models.Model):
         assert self.get_discount() == Decimal('0.00') or \
             (self.get_discount() and discounts)
 
-        logger.debug('Storing discounts %s for %s', discounts, self)
+        logger.debug(u'Storing discounts %s for %s', discounts, self)
 
         self.discounts = discounts
 
