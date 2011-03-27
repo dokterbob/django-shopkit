@@ -30,4 +30,5 @@ class ShippableCustomerMixin(object):
         """ Return the most recent shipping address """
         latest_order = self.get_latest_order()
 
-        return latest_order.shipping_address
+        if latest_order:
+            return latest_order.shipping_address
