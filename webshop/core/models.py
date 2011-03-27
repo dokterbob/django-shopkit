@@ -322,7 +322,8 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     product = models.ForeignKey(PRODUCT_MODEL)
     """ Product associated with this order item. """
 
-    piece_price = PriceField(verbose_name=_('price per piece'))
+    piece_price = PriceField(verbose_name=_('price per piece'),
+                             default=Decimal('0.00'))
     """ Price per piece for the current item. """
 
     order_line = models.CharField(verbose_name=_('description'),
