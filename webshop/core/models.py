@@ -145,12 +145,18 @@ class CartBase(AbstractPricedItemBase):
         :returns: `Cart` object corresponding with this request
         """
         cart_pk = request.session.get('cart_pk', None)
+
         if cart_pk:
+            logger.debug('Found shopping cart PK in session.')
+
             try:
                 return cls.objects.get(pk=cart_pk)
             except cls.DoesNotExist:
+                logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
+
                 pass
 
+        logger.debug('No shopping cart found. Creating new instance.')
         return cls()
 
     def to_request(self, request):
@@ -159,6 +165,7 @@ class CartBase(AbstractPricedItemBase):
         """
         assert self.pk, 'Cart object not saved'
 
+        logger.debug('Storing shopping cart with pk %d in session.' % self.pk)
         request.session['cart_pk'] = self.pk
 
     def get_items(self):
