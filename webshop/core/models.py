@@ -449,6 +449,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         verbose_name_plural = _('orders')
         abstract = True
 
+    cart = models.ForeignKey(CART_MODEL, verbose_name=_('cart'),
+                             null=True)
+    """ Shopping cart this order was created from. """
+
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
     """ Customer whom this order belongs to. """
 
@@ -498,7 +502,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         assert cart.customer
 
-        order = cls(customer=cart.customer)
+        order = cls(customer=cart.customer, cart=cart)
 
         # Save in order to be able to associate items
         order.save()
@@ -598,8 +602,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         Method which performs actions to be taken upon order confirmation.
 
         By default, this method writes a log message and calls the
-        `register_confirmation` method on all order items. Subclasses can use
-        this to perform actions such as updating the
+        `register_confirmation` method on all order items. It also deletes
+        to shopping cart this order was created from.
+
+        Subclasses can use this to perform actions such as updating the
         stock or registering the use of a discount. When overriding, make sure
         this method calls its supermethods.
 
@@ -619,6 +625,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
             'Order already confirmed, you should run prepare_confirm() first!'
 
         logger.debug(u'Registering order confirmation for %s', self)
+
+        # Delete shopping cart
+        if self.cart:
+            self.cart.delete()
 
         # Confirm registration before doing anything else: when an Exception
         # *does* occur in the process, we do not want to risk being able
