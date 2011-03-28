@@ -518,7 +518,6 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
                                OrderItem from a CartItem.'
             assert orderitem.pk
 
-        assert cart.cartitem_set.count() == order.orderitem_set.count()
         assert len(cart.get_items()) == len(order.get_items())
 
         return order
