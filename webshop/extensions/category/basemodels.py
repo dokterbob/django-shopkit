@@ -210,7 +210,7 @@ if USE_MPTT:
             in_shop = product_class.in_shop
             descendants = self.get_descendants(include_self=True)
 
-            return in_shop.filter(categories__in=descendants)
+            return in_shop.filter(categories__in=descendants).distinct()
 
         def __unicode__(self):
             """ The unicode representation of a nested category is that of
