@@ -24,6 +24,7 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
@@ -152,7 +153,7 @@ class CartBase(AbstractPricedItemBase):
             try:
                 cart = cls.objects.get(pk=cart_pk)
             except cls.DoesNotExist:
-                logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
+                logger.warning(u'Shopping cart nog found for pk %d.' % cart_pk)
 
                 cart = cls()
         else:
@@ -160,13 +161,16 @@ class CartBase(AbstractPricedItemBase):
             cart = cls()
 
         if not cart.customer and request.user.is_authenticated():
-            assert request.user.customer, 'User not a customer'
+            try:
+                customer = request.user.customer
 
-            customer = request.user.customer
+                logger.debug(u'Setting customer for cart to %s', customer)
 
-            logger.debug('Setting customer for cart to %s', customer)
-
-            cart.customer = customer
+                cart.customer = customer
+            except ObjectDoesNotExist:
+                logger.warning(u'User %s logged in but no customer object '+
+                               u'found. This user will not be able to buy '+
+                               u'products.', request.user)
 
         return cart
 
