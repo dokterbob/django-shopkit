@@ -155,9 +155,9 @@ class CartBase(AbstractPricedItemBase):
                 logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
 
                 pass
-
-        logger.debug('No shopping cart found. Creating new instance.')
-        cart = cls()
+        else:
+            logger.debug('No shopping cart found. Creating new instance.')
+            cart = cls()
 
         if not cart.customer and request.user.is_authenticated():
             assert request.user.customer, 'User not a customer'
