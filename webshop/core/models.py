@@ -150,14 +150,25 @@ class CartBase(AbstractPricedItemBase):
             logger.debug('Found shopping cart PK in session.')
 
             try:
-                return cls.objects.get(pk=cart_pk)
+                cart = cls.objects.get(pk=cart_pk)
             except cls.DoesNotExist:
                 logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
 
                 pass
 
         logger.debug('No shopping cart found. Creating new instance.')
-        return cls()
+        cart = cls()
+
+        if not cart.customer and request.user.is_authenticated():
+            assert request.user.customer, 'User not a customer'
+
+            customer = request.user.customer
+
+            logger.debug('Setting customer for cart to %s', customer)
+
+            cart.customer = customer
+
+        return cart
 
     def to_request(self, request):
         """
