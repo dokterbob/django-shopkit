@@ -154,7 +154,7 @@ class CartBase(AbstractPricedItemBase):
             except cls.DoesNotExist:
                 logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
 
-                pass
+                cart = cls()
         else:
             logger.debug('No shopping cart found. Creating new instance.')
             cart = cls()
