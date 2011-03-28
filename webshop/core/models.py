@@ -150,14 +150,25 @@ class CartBase(AbstractPricedItemBase):
             logger.debug('Found shopping cart PK in session.')
 
             try:
-                return cls.objects.get(pk=cart_pk)
+                cart = cls.objects.get(pk=cart_pk)
             except cls.DoesNotExist:
                 logger.warning('Shopping cart nog found for pk %d.' % cart_pk)
 
-                pass
+                cart = cls()
+        else:
+            logger.debug('No shopping cart found. Creating new instance.')
+            cart = cls()
 
-        logger.debug('No shopping cart found. Creating new instance.')
-        return cls()
+        if not cart.customer and request.user.is_authenticated():
+            assert request.user.customer, 'User not a customer'
+
+            customer = request.user.customer
+
+            logger.debug('Setting customer for cart to %s', customer)
+
+            cart.customer = customer
+
+        return cart
 
     def to_request(self, request):
         """
@@ -225,7 +236,7 @@ class CartBase(AbstractPricedItemBase):
 
             :returns: added `CartItem`
         """
-        assert isinstance(quantity, int), 'Quantity not an integer.'
+        # assert isinstance(quantity, int), 'Quantity not an integer.'
 
         cartitem = self.get_item(product, **kwargs)
 
@@ -272,7 +283,7 @@ class CartBase(AbstractPricedItemBase):
         for cartitem in self.get_items():
             quantity += cartitem.quantity
 
-        assert isinstance(quantity, int)
+        # assert isinstance(quantity, int)
         return quantity
 
     def get_price(self, **kwargs):
@@ -488,7 +499,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         quantity = 0
 
         for orderitem in self.get_items():
-            assert isinstance(orderitem.quantity, int)
+            # assert isinstance(orderitem.quantity, int)
             quantity += orderitem.quantity
 
         return quantity
