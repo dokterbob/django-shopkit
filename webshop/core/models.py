@@ -225,7 +225,7 @@ class CartBase(AbstractPricedItemBase):
 
             :returns: added `CartItem`
         """
-        assert isinstance(quantity, int), 'Quantity not an integer.'
+        # assert isinstance(quantity, int), 'Quantity not an integer.'
 
         cartitem = self.get_item(product, **kwargs)
 
@@ -272,7 +272,7 @@ class CartBase(AbstractPricedItemBase):
         for cartitem in self.get_items():
             quantity += cartitem.quantity
 
-        assert isinstance(quantity, int)
+        # assert isinstance(quantity, int)
         return quantity
 
     def get_price(self, **kwargs):
@@ -488,7 +488,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         quantity = 0
 
         for orderitem in self.get_items():
-            assert isinstance(orderitem.quantity, int)
+            # assert isinstance(orderitem.quantity, int)
             quantity += orderitem.quantity
 
         return quantity
