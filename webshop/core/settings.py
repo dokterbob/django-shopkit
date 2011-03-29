@@ -50,14 +50,6 @@ Mapping for order states of the following form::
 
 """
 
-ORDER_COMPLETED_STATES = getattr(settings, 'WEBSHOP_ORDER_COMPLETED_STATES')
-"""
-Iterable of order states which represent completed orders. Example::
-
-    WEBSHOP_ORDER_COMPLETED_STATES = (60, )
-
-"""
-
 DEFAULT_ORDER_STATE = getattr(settings, 'WEBSHOP_DEFAULT_ORDER_STATE', ORDER_STATES[0][0])
 """ 
 Default state for new orders. By default, the first state in 
