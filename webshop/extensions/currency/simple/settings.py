@@ -33,9 +33,11 @@ Number of decimals for
 Defaults to: 2.
 """
 
-CURRENCY_LOCALE = getattr(settings, 'WEBSHOP_CURRENCY_LOCALE', '')
+CURRENCY_FORMATTING = getattr(settings, 'WEBSHOP_CURRENCY_FORMATTING')
 """
-Locale used for currency formatting. Defaults to the currently selected
-locale.
-"""
+Formatting string for displaying monetary units.
 
+For example, euro's will be nicely rendered with::
+
+    WEBSHOP_CURRENCY_FORMATTING = u"\u20AC %.2f"
+"""
