@@ -99,9 +99,8 @@ class CalculatedShippingItemMixin(object):
 
         if method:
             costs = method.get_cost()
-            logger.info(u'Shipping method %s found for object %s '+
-                        '',
-                        method, kwargs, self)
+            logger.info(u'Shipping method %s found for object %s with args %s',
+                        method, self, kwargs)
 
         else:
             logger.info(u'No shipping method found for kwargs %s and object %s',
