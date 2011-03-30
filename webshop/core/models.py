@@ -574,12 +574,16 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
                          message)
 
             # Send order_state_change signal
-            signals.order_state_change.send(sender=self,
+            results = signals.order_state_change.send_robust(
+                                            sender=self,
                                             old_state=latest_state,
                                             new_state=self.state,
                                             state_change=state_change)
 
-
+            # Re-raise exceptions in listeners
+            for (receiver, response) in results:
+                if isinstance(response, Exception):
+                    raise response
 
         else:
             logger.debug(u'Same state %s for %s, not saving change.',
