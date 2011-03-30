@@ -70,7 +70,7 @@ class StockedCartBase(object):
             cartitem.save()
 
             # Raise error
-            raise NoStockAvailableException(item=self)
+            raise NoStockAvailableException(item=cartitem)
 
         return cartitem
 
