@@ -341,7 +341,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
     order = models.ForeignKey(ORDER_MODEL)
     """ Order this item belongs to. """
 
-    product = models.ForeignKey(PRODUCT_MODEL)
+    product = models.ForeignKey(PRODUCT_MODEL, on_delete=models.PROTECT)
     """ Product associated with this order item. """
 
     piece_price = PriceField(verbose_name=_('price per piece'),
@@ -465,10 +465,11 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         abstract = True
 
     cart = models.ForeignKey(CART_MODEL, verbose_name=_('cart'),
-                             null=True)
+                             null=True, on_delete=models.SET_NULL)
     """ Shopping cart this order was created from. """
 
-    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'))
+    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
+                                 on_delete=models.PROTECT)
     """ Customer whom this order belongs to. """
 
     state = models.PositiveSmallIntegerField(_('status'),
