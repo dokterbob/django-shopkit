@@ -429,9 +429,9 @@ class DateRangeDiscountMixin(models.Model):
         # Get valid discounts for the current situation
         valid = valid.filter(
                     Q(start_date__isnull=True, end_date__isnull=True) | \
-                    Q(start_date__isnull=True, end_date__lte=date) | \
-                    Q(start_date__gte=date, end_date__isnull=True) | \
-                    Q(start_date__gte=date, end_date__lte=date))
+                    Q(start_date__isnull=True, end_date__gte=date) | \
+                    Q(start_date__lte=date, end_date__isnull=True) | \
+                    Q(start_date__lte=date, end_date__gte=date))
 
         return valid
 
