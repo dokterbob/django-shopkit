@@ -153,7 +153,7 @@ class CartBase(AbstractPricedItemBase):
             try:
                 cart = cls.objects.get(pk=cart_pk)
             except cls.DoesNotExist:
-                logger.warning(u'Shopping cart nog found for pk %d.' % cart_pk)
+                logger.warning(u'Shopping cart not found for pk %d.', cart_pk)
 
                 cart = cls()
         else:
