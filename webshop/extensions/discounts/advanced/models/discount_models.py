@@ -332,7 +332,12 @@ class ItemDiscountPercentageMixin(models.Model):
 
 
 class ProductDiscountMixin(models.Model):
-    """ Mixin defining a discount valid for a single product. """
+    """
+    Mixin defining a discount valid for a single product.
+
+    .. todo::
+        Test this! There are likely to be bugs...
+    """
 
     class Meta:
         abstract = True
@@ -467,7 +472,12 @@ if CATEGORIES:
 
 
     class ManyCategoryDiscountMixin(models.Model):
-        """ Mixin defining discounts based on a collection of categories. """
+        """
+        Mixin defining discounts based on a collection of categories.
+
+        .. todo::
+            Test this! There are likely to be bugs...
+        """
 
         class Meta:
             abstract = True
@@ -567,10 +577,6 @@ class CouponDiscountMixin(models.Model):
 class AccountedUseDiscountMixin(models.Model):
     """
     Mixin class for discounts for which the number of uses is accounted.
-
-    ..todo::
-        Make sure our Order API has hooks for 'completed orders' and this one
-        attaches to these. We probably want to use signals for this one.
     """
 
     class Meta:
@@ -584,17 +590,6 @@ class AccountedUseDiscountMixin(models.Model):
     def register_use(cls, qs, count=1):
         """ Register `count` uses of discounts in queryset `qs`. """
         qs.update(used=models.F('used') + count)
-
-    # def register_use(self, count=1):
-    #     """
-    #     Register the usage of this particular discount, effectively
-    #     adding `count` to the used property.
-    #
-    #     As the register_use classmethod for querysets is (much) more
-    #     efficient, in practice, this method has been deprecated.
-    #     """
-    #     self.used = models.F('used') + count
-    #     self.save()
 
 
 class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
