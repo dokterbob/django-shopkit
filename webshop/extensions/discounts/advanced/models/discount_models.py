@@ -352,7 +352,7 @@ class ProductDiscountMixin(models.Model):
         product = kwargs.get('product', None)
         # When a product has been specified, allow discounts for this
         # specific product and discounts for which no product is specified
-        valid = valid.filter(Q(product=product) | Q(product__isnull=True))
+        valid = valid.filter(Q(product__isnull=True) | Q(product=product))
 
         return valid
 
@@ -423,10 +423,10 @@ class DateRangeDiscountMixin(models.Model):
 
         # Get valid discounts for the current situation
         valid = valid.filter(
-                    Q(start_date__gte=date, end_date__lte=date) | \
+                    Q(start_date__isnull=True, end_date__isnull=True) | \
                     Q(start_date__isnull=True, end_date__lte=date) | \
                     Q(start_date__gte=date, end_date__isnull=True) | \
-                    Q(start_date__isnull=True, end_date__isnull=True))
+                    Q(start_date__gte=date, end_date__lte=date))
 
         return valid
 
@@ -460,8 +460,8 @@ if CATEGORIES:
             valid = superclass.get_valid_discounts(**kwargs)
 
             category = kwargs.get('category', None)
-            valid = valid.filter(Q(category=category) | \
-                                 Q(category__isnull=True))
+            valid = valid.filter(Q(category__isnull=True) | \
+                                 Q(category=category))
 
             return valid
 
@@ -485,8 +485,9 @@ if CATEGORIES:
             valid = superclass.get_valid_discounts(**kwargs)
 
             category = kwargs.get('category', None)
-            valid = valid.filter(categories=category) | \
-                    valid.filter(categories__isnull=True)
+            valid = valid.filter(Q(categories__isnull=True) | \
+                                 Q(categories=category))
+
 
             return valid
 
@@ -554,8 +555,9 @@ class CouponDiscountMixin(models.Model):
         valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
-            valid = valid.filter(Q(use_coupon=True, coupon_code=coupon_code) | \
-                                 Q(coupon_code__isnull=True))
+            valid = valid.filter(Q(coupon_code__isnull=True) | \
+                                 Q(use_coupon=True, coupon_code=coupon_code)
+                                )
         else:
             valid = valid.filter(coupon_code__isnull=True)
 
@@ -633,7 +635,7 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
         superclass = super(LimitedUseDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
-        valid = valid.filter(Q(use_limit__gt=models.F('used')) | \
-                             Q(use_limit__isnull=True))
+        valid = valid.filter(Q(use_limit__isnull=True) | \
+                             Q(use_limit__gt=models.F('used')))
 
         return valid
