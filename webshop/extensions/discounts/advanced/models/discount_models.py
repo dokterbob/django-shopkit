@@ -508,7 +508,7 @@ class CouponDiscountMixin(models.Model):
     class Meta:
         abstract = True
 
-    use_coupon = models.BooleanField(default=False)
+    use_coupon = models.BooleanField(default=False, db_index=True)
     coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
                                    max_length=COUPON_LENGTH, blank=True,
                                    help_text=_('If left empty and a coupon \
@@ -560,14 +560,12 @@ class CouponDiscountMixin(models.Model):
         .. todo::
             Write tests for this.
         """
-
         superclass = super(CouponDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
             valid = valid.filter(Q(coupon_code__isnull=True) | \
-                                 Q(use_coupon=True, coupon_code=coupon_code)
-                                )
+                                 Q(use_coupon=True, coupon_code=coupon_code))
         else:
             valid = valid.filter(coupon_code__isnull=True)
 
