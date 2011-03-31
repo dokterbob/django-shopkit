@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 from decimal import Decimal
 
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.extensions.discounts.settings import \
@@ -351,8 +352,7 @@ class ProductDiscountMixin(models.Model):
         product = kwargs.get('product', None)
         # When a product has been specified, allow discounts for this
         # specific product and discounts for which no product is specified
-        valid = valid.filter(product=product) | \
-                valid.filter(product__isnull=True)
+        valid = valid.filter(Q(product=product) | Q(product__isnull=True))
 
         return valid
 
@@ -422,10 +422,11 @@ class DateRangeDiscountMixin(models.Model):
             date = datetime.today()
 
         # Get valid discounts for the current situation
-        valid = valid.filter(start_date__gte=date, end_date__lte=date) | \
-                valid.filter(start_date__isnull=True, end_date__lte=date) | \
-                valid.filter(start_date__gte=date, end_date__isnull=True) | \
-                valid.filter(start_date__isnull=True, end_date__isnull=True)
+        valid = valid.filter(
+                    Q(start_date__gte=date, end_date__lte=date) | \
+                    Q(start_date__isnull=True, end_date__lte=date) | \
+                    Q(start_date__gte=date, end_date__isnull=True) | \
+                    Q(start_date__isnull=True, end_date__isnull=True))
 
         return valid
 
@@ -459,8 +460,8 @@ if CATEGORIES:
             valid = superclass.get_valid_discounts(**kwargs)
 
             category = kwargs.get('category', None)
-            valid = valid.filter(category=category) | \
-                    valid.filter(category__isnull=True)
+            valid = valid.filter(Q(category=category) | \
+                                 Q(category__isnull=True))
 
             return valid
 
@@ -553,8 +554,8 @@ class CouponDiscountMixin(models.Model):
         valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
-            valid = valid.filter(use_coupon=True, coupon_code=coupon_code) | \
-                    valid.filter(coupon_code__isnull=True)
+            valid = valid.filter(Q(use_coupon=True, coupon_code=coupon_code) | \
+                                 Q(coupon_code__isnull=True))
         else:
             valid = valid.filter(coupon_code__isnull=True)
 
@@ -632,7 +633,7 @@ class LimitedUseDiscountMixin(AccountedUseDiscountMixin):
         superclass = super(LimitedUseDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
-        valid = valid.filter(use_limit__gt=models.F('used')) | \
-                valid.filter(use_limit__isnull=True)
+        valid = valid.filter(Q(use_limit__gt=models.F('used')) | \
+                             Q(use_limit__isnull=True))
 
         return valid

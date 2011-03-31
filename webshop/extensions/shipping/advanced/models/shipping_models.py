@@ -20,6 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 # Get the currently configured currency field, whatever it is
@@ -227,17 +228,17 @@ class MinimumOrderAmountShippingMixin(models.Model):
 
         valid = superclass.get_valid_methods(**kwargs)
 
-        valid_no_min = valid.filter(minimal_order_price__isnull=True)
+        valid_no_min = valid.filter()
 
         if order_price:
             # Return methods for which the minimal order price is less
             # than the current `order_price` or ones for which a minimal
             # order price does not apply.
-            valid = valid.filter(minimal_order_price__lte=order_price) | \
-                    valid_no_min
+            valid = valid.filter(Q(minimal_order_price__lte=order_price) | \
+                                 Q(minimal_order_price__isnull=True))
         else:
             # Return methods for which no minimal order price is specified
-            valid = valid_no_min
+            valid = valid.filter(minimal_order_price__isnull=True)
 
         return valid
 
@@ -265,16 +266,14 @@ class MinimumItemAmountShippingMixin(models.Model):
 
         valid = superclass.get_valid_methods(**kwargs)
 
-        valid_no_min = valid.filter(minimal_item_price__isnull=True)
-
         if item_price:
             # Return methods for which the minimal order price is less
             # than the current `order_price` or ones for which a minimal
             # order price does not apply.
-            valid = valid.filter(minimal_item_price__lte=item_price) | \
-                    valid_no_min
+            valid = valid.filter(Q(minimal_item_price__lte=item_price) | \
+                                 Q(minimal_item_price__isnull=True))
         else:
             # Return methods for which no minimal order price is specified
-            valid = valid_no_min
+            valid = valid.filter(minimal_item_price__isnull=True)
 
         return valid
