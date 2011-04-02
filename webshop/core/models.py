@@ -452,8 +452,12 @@ class OrderStateChangeBase(models.Model):
             return None
 
     def __unicode__(self):
-        return _(u'%s on %s to %s: %s') % \
-            (self.order, self.date, self.state, self.message)
+        return _(u'%(order)s on %(date)s to %(state)s: %(message)s') % \
+            {'order': self.order,
+             'date': self.date,
+             'state': self.state,
+             'message': self.message
+            }
 
 
 class OrderBase(AbstractPricedItemBase, DatedItemBase):
@@ -686,8 +690,11 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return _(u"%d by %s on %s") % \
-            (self.pk, self.customer, self.date_added.date())
+        return _(u"%(pk)d by %(customer)s on %(date)s") % \
+            {'pk': self.pk,
+             'customer': self.customer,
+             'date': self.date_added.date()
+            }
 
 
 class PaymentBase(models.Model):
