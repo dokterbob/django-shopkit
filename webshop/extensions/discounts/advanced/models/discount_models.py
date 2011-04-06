@@ -56,7 +56,7 @@ class DiscountBase(models.Model):
     def get_valid_discounts(cls, **kwargs):
         """
         Get all valid discount objects for a given `kwargs`. By default,
-        all discounts are valid.
+        all discounts are invalid.
         """
 
         return cls.objects.none()
