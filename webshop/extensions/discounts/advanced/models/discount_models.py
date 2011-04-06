@@ -355,9 +355,12 @@ class ProductDiscountMixin(models.Model):
         valid = superclass.get_valid_discounts(**kwargs)
 
         product = kwargs.get('product', None)
-        # When a product has been specified, allow discounts for this
-        # specific product and discounts for which no product is specified
-        valid = valid.filter(Q(product__isnull=True) | Q(product=product))
+        if not product is None:
+            # When a product has been specified, allow discounts for this
+            # specific product and discounts for which no product is specified
+            valid = valid.filter(Q(product__isnull=True) | Q(product=product))
+        else:
+            valid = valid.filter(product__isnull=True)
 
         return valid
 
@@ -382,10 +385,12 @@ class ManyProductDiscountMixin(models.Model):
 
         # Note: products=product here might be wrong -> products__in=product
         product = kwargs.get('product', None)
-        # When a product has been specified, allow discounts for this
-        # specific product and discounts for which no product is specified
-        valid = valid.filter(products=product) | \
-                valid.filter(products__isnull=True)
+        if not product is None:
+            # When a product has been specified, allow discounts for this
+            # specific product and discounts for which no product is specified
+            valid = valid.filter(Q(products__isnull=True) | Q(products=product))
+        else:
+            valid = valid.filter(products__isnull=True)
 
         return valid
 
@@ -465,8 +470,11 @@ if CATEGORIES:
             valid = superclass.get_valid_discounts(**kwargs)
 
             category = kwargs.get('category', None)
-            valid = valid.filter(Q(category__isnull=True) | \
-                                 Q(category=category))
+            if not category is None:
+                valid = valid.filter(Q(category__isnull=True) | \
+                                     Q(category=category))
+            else:
+                valid = valid.filter(category__isnull=True)
 
             return valid
 
@@ -495,9 +503,11 @@ if CATEGORIES:
             valid = superclass.get_valid_discounts(**kwargs)
 
             category = kwargs.get('category', None)
-            valid = valid.filter(Q(categories__isnull=True) | \
-                                 Q(categories=category))
-
+            if not category is None:
+                valid = valid.filter(Q(categories__isnull=True) | \
+                                     Q(categories__in=category))
+            else:
+                valid = valid.filter(categories__isnull=True)
 
             return valid
 
