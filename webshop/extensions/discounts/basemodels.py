@@ -123,7 +123,7 @@ class DiscountedCartItemBase(DiscountedItemBase):
 class DiscountedOrderBase(DiscountedItemBase):
     """
     Base class for orders which can have discounts applied to them. This
-    stores rather thab calculates the discounts for order persistence.
+    stores rather than calculates the discounts for order persistence.
     """
 
     class Meta:
