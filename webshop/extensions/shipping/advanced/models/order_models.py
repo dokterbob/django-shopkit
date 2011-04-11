@@ -90,7 +90,10 @@ class CalculatedShippingItemMixin(object):
     def get_shipping_method(self, **kwargs):
         superclass = super(CalculatedShippingItemMixin, self)
 
-        method = superclass.get_shipping_method(item_methods=True)
+        price = self.get_price_without_shipping()
+
+        method = superclass.get_shipping_method(item_methods=True,
+                                                item_price=price)
 
         return method
 
@@ -116,7 +119,10 @@ class CalculatedShippingOrderMixin(CalculatedShippingItemMixin):
     def get_shipping_method(self, **kwargs):
         superclass = super(CalculatedShippingItemMixin, self)
 
-        method = superclass.get_shipping_method(order_methods=True)
+        price = self.get_price_without_shipping()
+
+        method = superclass.get_shipping_method(order_methods=True,
+                                                order_price=price)
 
         return method
 
@@ -144,6 +150,7 @@ class PersistentShippedItemBase(models.Model):
         store the resulting `ShippingMethod` on the `shipping_method`
         property.
         """
+
         super(PersistentShippedItemBase, self).update_shipping()
 
         assert self.pk, 'Object not saved, need PK for assigning method'
