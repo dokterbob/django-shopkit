@@ -19,12 +19,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from webshop.extensions.stock.models import StockedCartItemMixinBase
+from webshop.extensions.stock.models import StockedCartItemBase
 from webshop.extensions.stock.simple.settings import STOCK_CHOICES, \
                                                      STOCK_DEFAULT, \
                                                      STOCK_ORDERABLE
 
-class StockedCartItemMixin(StockedCartItemMixinBase):
+class StockedCartItemMixin(StockedCartItemBase):
     """
     Mixin class for shopping carts containing items which can be out of stock.
     """

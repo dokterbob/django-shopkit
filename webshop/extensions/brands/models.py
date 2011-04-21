@@ -45,6 +45,7 @@ class BrandedProductMixin(models.Model):
         abstract = True
     
     brand = models.ForeignKey(BRAND_MODEL, verbose_name=_('brand'),
-                              null=BRAND_REQUIRED, blank=BRAND_REQUIRED)
+                              null=not BRAND_REQUIRED,
+                              blank=not BRAND_REQUIRED)
     """ Brand of the current product. """
 

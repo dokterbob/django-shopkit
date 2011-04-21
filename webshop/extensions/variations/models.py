@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from webshop.core.settings import PRODUCT_MODEL
 from webshop.core.basemodels import OrderedInlineItemBase
 
+from webshop.extensions.variations.settings import PRODUCTVARIATION_MODEL
 
 class ProductVariationBase(models.Model):
     """ Base class for variations of a product. """
@@ -73,3 +74,42 @@ class OrderedProductVariationBase(ProductVariationBase, OrderedInlineItemBase):
     def get_related_ordering(self):
         """ Related objects for generating default ordering. """
         return self.__class__.objects.filter(product=self.product)
+
+
+class VariationItemBase(object):
+    """ Abstract base class for (order/cart) items with variations. """
+
+    def __unicode__(self):
+        superclass = super(VariationItemBase, self)
+        return u'%s (%s)' % \
+                (unicode(superclass), unicode(self.variation))
+
+
+class VariationCartItemMixin(models.Model, VariationItemBase):
+    """ Mixin class for cart items which can have variations. """
+
+    class Meta:
+        abstract = True
+
+    variation = models.ForeignKey(PRODUCTVARIATION_MODEL, null=True, blank=True,
+                                  verbose_name=_('variation'))
+
+
+class VariationOrderItemMixin(models.Model, VariationItemBase):
+    """ Mixin class for order items which can have variations. """
+
+    class Meta:
+        abstract = True
+
+    variation = models.ForeignKey(PRODUCTVARIATION_MODEL, null=True, blank=True,
+                                  verbose_name=_('variation'))
+
+    @classmethod
+    def from_cartitem(cls, cartitem, order):
+        """ Create `OrderItem` from `CartItem`. """
+        superclass = super(VariationOrderItemMixin, cls)
+        orderitem = superclass.from_cartitem(cartitem, order)
+
+        orderitem.variation = cartitem.variation
+
+        return orderitem

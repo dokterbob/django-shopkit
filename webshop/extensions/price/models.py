@@ -22,7 +22,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.core.basemodels import AbstractPricedItemBase
 
-from webshop.extensions.price.settings import PRICE_MAX_DIGITS, PRICE_DECIMALS
+# Get the currently configured currency field, whatever it is
+from webshop.extensions.currency.utils import get_currency_field
+PriceField = get_currency_field()
 
 
 class PricedItemBase(AbstractPricedItemBase):
@@ -34,9 +36,7 @@ class PricedItemBase(AbstractPricedItemBase):
     class Meta:
         abstract = True
     
-    price = models.DecimalField(verbose_name=_('price'),
-                                max_digits=PRICE_MAX_DIGITS,
-                                decimal_places=PRICE_DECIMALS)
+    price = PriceField(verbose_name=_('price'))
     """ Price for the current product. """
 
     def get_price(self, **kwargs):

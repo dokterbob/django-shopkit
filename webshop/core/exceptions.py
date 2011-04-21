@@ -16,6 +16,22 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from django.utils.translation import ugettext_lazy as _
+
+
 class WebshopExceptionBase(Exception):
     """ Base class for exception in django-webshop. """
     pass
+
+
+class AlreadyConfirmedException(Exception):
+    """
+    Exception raised when confirmation is attempted for an order which has
+    already been confirmed.
+    """
+
+    def __init__(self, order):
+        self.order = order
+
+    def __str__(self):
+        return _('Order %s has already been confirmed') % self.order

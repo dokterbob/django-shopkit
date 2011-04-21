@@ -67,7 +67,7 @@ class CategoryBase(models.Model):
         """
 
         from webshop.core.settings import PRODUCT_MODEL
-        from webshop.core.util import get_model_from_string
+        from webshop.core.utils import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
         return product_class.in_shop.filter(category=self)
@@ -115,10 +115,10 @@ class NestedCategoryBase(CategoryBase):
         """
 
         from webshop.core.settings import PRODUCT_MODEL
-        from webshop.core.util import get_model_from_string
+        from webshop.core.utils import get_model_from_string
         product_class = get_model_from_string(PRODUCT_MODEL)
 
-        return product_class.in_shop.filter(categories=self)
+        return product_class.in_shop.filter(categories__in=self)
 
     def get_parent_list(self, reversed=False):
         """ Return a list of all parent categories of the current category.
@@ -174,7 +174,7 @@ class NestedCategoryBase(CategoryBase):
 Blabla
 """
 if USE_MPTT:
-    logger.debug('Enabling MPTTCategoryBase with category tree optimalization')
+    logger.debug(u'Enabling MPTTCategoryBase with category tree optimalization')
 
     from mptt.models import MPTTModel
 
@@ -204,12 +204,13 @@ if USE_MPTT:
             """
 
             from webshop.core.settings import PRODUCT_MODEL
-            from webshop.core.util import get_model_from_string
+            from webshop.core.utils import get_model_from_string
             product_class = get_model_from_string(PRODUCT_MODEL)
 
             in_shop = product_class.in_shop
+            descendants = self.get_descendants(include_self=True)
 
-            return in_shop.filter(categories=self.get_descendants(include_self=True))
+            return in_shop.filter(categories__in=descendants).distinct()
 
         def __unicode__(self):
             """ The unicode representation of a nested category is that of
@@ -237,6 +238,6 @@ if USE_MPTT:
             return result
 
 else:
-    logger.debug('Not using mptt for nested categories: not in INSTALLED_APPS')
+    logger.debug(u'Not using mptt for nested categories: not in INSTALLED_APPS')
 
 

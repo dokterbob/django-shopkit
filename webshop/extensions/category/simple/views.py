@@ -19,7 +19,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 
 from webshop.extensions.category.settings import CATEGORY_MODEL
 category_class = get_model_from_string(CATEGORY_MODEL)
@@ -33,7 +33,7 @@ class CategoriesMixin(object):
     def get_context_data(self, **kwargs):
         """ Adds the available categories to the context as `categories`."""
         
-        logger.debug('CategoriesMixin')
+        logger.debug(u'CategoriesMixin')
 
         context = super(CategoriesMixin, self).get_context_data(**kwargs)
         

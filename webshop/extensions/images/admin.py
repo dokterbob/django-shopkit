@@ -25,7 +25,7 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from webshop.extensions.images.settings import PRODUCTIMAGE_MODEL
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 productimage_class = get_model_from_string(PRODUCTIMAGE_MODEL)
 
 try:
@@ -34,14 +34,14 @@ try:
     from sorl.thumbnail.default import backend as sorl_backend
 
     SORL_THUMBNAIL = True
-    logger.debug('Sorl-thumbnail found: using it.')
+    logger.debug(u'Sorl-thumbnail found: using it.')
 
 except ImportError:
     class AdminInlineImageMixin(object):
         pass
 
     SORL_THUMBNAIL = False
-    logger.debug('Sorl-thumbnail not found. Skipping.')
+    logger.debug(u'Sorl-thumbnail not found. Skipping.')
 
 
 class ProductImageInline(AdminInlineImageMixin, admin.TabularInline):

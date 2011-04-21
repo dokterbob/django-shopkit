@@ -18,7 +18,7 @@
 
 from django import forms
 
-from webshop.core.util import get_model_from_string
+from webshop.core.utils import get_model_from_string
 from webshop.core.settings import PRODUCT_MODEL
 
 
@@ -38,7 +38,6 @@ def get_product_choices():
 
 product_choices = SimpleLazyObject(get_product_choices)
 """ get_product_choices wrapped up in a SimpleLazyObject. """
-
 
 class CartItemAddForm(forms.Form):
     """ Form for adding CartItems to a Cart. """

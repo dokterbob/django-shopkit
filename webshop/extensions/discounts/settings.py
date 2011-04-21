@@ -27,9 +27,9 @@ COUPON_LENGTH = getattr(settings, 'WEBSHOP_COUPON_LENGTH', 20)
 COUPON_CHARACTERS = getattr(settings, 'WEBSHOP_COUPON_CHARACTERS', '23456789QWERTASDFGZXCVBYUIPHJKLNM')
 """ Characters used for generating coupon codes.
     This defaults to: `23456789QWERTASDFGZXCVBYUIPHJKLNM`
-    
-    .. note:: 
+
+    .. note::
         Make sure each character only appears once in this string, or
         the security of your coupon codes might weaken.
-    
+
 """

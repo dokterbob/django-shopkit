@@ -19,11 +19,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from decimal import Decimal
-
-# Pick the current locale from the LANG environment variable
-import locale
-locale.setlocale(locale.LC_MONETARY, '')
+from webshop.extensions.currency.simple.settings import CURRENCY_FORMATTING
 
 
 def format_price(amount):
@@ -34,5 +30,5 @@ def format_price(amount):
         logger.warn('Attempting to format an empty price, failing softly by returning None.')
         return None
 
-    return locale.currency(amount, grouping=True)
+    return CURRENCY_FORMATTING % amount
 

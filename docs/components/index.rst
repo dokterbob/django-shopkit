@@ -17,7 +17,7 @@ simple as possible.
 Contents:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    core/index.rst
    extensions/index.rst
