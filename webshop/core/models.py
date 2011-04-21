@@ -168,9 +168,9 @@ class CartBase(AbstractPricedItemBase):
 
                 cart.customer = customer
             except ObjectDoesNotExist:
-                logger.warning(u'User %s logged in but no customer object '+
-                               u'found. This user will not be able to buy '+
-                               u'products.', request.user)
+                logger.info(u'User %s logged in but no customer object '+
+                            u'found. This user will not be able to buy '+
+                            u'products.', request.user)
 
         return cart
 
