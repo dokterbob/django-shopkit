@@ -696,6 +696,56 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
              'date': self.date_added.date()
             }
 
+class AddressBase(models.Model):
+    """
+    Base class for address models.
+
+    This base class should be used when defining addresses for customers.
+    """
+
+    class Meta:
+        abstract = True
+        verbose_name = _('address')
+        verbose_name_plural = _('addresses')
+
+    addressee = models.CharField(_('addressee'), max_length=255)
+    """ Addressee for the current address. """
+
+    def __unicode__(self):
+        """ Return the addressee property. """
+        return self.addressee
+
+
+class CustomerAddressBase(models.Model):
+    """
+    Base class for addresses with a relation to a customer, for which the
+    `addressee` field is automatically set when saving.
+    """
+
+    class Meta(AddressBase.Meta):
+        abstract = True
+
+    addressee = models.CharField(_('addressee'), max_length=255, blank=True,
+                                 help_text=_('Automatically set to the name of the customer when left empty.'))
+    customer = models.ForeignKey(CUSTOMER_MODEL, editable=False)
+
+    def save(self, **kwargs):
+        """
+        Default the addressee to the full name of the user if none has
+        been specified explicitly.
+        """
+
+        if not self.addressee:
+            assert self.customer
+
+            self.addressee = self.customer.get_full_name()
+
+        super(CustomerAddressBase, self).save(**kwargs)
+
+    def __unicode__(self):
+        """ Return the addressee property. """
+        return self.addressee
+
 
 class PaymentBase(models.Model):
     """ Abstract base class for payments. """
