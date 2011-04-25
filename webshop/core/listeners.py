@@ -19,14 +19,162 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from webshop.core.signals import order_state_change
+from django.core.exceptions import ImproperlyConfigured
+from django.core.mail import EmailMessage
 
-def state_change_logger(sender, old_state, new_state, state_change, **kwargs):
+from django.template.loader import render_to_string
+from django.contrib.sites.models import Site
+
+from django.utils import translation
+
+from webshop.core.utils.listeners import Listener
+
+
+class StateChangeListener(Listener):
+    """
+    Listener base class for order status changes.
+
+    Example::
+        OrderPaidListener(StatusChangeListener):
+            state = order_states.ORDER_STATE_PAID
+
+            def handler(self, sender, **kwargs):
+                <do something>
+    """
+
+    new_state = None
+    old_state = None
+
+    def dispatch(self, sender, **kwargs):
+        # Match the new state, if given
+        if self.new_state and not self.new_state == sender.state:
+            logger.debug(u'Signal for %s doesn\'t match listener for %s', sender, self)
+            return
+
+        # Match the old state
+        if self.old_state and not self.old_state == kwargs['old_state']:
+            logger.debug(u'Old state for %s doesn\'t match old state for listener %s', sender, self)
+            return
+
+        self.handler(sender, **kwargs)
+
+    def handler(self, sender, **kwargs):
+        raise NotImplementedError('Better give me some function to fulfill')
+
+
+class StateChangeLogger(StateChangeListener):
     """
     Debugging listener for `order_state_change`,
     logging each and every state change.
     """
-    logger.debug(u'State change signal: from %s to %s for %s',
-                 old_state, new_state, sender)
 
-order_state_change.connect(state_change_logger)
+    def handler(self, sender, **kwargs):
+        old_state = kwargs['old_state']
+        new_state = sender.state
+
+        logger.debug(u'State change signal: from %s to %s for %s',
+                     old_state, new_state, sender)
+
+
+class EmailingListener(Listener):
+    """ Listener which sends out emails. """
+
+    body_template_name = None
+    subject_template_name = None
+
+    def get_subject_template_names(self):
+        """
+        Returns a list of template names to be used for the request. Must return
+        a list. May not be called if render_to_response is overridden.
+        """
+        if self.subject_template_name is None:
+            raise ImproperlyConfigured(
+                "TemplateResponseMixin requires either a definition of "
+                "'template_name' or an implementation of 'get_template_names()'")
+        else:
+            return [self.subject_template_name]
+
+    def get_body_template_names(self):
+        """
+        Returns a list of template names to be used for the request. Must return
+        a list. May not be called if render_to_response is overridden.
+        """
+        if self.body_template_name is None:
+            raise ImproperlyConfigured(
+                "TemplateResponseMixin requires either a definition of "
+                "'template_name' or an implementation of 'get_template_names()'")
+        else:
+
+            return [self.body_template_name]
+
+    def get_context_data(self):
+        """
+        Context for the message template rendered. Defaults to sender, the
+        current site object and kwargs.
+        """
+
+        current_site = Site.objects.get_current()
+
+        context = {'sender': self.sender,
+                   'site': current_site}
+
+        context.update(self.kwargs)
+
+        return context
+
+    def get_recipients(self):
+        """ Get recipients for the message. """
+        raise NotImplementedError
+
+    def get_sender(self):
+        """
+        Sender of the message, defaults to `None` which imples
+        `DEFAULT_FROM_EMAIL`.
+        """
+        return None
+
+    def create_message(self, context):
+        """ Create an email message. """
+        subject = render_to_string(self.get_subject_template_names(), context)
+        # Clean the subject a bit for common errors (newlines!)
+        subject = subject.strip().replace('\n', ' ')
+
+        body = render_to_string(self.get_body_template_names(), context)
+        recipients = self.get_recipients()
+        sender = self.get_sender()
+
+        email = EmailMessage(subject, body, sender, recipients)
+
+        return email
+
+    def handler(self, sender, **kwargs):
+        """ Store sender and kwargs attributes on self. """
+
+        self.sender = sender
+        self.kwargs = kwargs
+
+        context = self.get_context_data()
+
+        message = self.create_message(context)
+
+        message.send()
+
+
+class TranslatedEmailingListener(EmailingListener):
+    """ Email sending listener which switched locale before processing. """
+
+    def get_language(self, sender, **kwargs):
+        """ Return the language we should switch to. """
+        raise NotImplementedError
+
+    def handler(self, sender, **kwargs):
+        old_language = translation.get_language()
+
+        language = self.get_language(sender, **kwargs)
+
+        logger.debug('Changing to language %s for email submission', language)
+        translation.activate(language)
+
+        super(TranslatedEmailingListener, self).handler(sender, **kwargs)
+
+        translation.activate(old_language)
