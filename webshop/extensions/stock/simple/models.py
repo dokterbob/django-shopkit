@@ -42,12 +42,12 @@ class StockedCartItemMixin(StockedCartItemBase):
         
         raise NotImplementedError
     
-    def is_available(self):
+    def is_available(self, quantity=None):
         """
         Determine whether or not this item is available.
         """
         
-        return self.get_stocked_item().is_available()
+        return self.get_stocked_item().is_available(quantity)
 
 
 class StockedItemMixin(models.Model):
@@ -71,7 +71,7 @@ class StockedItemMixin(models.Model):
     default value of `STOCK_DEFAULT`.
     """
 
-    def is_available(self):
+    def is_available(self, quantity=None):
         """
         Method used to determine whether or not the current item is in an
         orderable state.
