@@ -74,7 +74,7 @@ class PriceBase(PricedItemBase):
             * Quantity
         """
 
-        return cls.objects.all()
+        return cls.objects.filter(**kwargs)
 
 
     def __unicode__(self):
