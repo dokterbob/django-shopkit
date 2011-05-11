@@ -24,32 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from webshop.extensions.stock.models import \
     StockedCartItemBase, StockedCartBase, StockedOrderItemBase, \
-    StockedOrderBase
-
-
-class StockedItemBase(object):
-    """
-    Generic base class for `CartItem`'s or `OrderItem`'s for which the stock
-    is represented by a stocked item somehow.
-    """
-    def get_stocked_item(self):
-        """
-        Get the :class:`StockedItemMixin <websop.extensions.simple.StockedItemMixin>`
-        subclass instance whose `is_available` method should determine whether
-        we are out of stock.
-
-        This method
-        should be overridden in order to be able to specify whether the cart
-        item is available or not.
-        """
-
-        raise NotImplementedError
-
-    def is_available(self, quantity):
-        """
-        Determine whether or not this item is available.
-        """
-        return self.get_stocked_item().is_available(quantity)
+    StockedOrderBase, StockedItemBase
 
 
 class StockedCartItemMixin(StockedItemBase, StockedCartItemBase):

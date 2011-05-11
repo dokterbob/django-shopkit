@@ -16,41 +16,49 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from webshop.extensions.stock.models import StockedCartItemBase
+from webshop.extensions.stock.models import \
+    StockedCartItemBase, StockedCartBase, StockedOrderItemBase, \
+    StockedOrderBase, StockedItemBase
 from webshop.extensions.stock.simple.settings import STOCK_CHOICES, \
                                                      STOCK_DEFAULT, \
                                                      STOCK_ORDERABLE
 
-class StockedCartItemMixin(StockedCartItemBase):
+
+class StockedCartItemMixin(StockedItemBase, StockedCartItemBase):
     """
-    Mixin class for shopping carts containing items which can be out of stock.
+    Mixin class for `CartItem`'s containing items for which stock is kept.
     """
-    
-    def get_stocked_item(self):
-        """ 
-        Get the :class:`StockedItemMixin <websop.extensions.simple.StockedItemMixin>` 
-        subclass instance whose `is_available` method should determine whether
-        we are out of stock.
-        
-        This method
-        should be overridden in order to be able to specify whether the cart
-        item is available or not.
-        """
-        
-        raise NotImplementedError
-    
-    def is_available(self, quantity=None):
-        """
-        Determine whether or not this item is available.
-        """
-        
-        return self.get_stocked_item().is_available(quantity)
+    pass
 
 
-class StockedItemMixin(models.Model):
+class StockedCartMixin(StockedCartBase):
+    """
+    Mixin class for `Cart`'s containing items for which stock is kept.
+    """
+    pass
+
+
+class StockedOrderItemMixin(StockedItemBase, StockedOrderItemBase):
+    """
+    Mixin class for `OrderItem`'s containing items for which stock is kept.
+    """
+    pass
+
+class StockedOrderMixin(StockedOrderBase):
+    """
+    Mixin class for `Order`'s containing items for which stock is kept.
+    """
+    pass
+
+
+class StockedItemMixin(models.Model, StockedItemBase):
     """
     Item with a simple stock selection mechanism: the possible options for
     the available `stock` field signify certain stock states, some of which
@@ -76,6 +84,8 @@ class StockedItemMixin(models.Model):
         Method used to determine whether or not the current item is in an
         orderable state.
         """
+        logger.debug(u'Checking whether %s is stocked', self)
+
         if self.stock in STOCK_ORDERABLE:
             return True
 
