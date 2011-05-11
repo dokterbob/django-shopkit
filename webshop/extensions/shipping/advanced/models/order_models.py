@@ -170,27 +170,13 @@ class ShippedCartMixin(CalculatedShippingOrderMixin, CheapestShippingMixin, Ship
     class Meta:
         abstract = True
 
-    # def get_valid_shipping_methods(self, **kwargs):
-    #     """ Return valid shipping_methods for the current order. """
-    #     superclass = super(ShippedCartMixin, self)
-    #     return superclass.get_valid_shipping_methods(order_methods=True,
-    #                                                  **kwargs)
-
 
 class ShippedCartItemMixin(CalculatedShippingItemMixin, CheapestShippingMixin, ShippedCartItemBase):
     """ Base class for shopping cart items which are shippable. """
     class Meta:
         abstract = True
 
-    # def get_valid_shipping_methods(self, **kwargs):
-    #     """ Return valid shipping_methods for the current order item. """
-    #     superclass = super(ShippedCartItemMixin, self)
-    #     return superclass.get_valid_shipping_methods(item_methods=True,
-    #                                                  product=self.product,
-    #                                                  **kwargs)
 
-
-# class ShippedOrderMixin(CalculatedShippingOrderMixin, CheapestShippingMixin, ShippedOrderBase):
 class ShippedOrderMixin(PersistentShippedItemBase,
                         ShippedOrderBase,
                         CalculatedShippingOrderMixin,
@@ -199,12 +185,6 @@ class ShippedOrderMixin(PersistentShippedItemBase,
 
     class Meta:
         abstract = True
-
-    # def get_valid_shipping_methods(self, **kwargs):
-    #     """ Return valid shipping_methods for the current order. """
-    #     superclass = super(ShippedOrderMixin, self)
-    #     return superclass.get_valid_shipping_methods(order_methods=True,
-    #                                                  **kwargs)
 
 
 class ShippedOrderItemMixin(PersistentShippedItemBase,
@@ -218,10 +198,3 @@ class ShippedOrderItemMixin(PersistentShippedItemBase,
 
     class Meta:
         abstract = True
-
-    # def get_valid_shipping_methods(self, **kwargs):
-    #     """ Return valid shipping_methods for the current order item. """
-    #     superclass = super(ShippedCartItemMixin, self)
-    #     return superclass.get_valid_shipping_methods(item_methods=True,
-    #                                                  product=self.product,
-    #                                                  **kwargs)
