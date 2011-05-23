@@ -20,7 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
@@ -80,6 +80,7 @@ class EmailingListener(Listener):
     """ Listener which sends out emails. """
 
     body_template_name = None
+    body_html_template_name = None
     subject_template_name = None
 
     def get_subject_template_names(self):
@@ -106,6 +107,16 @@ class EmailingListener(Listener):
         else:
 
             return [self.body_template_name]
+
+    def get_body_html_template_names(self):
+        """
+        Returns a list of HTML template names to be used for the request. Must return
+        a list. May not be called if render_to_response is overridden.
+        """
+        if self.body_html_template_name is None:
+            return None
+        else:
+            return [self.body_html_template_name]
 
     def get_context_data(self):
         """
@@ -135,15 +146,21 @@ class EmailingListener(Listener):
 
     def create_message(self, context):
         """ Create an email message. """
+        recipients = self.get_recipients()
+        sender = self.get_sender()
+
         subject = render_to_string(self.get_subject_template_names(), context)
         # Clean the subject a bit for common errors (newlines!)
         subject = subject.strip().replace('\n', ' ')
 
         body = render_to_string(self.get_body_template_names(), context)
-        recipients = self.get_recipients()
-        sender = self.get_sender()
 
-        email = EmailMessage(subject, body, sender, recipients)
+        email = EmailMultiAlternatives(subject, body, sender, recipients)
+
+        html_body_template_names = self.get_body_html_template_names()
+        if html_body_template_names:
+            html_body = render_to_string(html_body_template_names, context)
+            email.attach_alternative(html_body, 'text/html')
 
         return email
 
