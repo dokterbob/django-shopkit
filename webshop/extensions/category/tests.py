@@ -37,7 +37,7 @@ class CategoryTestMixinBase(object):
         self.category_class = \
             get_model_from_string(settings.WEBSHOP_CATEGORY_MODEL)
         
-    def make_test_category(self):
+    def make_category(self):
         """ 
         Abstract function for creating a test category. As the actual
         properties of Products depend on the classes actually implementing
@@ -49,7 +49,7 @@ class CategoryTestMixinBase(object):
     def test_basic_category(self):
         """ Test if we can make and save a simple category. """
         
-        c = self.make_test_category()
+        c = self.make_category()
         c.save()
         
         self.assert_(c.pk)
