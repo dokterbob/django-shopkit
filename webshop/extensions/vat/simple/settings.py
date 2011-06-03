@@ -18,6 +18,6 @@
 
 from django.conf import settings
 
-VAT_PERCENTAGE = getattr(settings, 'WEBSHOP_VAT_PERCENTAGE')
-VAT_DEFAULT_DISPLAY = getattr(settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY')
+VAT_PERCENTAGE = getattr(settings, 'SHOPKIT_VAT_PERCENTAGE')
+VAT_DEFAULT_DISPLAY = getattr(settings, 'SHOPKIT_VAT_DEFAULT_DISPLAY')
 

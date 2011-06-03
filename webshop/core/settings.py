@@ -18,26 +18,26 @@
 
 from django.conf import settings
 
-CUSTOMER_MODEL = getattr(settings, 'WEBSHOP_CUSTOMER_MODEL')
+CUSTOMER_MODEL = getattr(settings, 'SHOPKIT_CUSTOMER_MODEL')
 """ Reference to the customer model used in the shop. """
 
-PRODUCT_MODEL = getattr(settings, 'WEBSHOP_PRODUCT_MODEL')
+PRODUCT_MODEL = getattr(settings, 'SHOPKIT_PRODUCT_MODEL')
 """ Reference to the model class defining the product. """
 
-CART_MODEL = getattr(settings, 'WEBSHOP_CART_MODEL')
+CART_MODEL = getattr(settings, 'SHOPKIT_CART_MODEL')
 """ The model used for shopping carts. """
 
-CARTITEM_MODEL = getattr(settings, 'WEBSHOP_CARTITEM_MODEL')
+CARTITEM_MODEL = getattr(settings, 'SHOPKIT_CARTITEM_MODEL')
 """ The model used for shopping cart items. """
 
-ORDER_MODEL = getattr(settings, 'WEBSHOP_ORDER_MODEL')
+ORDER_MODEL = getattr(settings, 'SHOPKIT_ORDER_MODEL')
 """ The model used for orders. """
 
-ORDER_STATES = getattr(settings, 'WEBSHOP_ORDER_STATES')
+ORDER_STATES = getattr(settings, 'SHOPKIT_ORDER_STATES')
 """
 Mapping for order states of the following form::
 
-    WEBSHOP_ORDER_STATES = (
+    SHOPKIT_ORDER_STATES = (
         (00, _('Temp')),
         (10, _('New')),
         (20, _('Blocked')),
@@ -50,19 +50,19 @@ Mapping for order states of the following form::
 
 """
 
-DEFAULT_ORDER_STATE = getattr(settings, 'WEBSHOP_DEFAULT_ORDER_STATE', ORDER_STATES[0][0])
+DEFAULT_ORDER_STATE = getattr(settings, 'SHOPKIT_DEFAULT_ORDER_STATE', ORDER_STATES[0][0])
 """ 
 Default state for new orders. By default, the first state in 
-`WEBSHOP_ORDER_STATES` is selected.
+`SHOPKIT_ORDER_STATES` is selected.
 """
 
-ORDERSTATE_CHANGE_MODEL = getattr(settings, 'WEBSHOP_ORDERSTATE_CHANGE_MODEL')
+ORDERSTATE_CHANGE_MODEL = getattr(settings, 'SHOPKIT_ORDERSTATE_CHANGE_MODEL')
 """ Model used for logging state changes of orders. """
 
-ORDERITEM_MODEL = getattr(settings, 'WEBSHOP_ORDERITEM_MODEL')
+ORDERITEM_MODEL = getattr(settings, 'SHOPKIT_ORDERITEM_MODEL')
 """ The model used for order items. """
 
-MAX_NAME_LENGTH = getattr(settings, 'WEBSHOP_MAX_NAME_LENGTH', 255)
+MAX_NAME_LENGTH = getattr(settings, 'SHOPKIT_MAX_NAME_LENGTH', 255)
 """ (Optional) The maximum name length for named products in the webshop. 
     This defaults to 255.
 """

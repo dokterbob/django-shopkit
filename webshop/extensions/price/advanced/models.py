@@ -182,7 +182,7 @@ class QuantifiedPriceMixin(QuantizedItemBase):
 #
 #     def get_price(self, **kwargs):
 #         """ Get the cheapest available price, based
-#             upon WEBSHOP_PRICE_MODEL. """
+#             upon SHOPKIT_PRICE_MODEL. """
 #
 #         cheapest = self.__class__.get_cheapest(**kwargs)
 #

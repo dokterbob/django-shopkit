@@ -18,6 +18,6 @@
 
 from django.conf import settings
 
-PRODUCTIMAGE_MODEL = getattr(settings, 'WEBSHOP_PRODUCTIMAGE_MODEL')
+PRODUCTIMAGE_MODEL = getattr(settings, 'SHOPKIT_PRODUCTIMAGE_MODEL')
 """ Model used for product images. """
 

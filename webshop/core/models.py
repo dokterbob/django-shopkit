@@ -433,7 +433,7 @@ class OrderStateChangeBase(models.Model):
     state = models.PositiveSmallIntegerField(_('status'),
                                              choices=ORDER_STATES)
     """ State of the order, represented by a PositveSmallInteger field.
-        Available choices can be configured in WEBSHOP_ORDER_STATES.
+        Available choices can be configured in SHOPKIT_ORDER_STATES.
     """
 
     message = models.CharField(_('message'),
@@ -480,7 +480,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
                                              choices=ORDER_STATES,
                                              default=DEFAULT_ORDER_STATE)
     """ State of the order, represented by a PositveSmallInteger field.
-        Available choices can be configured in WEBSHOP_ORDER_STATES.
+        Available choices can be configured in SHOPKIT_ORDER_STATES.
     """
 
     confirmed = models.BooleanField(_('confirmed'),

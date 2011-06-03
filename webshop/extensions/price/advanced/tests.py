@@ -28,11 +28,11 @@ class AdvancedPriceTestMixin(object):
     
     def setUp(self):
         """
-        This makes the `Price` class from the `WEBSHOP_PRICE_MODEL` available
+        This makes the `Price` class from the `SHOPKIT_PRICE_MODEL` available
         as `self.price_class` for unittests to make use of.
         """
 
         super(AdvancedPriceTestMixin, self).setUp()
         
         self.price_class = \
-            get_model_from_string(settings.WEBSHOP_PRICE_MODEL)
+            get_model_from_string(settings.SHOPKIT_PRICE_MODEL)

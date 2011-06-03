@@ -19,5 +19,5 @@
 from webshop.extensions.shipping.settings import *
 
 
-SHIPPING_METHOD_MODEL = getattr(settings, 'WEBSHOP_SHIPPING_METHOD_MODEL')
+SHIPPING_METHOD_MODEL = getattr(settings, 'SHOPKIT_SHIPPING_METHOD_MODEL')
 """ Model for shipping method. """

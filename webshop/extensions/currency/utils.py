@@ -19,7 +19,7 @@
 def get_currency_field():
     """
     Use this method to get a useable pricefield based on the
-    `WEBSHOP_PRICE_FIELD_NAME` setting::
+    `SHOPKIT_PRICE_FIELD_NAME` setting::
 
         # Get the currently configured currency field, whatever it is
         from webshop.extensions.currency.utils import get_currency_field

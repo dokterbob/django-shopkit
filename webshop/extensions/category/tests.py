@@ -35,7 +35,7 @@ class CategoryTestMixinBase(object):
         super(CategoryTestMixinBase, self).setUp()
         
         self.category_class = \
-            get_model_from_string(settings.WEBSHOP_CATEGORY_MODEL)
+            get_model_from_string(settings.SHOPKIT_CATEGORY_MODEL)
         
     def make_test_category(self):
         """ 

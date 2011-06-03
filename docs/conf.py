@@ -43,33 +43,33 @@ autodoc_member_order = 'bysource'
 # This is needed to be able to import the Django shizzle
 from django.conf import global_settings
 
-setattr(global_settings, 'WEBSHOP_CUSTOMER_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_PRODUCT_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_CART_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_CARTITEM_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_ORDER_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_ORDERITEM_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_CATEGORY_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_PRICE_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_PRODUCTVARIATION_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_PRODUCTIMAGE_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_ORDER_STATES', '#doc')
-setattr(global_settings, 'WEBSHOP_ORDERSTATE_CHANGE_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_ORDER_COMPLETED_STATES', '#doc')
+setattr(global_settings, 'SHOPKIT_CUSTOMER_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_PRODUCT_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_CART_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_CARTITEM_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_ORDER_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_ORDERITEM_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_CATEGORY_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_PRICE_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_PRODUCTVARIATION_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_PRODUCTIMAGE_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_ORDER_STATES', '#doc')
+setattr(global_settings, 'SHOPKIT_ORDERSTATE_CHANGE_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_ORDER_COMPLETED_STATES', '#doc')
 
-setattr(global_settings, 'WEBSHOP_CURRENCY_PRICE_FIELD', '#doc')
+setattr(global_settings, 'SHOPKIT_CURRENCY_PRICE_FIELD', '#doc')
 
-setattr(global_settings, 'WEBSHOP_VAT_PERCENTAGE', 19)
-setattr(global_settings, 'WEBSHOP_VAT_DEFAULT_DISPLAY', True)
+setattr(global_settings, 'SHOPKIT_VAT_PERCENTAGE', 19)
+setattr(global_settings, 'SHOPKIT_VAT_DEFAULT_DISPLAY', True)
 
-setattr(global_settings, 'WEBSHOP_DISCOUNT_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_DISCOUNT_MODEL', '#doc')
 
-setattr(global_settings, 'WEBSHOP_BRAND_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_BRAND_MODEL', '#doc')
 
-setattr(global_settings, 'WEBSHOP_SHIPPING_ADDRESS_MODEL', '#doc')
-setattr(global_settings, 'WEBSHOP_SHIPPING_METHOD_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_SHIPPING_ADDRESS_MODEL', '#doc')
+setattr(global_settings, 'SHOPKIT_SHIPPING_METHOD_MODEL', '#doc')
 
-setattr(global_settings, 'WEBSHOP_USE_MPTT', True)
+setattr(global_settings, 'SHOPKIT_USE_MPTT', True)
 
 from django.core.management import setup_environ
 setup_environ(global_settings)

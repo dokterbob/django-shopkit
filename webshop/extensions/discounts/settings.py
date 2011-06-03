@@ -18,13 +18,13 @@
 
 from django.conf import settings
 
-DISCOUNT_MODEL = getattr(settings, 'WEBSHOP_DISCOUNT_MODEL')
+DISCOUNT_MODEL = getattr(settings, 'SHOPKIT_DISCOUNT_MODEL')
 """ Model used for product discounts. """
 
-COUPON_LENGTH = getattr(settings, 'WEBSHOP_COUPON_LENGTH', 20)
+COUPON_LENGTH = getattr(settings, 'SHOPKIT_COUPON_LENGTH', 20)
 """ Length of a coupon code. """
 
-COUPON_CHARACTERS = getattr(settings, 'WEBSHOP_COUPON_CHARACTERS', '23456789QWERTASDFGZXCVBYUIPHJKLNM')
+COUPON_CHARACTERS = getattr(settings, 'SHOPKIT_COUPON_CHARACTERS', '23456789QWERTASDFGZXCVBYUIPHJKLNM')
 """ Characters used for generating coupon codes.
     This defaults to: `23456789QWERTASDFGZXCVBYUIPHJKLNM`
 

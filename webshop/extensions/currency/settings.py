@@ -18,7 +18,7 @@
 
 from django.conf import settings
 
-PRICE_FIELD_NAME = getattr(settings, 'WEBSHOP_CURRENCY_PRICE_FIELD')
+PRICE_FIELD_NAME = getattr(settings, 'SHOPKIT_CURRENCY_PRICE_FIELD')
 """ 
 String reference to default price field for webshop.
 For example: `webshop.extensions.currency.simple.fields.PriceField`

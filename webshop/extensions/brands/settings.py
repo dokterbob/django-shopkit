@@ -19,8 +19,8 @@
 from django.conf import settings
 
 
-BRAND_MODEL = getattr(settings, 'WEBSHOP_BRAND_MODEL')
+BRAND_MODEL = getattr(settings, 'SHOPKIT_BRAND_MODEL')
 """ Model class used brands. """
 
-BRAND_REQUIRED = getattr(settings, 'WEBSHOP_BRAND_REQUIRED', True)
+BRAND_REQUIRED = getattr(settings, 'SHOPKIT_BRAND_REQUIRED', True)
 """ Whether or not brand is a required property for products. """

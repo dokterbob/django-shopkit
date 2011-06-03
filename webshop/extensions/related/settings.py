@@ -19,7 +19,7 @@
 from django.conf import settings
 
 
-RELATED_SYMMETRICAL = getattr(settings, 'WEBSHOP_RELATED_SYMMETRICAL', False)
+RELATED_SYMMETRICAL = getattr(settings, 'SHOPKIT_RELATED_SYMMETRICAL', False)
 """ 
 Whether relations from Product a to Product b should imply a relation from
 Product b to Product a as well. By default, this is `False`.

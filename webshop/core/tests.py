@@ -36,22 +36,22 @@ class CoreTestMixin(object):
         super(CoreTestMixin, self).setUp()
         
         self.customer_class = \
-            get_model_from_string(settings.WEBSHOP_CUSTOMER_MODEL)
+            get_model_from_string(settings.SHOPKIT_CUSTOMER_MODEL)
         
         self.product_class = \
-            get_model_from_string(settings.WEBSHOP_PRODUCT_MODEL)
+            get_model_from_string(settings.SHOPKIT_PRODUCT_MODEL)
         
         self.cart_class = \
-            get_model_from_string(settings.WEBSHOP_CART_MODEL)
+            get_model_from_string(settings.SHOPKIT_CART_MODEL)
 
         self.cartitem_class = \
-            get_model_from_string(settings.WEBSHOP_CARTITEM_MODEL)
+            get_model_from_string(settings.SHOPKIT_CARTITEM_MODEL)
 
         self.order_class = \
-            get_model_from_string(settings.WEBSHOP_ORDER_MODEL)
+            get_model_from_string(settings.SHOPKIT_ORDER_MODEL)
 
         self.orderitem_class = \
-            get_model_from_string(settings.WEBSHOP_ORDERITEM_MODEL)
+            get_model_from_string(settings.SHOPKIT_ORDERITEM_MODEL)
     
     def make_test_product(self):
         """ 

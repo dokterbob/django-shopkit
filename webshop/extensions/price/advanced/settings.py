@@ -18,4 +18,4 @@
 
 from django.conf import settings
 
-PRICE_MODEL = getattr(settings, 'WEBSHOP_PRICE_MODEL')
+PRICE_MODEL = getattr(settings, 'SHOPKIT_PRICE_MODEL')

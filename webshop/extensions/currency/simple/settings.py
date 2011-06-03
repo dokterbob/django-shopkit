@@ -19,25 +19,25 @@
 from django.conf import settings
 
 
-CURRENCY_MAX_DIGITS = getattr(settings, 'WEBSHOP_CURRENCY_MAX_DIGITS', 6)
+CURRENCY_MAX_DIGITS = getattr(settings, 'SHOPKIT_CURRENCY_MAX_DIGITS', 6)
 """
 Maximum number of decimals for
 :class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
 Defaults to: 6.
 """
 
-CURRENCY_DECIMALS = getattr(settings, 'WEBSHOP_CURRENCY_DECIMALS', 2)
+CURRENCY_DECIMALS = getattr(settings, 'SHOPKIT_CURRENCY_DECIMALS', 2)
 """
 Number of decimals for
 :class:`PriceField <webshop.extensions.currency.simple.fields.PriceField>`.
 Defaults to: 2.
 """
 
-CURRENCY_FORMATTING = getattr(settings, 'WEBSHOP_CURRENCY_FORMATTING')
+CURRENCY_FORMATTING = getattr(settings, 'SHOPKIT_CURRENCY_FORMATTING')
 """
 Formatting string for displaying monetary units.
 
 For example, euro's will be nicely rendered with::
 
-    WEBSHOP_CURRENCY_FORMATTING = u"\u20AC %.2f"
+    SHOPKIT_CURRENCY_FORMATTING = u"\u20AC %.2f"
 """
