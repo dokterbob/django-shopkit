@@ -1,9 +1,9 @@
 Simple
 ======
 
-`webshop.extensions.price.simple`
+`shopkit.extensions.price.simple`
 
-.. automodule:: webshop.extensions.price.simple
+.. automodule:: shopkit.extensions.price.simple
    :members:
 
 Contents:

@@ -1,6 +1,6 @@
 Settings
 ========
 
-.. automodule:: webshop.extensions.shipping.advanced.settings
+.. automodule:: shopkit.extensions.shipping.advanced.settings
    :members:
 

@@ -1,9 +1,9 @@
 Related products
 ==================
 
-`webshop.extensions.related`
+`shopkit.extensions.related`
 
-.. automodule:: webshop.extensions.related
+.. automodule:: shopkit.extensions.related
    :members:
 
 Contents:

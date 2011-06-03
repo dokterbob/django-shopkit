@@ -1,8 +1,8 @@
 Managers
 ========
 
-`webshop.core.managers`
+`shopkit.core.managers`
 
-.. automodule:: webshop.core.managers
+.. automodule:: shopkit.core.managers
    :members:
 

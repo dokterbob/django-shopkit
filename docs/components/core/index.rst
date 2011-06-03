@@ -1,7 +1,7 @@
 Core
 ====
 
-.. automodule:: webshop.core
+.. automodule:: shopkit.core
    :members:
 
 Contents:

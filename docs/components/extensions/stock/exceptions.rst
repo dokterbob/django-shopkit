@@ -1,6 +1,6 @@
 Exceptions
 ==========
 
-.. automodule:: webshop.extensions.stock.exceptions
+.. automodule:: shopkit.extensions.stock.exceptions
    :members:
 

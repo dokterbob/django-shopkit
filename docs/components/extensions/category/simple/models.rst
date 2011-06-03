@@ -1,6 +1,6 @@
 Models
 ======
 
-.. automodule:: webshop.extensions.category.simple.models
+.. automodule:: shopkit.extensions.category.simple.models
    :members:
 

@@ -1,8 +1,8 @@
 Base models
 ===========
 
-`webshop.core.basemodels`
+`shopkit.core.basemodels`
 
-.. automodule:: webshop.core.basemodels
+.. automodule:: shopkit.core.basemodels
    :members:
 

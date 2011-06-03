@@ -1,6 +1,6 @@
 Utils
 ========
 
-.. automodule:: webshop.extensions.currency.simple.utils
+.. automodule:: shopkit.extensions.currency.simple.utils
    :members:
 

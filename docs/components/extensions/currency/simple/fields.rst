@@ -1,6 +1,6 @@
 Fields
 ========
 
-.. automodule:: webshop.extensions.currency.simple.fields
+.. automodule:: shopkit.extensions.currency.simple.fields
    :members:
 

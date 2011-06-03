@@ -1,8 +1,8 @@
 Settings
 ========
 
-`webshop.extensions.images.settings`
+`shopkit.extensions.images.settings`
 
-.. automodule:: webshop.extensions.images.settings
+.. automodule:: shopkit.extensions.images.settings
    :members:
 

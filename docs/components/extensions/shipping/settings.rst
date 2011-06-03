@@ -1,8 +1,8 @@
 Settings
 ========
 
-`webshop.extensions.shipping.settings`
+`shopkit.extensions.shipping.settings`
 
-.. automodule:: webshop.extensions.shipping.settings
+.. automodule:: shopkit.extensions.shipping.settings
    :members:
 

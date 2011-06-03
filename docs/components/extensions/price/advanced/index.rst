@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`webshop.extensions.price.advanced`
+`shopkit.extensions.price.advanced`
 
-.. automodule:: webshop.extensions.price.advanced
+.. automodule:: shopkit.extensions.price.advanced
    :members:
 
 .. toctree::

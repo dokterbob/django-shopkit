@@ -5,37 +5,37 @@ Getting started
 #) Install the app basic_webshop in your environment using `PIP <http://pypi.python.org/pypi/pip/>`_  
    (better make sure you're working in a virtual environment):: 
 
-    pip install -e git://salmon.dokterbob.net/basic-webshop.git#egg=basic-webshop
+    pip install -e git://salmon.dokterbob.net/basic-shopkit.git#egg=basic-webshop
 
 #) Enable the `basic_webshop` application in `INSTALLED_APPS` in `settings.py`::
 
     INSTALLED_APPS = (
         ...
-        'webshop.extensions.currency.simple',
+        'shopkit.extensions.currency.simple',
         'basic_webshop',
         ...
     )
 
 #) Import the webshop settings from `basic_webshop` in `settings.py`::
 
-    from basic_webshop.django_settings import *
+    from basic_shopkit.django_settings import *
 
    Or add the settings manually::
 
-    SHOPKIT_CUSTOMER_MODEL = 'basic_webshop.Customer'
-    SHOPKIT_PRODUCT_MODEL = 'basic_webshop.Product'
-    SHOPKIT_CART_MODEL = 'basic_webshop.Cart'
-    SHOPKIT_CARTITEM_MODEL = 'basic_webshop.CartItem'
-    SHOPKIT_ORDER_MODEL = 'basic_webshop.Order'
-    SHOPKIT_ORDERITEM_MODEL = 'basic_webshop.OrderItem'
-    SHOPKIT_CATEGORY_MODEL = 'basic_webshop.Category'
+    SHOPKIT_CUSTOMER_MODEL = 'basic_shopkit.Customer'
+    SHOPKIT_PRODUCT_MODEL = 'basic_shopkit.Product'
+    SHOPKIT_CART_MODEL = 'basic_shopkit.Cart'
+    SHOPKIT_CARTITEM_MODEL = 'basic_shopkit.CartItem'
+    SHOPKIT_ORDER_MODEL = 'basic_shopkit.Order'
+    SHOPKIT_ORDERITEM_MODEL = 'basic_shopkit.OrderItem'
+    SHOPKIT_CATEGORY_MODEL = 'basic_shopkit.Category'
 
 
 #) Now include the webshop URL's in `urls.py`::
 
     urlpatterns = patterns('',
         ...
-        (r'^shop/', include('basic_webshop.urls')),
+        (r'^shop/', include('basic_shopkit.urls')),
         ...
     )
 

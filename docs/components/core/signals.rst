@@ -1,8 +1,8 @@
 Signals
 =======
 
-`webshop.core.signals`
+`shopkit.core.signals`
 
-.. automodule:: webshop.core.signals
+.. automodule:: shopkit.core.signals
    :members:
 

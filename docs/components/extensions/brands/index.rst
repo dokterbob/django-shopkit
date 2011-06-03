@@ -1,9 +1,9 @@
 Brand management
 ==================
 
-`webshop.extensions.brands`
+`shopkit.extensions.brands`
 
-.. automodule:: webshop.extensions.brands
+.. automodule:: shopkit.extensions.brands
    :members:
 
 Contents:

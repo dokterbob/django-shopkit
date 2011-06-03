@@ -1,8 +1,8 @@
 Base models
 ===========
 
-`webshop.extensions.shipping.basemodels`
+`shopkit.extensions.shipping.basemodels`
 
-.. automodule:: webshop.extensions.shipping.basemodels
+.. automodule:: shopkit.extensions.shipping.basemodels
    :members:
 

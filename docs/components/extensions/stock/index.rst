@@ -1,9 +1,9 @@
 Stock
 =====
 
-`webshop.extensions.stock`
+`shopkit.extensions.stock`
 
-.. automodule:: webshop.extensions.stock
+.. automodule:: shopkit.extensions.stock
    :members:
 
 Contents:

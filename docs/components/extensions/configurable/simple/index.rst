@@ -1,9 +1,9 @@
 Simple
 ======
 
-`webshop.extensions.configurable.simple`
+`shopkit.extensions.configurable.simple`
 
-.. automodule:: webshop.extensions.configurable.simple
+.. automodule:: shopkit.extensions.configurable.simple
    :members:
 
 .. toctree::

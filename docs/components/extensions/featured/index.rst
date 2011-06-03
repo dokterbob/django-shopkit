@@ -1,9 +1,9 @@
 Featured products
 =================
 
-`webshop.extensions.featured`
+`shopkit.extensions.featured`
 
-.. automodule:: webshop.extensions.featured
+.. automodule:: shopkit.extensions.featured
    :members:
 
 Contents:

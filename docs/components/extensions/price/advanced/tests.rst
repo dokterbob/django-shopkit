@@ -1,8 +1,8 @@
 Tests
 ========
 
-`webshop.extensions.price.advanced.tests`
+`shopkit.extensions.price.advanced.tests`
 
-.. automodule:: webshop.extensions.price.advanced.tests
+.. automodule:: shopkit.extensions.price.advanced.tests
    :members:
 

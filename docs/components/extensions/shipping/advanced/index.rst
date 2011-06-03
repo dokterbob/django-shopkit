@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`webshop.extensions.shipping.advanced`
+`shopkit.extensions.shipping.advanced`
 
-.. automodule:: webshop.extensions.shipping.advanced
+.. automodule:: shopkit.extensions.shipping.advanced
    :members:
 
 .. toctree::

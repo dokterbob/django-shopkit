@@ -1,8 +1,8 @@
 Base models
 ===========
 
-`webshop.extensions.discounts.basemodels`
+`shopkit.extensions.discounts.basemodels`
 
-.. automodule:: webshop.extensions.discounts.basemodels
+.. automodule:: shopkit.extensions.discounts.basemodels
    :members:
 

@@ -1,8 +1,8 @@
 Views
 =====
 
-`webshop.core.views`
+`shopkit.core.views`
 
-.. automodule:: webshop.core.views
+.. automodule:: shopkit.core.views
    :members:
 

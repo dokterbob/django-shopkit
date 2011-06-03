@@ -1,8 +1,8 @@
 Settings
 ========
 
-`webshop.extensions.price.advanced.settings`
+`shopkit.extensions.price.advanced.settings`
 
-.. automodule:: webshop.extensions.price.advanced.settings
+.. automodule:: shopkit.extensions.price.advanced.settings
    :members:
 

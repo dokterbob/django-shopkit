@@ -1,8 +1,8 @@
 Forms
 =====
 
-`webshop.core.forms`
+`shopkit.core.forms`
 
-.. automodule:: webshop.core.forms
+.. automodule:: shopkit.core.forms
    :members:
 

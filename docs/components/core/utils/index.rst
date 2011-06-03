@@ -1,9 +1,9 @@
 Utils
 =====
 
-`webshop.core.utils`
+`shopkit.core.utils`
 
-.. automodule:: webshop.core.utils
+.. automodule:: shopkit.core.utils
    :members:
 
 Contents:

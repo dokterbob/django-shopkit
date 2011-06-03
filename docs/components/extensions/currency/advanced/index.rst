@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`webshop.extensions.currency.advanced`
+`shopkit.extensions.currency.advanced`
 
-.. automodule:: webshop.extensions.currency.advanced
+.. automodule:: shopkit.extensions.currency.advanced
    :members:
 
 Contents:

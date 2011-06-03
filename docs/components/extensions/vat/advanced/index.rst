@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`webshop.extensions.vat.advanced`
+`shopkit.extensions.vat.advanced`
 
-.. automodule:: webshop.extensions.vat.advanced
+.. automodule:: shopkit.extensions.vat.advanced
    :members:
 
 .. toctree::

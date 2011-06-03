@@ -1,6 +1,6 @@
 Views
 =====
 
-.. automodule:: webshop.extensions.configurable.advanced.views
+.. automodule:: shopkit.extensions.configurable.advanced.views
    :members:
 

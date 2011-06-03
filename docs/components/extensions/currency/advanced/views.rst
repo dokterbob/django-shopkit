@@ -1,6 +1,6 @@
 Views
 =====
 
-.. automodule:: webshop.extensions.currency.advanced.views
+.. automodule:: shopkit.extensions.currency.advanced.views
    :members:
 

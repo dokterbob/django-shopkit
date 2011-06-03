@@ -1,8 +1,8 @@
 Tests
 =====
 
-`webshop.core.tests`
+`shopkit.core.tests`
 
-.. automodule:: webshop.core.tests
+.. automodule:: shopkit.core.tests
    :members:
 

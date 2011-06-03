@@ -1,8 +1,8 @@
 Base models
 ===========
 
-.. automodule:: webshop.extensions.category.basemodels
+.. automodule:: shopkit.extensions.category.basemodels
    :members:
 
-.. autoclass:: webshop.extensions.category.basemodels.MPTTCategoryBase
+.. autoclass:: shopkit.extensions.category.basemodels.MPTTCategoryBase
 

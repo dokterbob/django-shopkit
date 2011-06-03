@@ -1,8 +1,8 @@
 Settings
 ========
 
-`webshop.extensions.related.settings`
+`shopkit.extensions.related.settings`
 
-.. automodule:: webshop.extensions.related.settings
+.. automodule:: shopkit.extensions.related.settings
    :members:
 

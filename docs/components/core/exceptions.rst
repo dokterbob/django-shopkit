@@ -1,8 +1,8 @@
 Exceptions
 ==========
 
-`webshop.core.exceptions`
+`shopkit.core.exceptions`
 
-.. automodule:: webshop.core.exceptions
+.. automodule:: shopkit.core.exceptions
    :members:
 

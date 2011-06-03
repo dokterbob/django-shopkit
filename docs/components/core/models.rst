@@ -1,8 +1,8 @@
 Models
 ======
 
-`webshop.core.models`
+`shopkit.core.models`
 
-.. automodule:: webshop.core.models
+.. automodule:: shopkit.core.models
    :members:
 

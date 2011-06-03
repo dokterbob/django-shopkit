@@ -1,7 +1,7 @@
 Shipping
 ============
 
-.. automodule:: webshop.extensions.shipping
+.. automodule:: shopkit.extensions.shipping
    :members:
 
 .. toctree::

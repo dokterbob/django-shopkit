@@ -152,7 +152,7 @@ exclude_trees = ['_build']
 pygments_style = 'sphinx'
 
 # A list of ignored prefixes for module index sorting.
-modindex_common_prefix = ['webshop.', 'webshop.extensions.', ]
+modindex_common_prefix = ['shopkit.', 'shopkit.extensions.', ]
 
 
 # -- Options for HTML output ---------------------------------------------------

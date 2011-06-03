@@ -1,8 +1,8 @@
 Fields
 ======
 
-`webshop.core.utils.fields`
+`shopkit.core.utils.fields`
 
-.. automodule:: webshop.core.utils.fields
+.. automodule:: shopkit.core.utils.fields
    :members:
 

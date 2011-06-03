@@ -1,9 +1,9 @@
 Admin
 =====
 
-`webshop.extensions.price.advanced.admin`
+`shopkit.extensions.price.advanced.admin`
 
 
-.. automodule:: webshop.extensions.price.advanced.admin
+.. automodule:: shopkit.extensions.price.advanced.admin
    :members:
 

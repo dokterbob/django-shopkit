@@ -1,7 +1,7 @@
 Value Added Tax
 ===============
 
-.. automodule:: webshop.extensions.vat
+.. automodule:: shopkit.extensions.vat
    :members:
 
 .. toctree::

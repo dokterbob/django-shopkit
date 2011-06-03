@@ -1,9 +1,9 @@
 Discounts
 ==================
 
-`webshop.extensions.discounts`
+`shopkit.extensions.discounts`
 
-.. automodule:: webshop.extensions.discounts
+.. automodule:: shopkit.extensions.discounts
    :members:
 
 Contents:

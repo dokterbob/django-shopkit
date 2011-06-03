@@ -1,8 +1,8 @@
 Listeners
 =========
 
-`webshop.core.listeners`
+`shopkit.core.listeners`
 
-.. automodule:: webshop.core.listeners
+.. automodule:: shopkit.core.listeners
    :members:
 

@@ -1,7 +1,7 @@
 Settings
 ========
 
-`webshop.extensions.category.settings`
+`shopkit.extensions.category.settings`
 
 To set the values below from `settings.py`, prepend their names with 
 `SHOPKIT_`. For example::
@@ -9,6 +9,6 @@ To set the values below from `settings.py`, prepend their names with
     SHOPKIT_CATEGORY_MODEL = 'myapp.MyCategory'
 
 
-.. automodule:: webshop.extensions.category.settings
+.. automodule:: shopkit.extensions.category.settings
    :members:
 

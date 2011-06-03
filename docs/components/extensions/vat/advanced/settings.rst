@@ -1,6 +1,6 @@
 Settings
 ========
 
-.. automodule:: webshop.extensions.vat.advanced.settings
+.. automodule:: shopkit.extensions.vat.advanced.settings
    :members:
 

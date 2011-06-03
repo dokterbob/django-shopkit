@@ -1,8 +1,8 @@
 Models
 ======
 
-`webshop.extensions.stock.advanced.models`
+`shopkit.extensions.stock.advanced.models`
 
-.. automodule:: webshop.extensions.stock.advanced.models
+.. automodule:: shopkit.extensions.stock.advanced.models
    :members:
 

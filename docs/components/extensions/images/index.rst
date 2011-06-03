@@ -1,9 +1,9 @@
 Images
 ==============
 
-`webshop.extensions.images`
+`shopkit.extensions.images`
 
-.. automodule:: webshop.extensions.images
+.. automodule:: shopkit.extensions.images
    :members:
 
 Contents:

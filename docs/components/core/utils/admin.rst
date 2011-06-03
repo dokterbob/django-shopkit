@@ -1,8 +1,8 @@
 Admin
 =====
 
-`webshop.core.utils.admin`
+`shopkit.core.utils.admin`
 
-.. automodule:: webshop.core.utils.admin
+.. automodule:: shopkit.core.utils.admin
    :members:
 
