@@ -11,7 +11,7 @@ Getting started
 
     INSTALLED_APPS = (
         ...
-        'shopkit.extensions.currency.simple',
+        'shopkit.currency.simple',
         'basic_webshop',
         ...
     )
