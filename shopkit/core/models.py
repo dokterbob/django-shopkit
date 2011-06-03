@@ -42,7 +42,7 @@ from shopkit.core.utils import get_model_from_string
 from shopkit.core.exceptions import AlreadyConfirmedException
 
 # Get the currently configured currency field, whatever it is
-from shopkit.extensions.currency.utils import get_currency_field
+from shopkit.currency.utils import get_currency_field
 PriceField = get_currency_field()
 """
 ..todo::
