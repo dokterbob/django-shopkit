@@ -38,7 +38,7 @@ building customized webshop applications using Django, for 'perfectionists
 with deadlines'. """
 
 setup(
-    name = 'django-webshop',
+    name = 'django-shopkit',
     version = "0.1",
     description = SHORT_DESCRIPTION,
     long_description = README,

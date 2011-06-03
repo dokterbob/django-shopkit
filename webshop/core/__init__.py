@@ -17,7 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
-The core of django-webshop framework contains the components
+The core of django-shopkit framework contains the components
 considered to be essential in the basis of any kind of webshop.
 
 As the models and other components contained in this module are

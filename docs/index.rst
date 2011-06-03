@@ -1,14 +1,14 @@
-.. django-webshop documentation master file, created by
+.. django-shopkit documentation master file, created by
    sphinx-quickstart on Sat Nov  6 13:12:00 2010.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to django-webshop's documentation!
+Welcome to django-shopkit's documentation!
 ==========================================
 
 Webshop framework for Django
 ----------------------------
-Similar to the way that Django is a web application framework, django-webshop
+Similar to the way that Django is a web application framework, django-shopkit
 is a webshop application framework. It is, essentially, a toolkit for
 building customized webshop applications, for 'perfectionists with deadlines'.
 
@@ -22,7 +22,7 @@ release.
 Dependencies
 ------------
 You will need the dependencies mentioned in `requirements.txt` to be installed
-somewhere in your `PYTHONPATH`. `django-webshop` will default to using (the
+somewhere in your `PYTHONPATH`. `django-shopkit` will default to using (the
 new) `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ when
 available, but does not depend on it.
 

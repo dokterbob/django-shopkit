@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class WebshopExceptionBase(Exception):
-    """ Base class for exception in django-webshop. """
+    """ Base class for exception in django-shopkit. """
     pass
 
 

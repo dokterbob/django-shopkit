@@ -18,7 +18,7 @@
 
 # -*- coding: utf-8 -*-
 #
-# django-webshop documentation build configuration file, created by
+# django-shopkit documentation build configuration file, created by
 # sphinx-quickstart on Sat Nov  6 13:12:00 2010.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -105,7 +105,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'django-webshop'
+project = u'django-shopkit'
 copyright = u'2010, Mathijs de Bruin'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -226,7 +226,7 @@ html_theme = 'default'
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'django-webshopdoc'
+htmlhelp_basename = 'django-shopkitdoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -240,7 +240,7 @@ latex_font_size = '10pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'django-webshop.tex', u'django-webshop Documentation',
+  ('index', 'django-shopkit.tex', u'django-shopkit Documentation',
    u'Mathijs de Bruin', 'manual'),
 ]
 

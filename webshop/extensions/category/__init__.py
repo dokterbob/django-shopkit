@@ -17,7 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
-Django-webshop, by default, contains base classes for two kinds of categories:
+Django-shopkit, by default, contains base classes for two kinds of categories:
 
 * Simple categories, which define a base class for products that belong to
   exactly one category.

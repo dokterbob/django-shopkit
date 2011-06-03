@@ -17,7 +17,7 @@
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 """ 
-Currency handling for django-webshop. It comes in a simple and an advanced
+Currency handling for django-shopkit. It comes in a simple and an advanced
 variant. The simple variant assumes a single currency throughout the webshop
 project, advanced currency support allows for using multiple currencies
 throughout the site.

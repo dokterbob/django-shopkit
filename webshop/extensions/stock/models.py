@@ -32,7 +32,7 @@ class StockedCartItemBase(object):
         * Pro: We'll have a generic API for determining the stock state of
           items.
         * Con: It's bad to have too much code in the core, it is better if
-          modules within `django-webshop` have the least possible knowledge
+          modules within `django-shopkit` have the least possible knowledge
           about one another.
 
     """
