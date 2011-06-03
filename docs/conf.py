@@ -58,6 +58,7 @@ setattr(global_settings, 'SHOPKIT_ORDERSTATE_CHANGE_MODEL', '#doc')
 setattr(global_settings, 'SHOPKIT_ORDER_COMPLETED_STATES', '#doc')
 
 setattr(global_settings, 'SHOPKIT_CURRENCY_PRICE_FIELD', '#doc')
+setattr(global_settings, 'SHOPKIT_CURRENCY_FORMATTING', '#doc')
 
 setattr(global_settings, 'SHOPKIT_VAT_PERCENTAGE', 19)
 setattr(global_settings, 'SHOPKIT_VAT_DEFAULT_DISPLAY', True)
