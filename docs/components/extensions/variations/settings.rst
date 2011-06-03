@@ -1,8 +1,8 @@
 Settings
 ========
 
-`shopkit.extensions.variations.settings`
+`shopkit.variations.settings`
 
-.. automodule:: shopkit.extensions.variations.settings
+.. automodule:: shopkit.variations.settings
    :members:
 

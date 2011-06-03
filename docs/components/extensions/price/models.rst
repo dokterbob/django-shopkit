@@ -1,6 +1,6 @@
 Models
 ======
 
-.. automodule:: shopkit.extensions.price.models
+.. automodule:: shopkit.price.models
    :members:
 

@@ -1,8 +1,8 @@
 Settings
 ========
 
-`shopkit.extensions.discounts.settings`
+`shopkit.discounts.settings`
 
-.. automodule:: shopkit.extensions.discounts.settings
+.. automodule:: shopkit.discounts.settings
    :members:
 

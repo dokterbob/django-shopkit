@@ -1,9 +1,9 @@
 Forms
 =====
 
-`shopkit.extensions.price.advanced.forms`
+`shopkit.price.advanced.forms`
 
 
-.. automodule:: shopkit.extensions.price.advanced.forms
+.. automodule:: shopkit.price.advanced.forms
    :members:
 

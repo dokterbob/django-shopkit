@@ -1,6 +1,6 @@
 Models
 ======
 
-.. automodule:: shopkit.extensions.vat.advanced.models
+.. automodule:: shopkit.vat.advanced.models
    :members:
 

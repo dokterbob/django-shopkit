@@ -1,8 +1,8 @@
 Models
 ======
 
-`shopkit.extensions.variations.models`
+`shopkit.variations.models`
 
-.. automodule:: shopkit.extensions.variations.models
+.. automodule:: shopkit.variations.models
    :members:
 

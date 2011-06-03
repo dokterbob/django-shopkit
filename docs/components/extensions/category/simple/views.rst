@@ -1,6 +1,6 @@
 Views
 =====
 
-.. automodule:: shopkit.extensions.category.simple.views
+.. automodule:: shopkit.category.simple.views
    :members:
 

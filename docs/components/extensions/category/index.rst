@@ -1,9 +1,9 @@
 Category
 ========
 
-`shopkit.extensions.category`
+`shopkit.category`
 
-.. automodule:: shopkit.extensions.category
+.. automodule:: shopkit.category
    :members:
 
 Contents:

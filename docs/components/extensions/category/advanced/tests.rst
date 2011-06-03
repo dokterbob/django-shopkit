@@ -1,6 +1,6 @@
 Tests
 =====
 
-.. automodule:: shopkit.extensions.category.advanced.tests
+.. automodule:: shopkit.category.advanced.tests
    :members:
 

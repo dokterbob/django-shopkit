@@ -1,9 +1,9 @@
 Advanced discounts
 ==================
 
-`shopkit.extensions.discounts.advanced`
+`shopkit.discounts.advanced`
 
-.. automodule:: shopkit.extensions.discounts.advanced
+.. automodule:: shopkit.discounts.advanced
    :members:
 
 Contents:

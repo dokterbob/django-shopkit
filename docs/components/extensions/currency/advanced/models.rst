@@ -1,6 +1,6 @@
 Models
 ======
 
-.. automodule:: shopkit.extensions.currency.advanced.models
+.. automodule:: shopkit.currency.advanced.models
    :members:
 

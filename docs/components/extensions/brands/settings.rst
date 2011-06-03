@@ -1,8 +1,8 @@
 Settings
 ========
 
-`shopkit.extensions.brands.settings`
+`shopkit.brands.settings`
 
-.. automodule:: shopkit.extensions.brands.settings
+.. automodule:: shopkit.brands.settings
    :members:
 

@@ -1,6 +1,6 @@
 Settings
 ========
 
-.. automodule:: shopkit.extensions.configurable.simple.settings
+.. automodule:: shopkit.configurable.simple.settings
    :members:
 

@@ -1,6 +1,6 @@
 Views
 =====
 
-.. automodule:: shopkit.extensions.vat.advanced.views
+.. automodule:: shopkit.vat.advanced.views
    :members:
 

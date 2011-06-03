@@ -1,8 +1,8 @@
 Admin
 ======
 
-`shopkit.extensions.discounts.advanced.admin`
+`shopkit.discounts.advanced.admin`
 
-.. automodule:: shopkit.extensions.discounts.advanced.admin
+.. automodule:: shopkit.discounts.advanced.admin
    :members:
 

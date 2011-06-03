@@ -1,14 +1,14 @@
 Models
 ======
 
-`shopkit.extensions.shipping.advanced.models`
+`shopkit.shipping.advanced.models`
 
-.. automodule:: shopkit.extensions.shipping.advanced.models
+.. automodule:: shopkit.shipping.advanced.models
    :members:
 
-.. automodule:: shopkit.extensions.shipping.advanced.models.shipping_models
+.. automodule:: shopkit.shipping.advanced.models.shipping_models
    :members:
 
-.. automodule:: shopkit.extensions.shipping.advanced.models.order_models
+.. automodule:: shopkit.shipping.advanced.models.order_models
    :members:
 

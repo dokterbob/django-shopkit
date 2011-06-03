@@ -1,8 +1,8 @@
 Tests
 ========
 
-`shopkit.extensions.category.tests`
+`shopkit.category.tests`
 
-.. automodule:: shopkit.extensions.category.tests
+.. automodule:: shopkit.category.tests
    :members:
 

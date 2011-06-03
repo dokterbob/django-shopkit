@@ -1,6 +1,6 @@
 Settings
 ========
 
-.. automodule:: shopkit.extensions.vat.simple.settings
+.. automodule:: shopkit.vat.simple.settings
    :members:
 

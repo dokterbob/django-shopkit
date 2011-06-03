@@ -1,7 +1,7 @@
 Configurable
 ============
 
-.. automodule:: shopkit.extensions.configurable
+.. automodule:: shopkit.configurable
    :members:
 
 .. toctree::

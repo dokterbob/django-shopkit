@@ -1,9 +1,9 @@
 Simple
 ======
 
-`shopkit.extensions.category.simple`
+`shopkit.category.simple`
 
-.. automodule:: shopkit.extensions.category.simple
+.. automodule:: shopkit.category.simple
    :members:
 
 .. toctree::

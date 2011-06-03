@@ -1,9 +1,9 @@
 Variations
 ==================
 
-`shopkit.extensions.variations`
+`shopkit.variations`
 
-.. automodule:: shopkit.extensions.variations
+.. automodule:: shopkit.variations
    :members:
 
 Contents:

@@ -1,6 +1,6 @@
 Settings
 ========
 
-.. automodule:: shopkit.extensions.currency.simple.settings
+.. automodule:: shopkit.currency.simple.settings
    :members:
 

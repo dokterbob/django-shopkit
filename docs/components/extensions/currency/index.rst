@@ -1,9 +1,9 @@
 Currency
 ========
 
-`shopkit.extensions.currency`
+`shopkit.currency`
 
-.. automodule:: shopkit.extensions.currency
+.. automodule:: shopkit.currency
    :members:
 
 Contents:

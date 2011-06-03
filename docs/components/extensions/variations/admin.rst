@@ -1,8 +1,8 @@
 Admin
 ======
 
-`shopkit.extensions.variations.admin`
+`shopkit.variations.admin`
 
-.. automodule:: shopkit.extensions.variations.admin
+.. automodule:: shopkit.variations.admin
    :members:
 

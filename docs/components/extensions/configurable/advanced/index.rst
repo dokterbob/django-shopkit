@@ -1,9 +1,9 @@
 Advanced
 ========
 
-`shopkit.extensions.configurable.advanced`
+`shopkit.configurable.advanced`
 
-.. automodule:: shopkit.extensions.configurable.advanced
+.. automodule:: shopkit.configurable.advanced
    :members:
 
 .. toctree::

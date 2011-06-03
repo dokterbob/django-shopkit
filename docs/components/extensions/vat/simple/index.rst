@@ -1,9 +1,9 @@
 Simple
 ======
 
-`shopkit.extensions.vat.simple`
+`shopkit.vat.simple`
 
-.. automodule:: shopkit.extensions.vat.simple
+.. automodule:: shopkit.vat.simple
    :members:
 
 .. toctree::

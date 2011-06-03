@@ -1,6 +1,6 @@
 Admin
 ======
 
-.. automodule:: shopkit.extensions.shipping.advanced.admin
+.. automodule:: shopkit.shipping.advanced.admin
    :members:
 
