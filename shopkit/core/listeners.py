@@ -35,17 +35,24 @@ class StateChangeListener(Listener):
     Listener base class for order status changes.
 
     Example::
+
         OrderPaidListener(StatusChangeListener):
             state = order_states.ORDER_STATE_PAID
 
             def handler(self, sender, **kwargs):
-                <do something>
+                # <do something>
     """
 
     new_state = None
     old_state = None
 
     def dispatch(self, sender, **kwargs):
+        """
+        The dispatch method is equivlant to the similarly named method in
+        Django's class based views: it checks whether or not this signal
+        should be handled at all (whether or not it matches the specified)
+        state change) and then calls the `handle()` method.
+        """
         # Match the new state, if given
         if self.new_state and not self.new_state == sender.state:
             logger.debug(u'Signal for %s doesn\'t match listener for %s', sender, self)
@@ -59,6 +66,10 @@ class StateChangeListener(Listener):
         self.handler(sender, **kwargs)
 
     def handler(self, sender, **kwargs):
+        """
+        The handler performs some actual action upon handling a signal. This
+        must be overridden in subclasses defining *actual* listeners.
+        """
         raise NotImplementedError('Better give me some function to fulfill')
 
 
@@ -69,6 +80,7 @@ class StateChangeLogger(StateChangeListener):
     """
 
     def handler(self, sender, **kwargs):
+        """ Handle the signal by writing out a debug log message. """
         old_state = kwargs['old_state']
         new_state = sender.state
 
@@ -85,8 +97,8 @@ class EmailingListener(Listener):
 
     def get_subject_template_names(self):
         """
-        Returns a list of template names to be used for the request. Must return
-        a list. May not be called if render_to_response is overridden.
+        Returns a list of template names to be used for the request. Must
+        return a list. May not be called if render_to_response is overridden.
         """
         if self.subject_template_name is None:
             raise ImproperlyConfigured(
@@ -97,8 +109,8 @@ class EmailingListener(Listener):
 
     def get_body_template_names(self):
         """
-        Returns a list of template names to be used for the request. Must return
-        a list. May not be called if render_to_response is overridden.
+        Returns a list of template names to be used for the request. Must
+        return a list. May not be called if render_to_response is overridden.
         """
         if self.body_template_name is None:
             raise ImproperlyConfigured(
@@ -110,8 +122,8 @@ class EmailingListener(Listener):
 
     def get_body_html_template_names(self):
         """
-        Returns a list of HTML template names to be used for the request. Must return
-        a list. May not be called if render_to_response is overridden.
+        Returns a list of HTML template names to be used for the request. Must
+        return a list. May not be called if render_to_response is overridden.
         """
         if self.body_html_template_name is None:
             return None
@@ -185,6 +197,11 @@ class TranslatedEmailingListener(EmailingListener):
         raise NotImplementedError
 
     def handler(self, sender, **kwargs):
+        """
+        Handle the signal, wrapping the emailing handler from the base
+        class but changing locale on beforehand, switching back to the
+        original afterwards.
+        """
         old_language = translation.get_language()
 
         language = self.get_language(sender, **kwargs)
