@@ -10,5 +10,4 @@ building customized webshop applications, for 'perfectionists with deadlines'.
 
 More information
 ----------------
-Please refer to the documentation, which can be found in the docs directory and
-rendered with Sphinx.
+Please refer to the documentation at http://dokterbob.github.com/django-shopkit/.
