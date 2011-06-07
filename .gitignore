@@ -3,4 +3,6 @@
 .DS\_Store
 docs/_build/*
 dist/*
+build/*
+env/*
 *.egg-info/*
