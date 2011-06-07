@@ -1,11 +1,17 @@
 Getting started
 ===============
 
+.. warning::
+    This getting started guide as well as the `basic_webshop` demonstration
+    project are well outdated and probably very much broken by now.
+
+    Any supplements to the documentation are much welcomed!
+
 
 #) Install the app basic_webshop in your environment using `PIP <http://pypi.python.org/pypi/pip/>`_  
    (better make sure you're working in a virtual environment):: 
 
-    pip install -e git://salmon.dokterbob.net/basic-webshop.git#egg=basic-webshop
+    pip install -e git://github.com/dokterbob/basic-webshop.git#egg=basic-webshop
 
 #) Enable the `basic_webshop` application in `INSTALLED_APPS` in `settings.py`::
 
