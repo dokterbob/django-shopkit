@@ -657,6 +657,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         # *does* occur in the process, we do not want to risk being able
         # to call `confirm()` again.
         self.confirmed = True
+        
+        # Make sure the cart is reset in order to preserve referential
+        # integrity
+        self.cart = None
         self.save()
 
         for item in self.get_items():
