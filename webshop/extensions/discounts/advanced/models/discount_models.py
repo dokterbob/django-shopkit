@@ -502,10 +502,10 @@ if CATEGORIES:
             superclass = super(ManyCategoryDiscountMixin, cls)
             valid = superclass.get_valid_discounts(**kwargs)
 
-            category = kwargs.get('category', None)
-            if not category is None:
+            categories = kwargs.get('categories', None)
+            if not categories is None:
                 valid = valid.filter(Q(categories__isnull=True) | \
-                                     Q(categories__in=category))
+                                     Q(categories__in=categories))
             else:
                 valid = valid.filter(categories__isnull=True)
 

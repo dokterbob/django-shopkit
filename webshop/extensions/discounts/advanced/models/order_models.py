@@ -105,6 +105,23 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
 
         assert not 'product' in kwargs
 
+        from discount_models import CATEGORIES
+
+        # Make sure we pass around category
+        if CATEGORIES:
+            cats_dict = {}
+
+            if hasattr(self.product, 'categories'):
+                cats_dict['categories'] = self.product.categories.all()
+
+            if hasattr(self.product, 'category'):
+                cats_dict['category'] = self.product.category
+
+            # Make sure we do it gracefully: we should be able to override
+            # this thingie
+            cats_dict.update(kwargs)
+            kwargs = cats_dict
+
         discounts = \
             superclass.get_valid_discounts(product=self.product,
                                            item_discounts=True,
