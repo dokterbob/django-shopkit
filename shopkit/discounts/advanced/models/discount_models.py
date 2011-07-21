@@ -469,10 +469,24 @@ if CATEGORIES:
             superclass = super(CategoryDiscountMixin, cls)
             valid = superclass.get_valid_discounts(**kwargs)
 
-            category = kwargs.get('category', None)
-            if not category is None:
+            # Allow for explicit specification of categories, get the
+            # categories from the product otherwise.
+            categories = kwargs.get('categories', None)
+            if categories is None:
+                product = kwargs.get('product', None)
+
+                if product:
+                    # A product might either have multiple categories (M2M)
+                    # or just one. We do not know this beforehand.
+                    if hasattr(product, 'categories'):
+                        categories = product.categories.all()
+                    else:
+                        categories = getattr(product, 'category', None)
+
+
+            if not categories is None:
                 valid = valid.filter(Q(category__isnull=True) | \
-                                     Q(category=category))
+                                     Q(category__in=categories))
             else:
                 valid = valid.filter(category__isnull=True)
 
@@ -502,10 +516,23 @@ if CATEGORIES:
             superclass = super(ManyCategoryDiscountMixin, cls)
             valid = superclass.get_valid_discounts(**kwargs)
 
-            category = kwargs.get('category', None)
-            if not category is None:
+            # Allow for explicit specification of categories, get the
+            # categories from the product otherwise.
+            categories = kwargs.get('categories', None)
+            if categories is None:
+                product = kwargs.get('product', None)
+
+                if product:
+                    # A product might either have multiple categories (M2M)
+                    # or just one. We do not know this beforehand.
+                    if hasattr(product, 'categories'):
+                        categories = product.categories.all()
+                    else:
+                        categories = getattr(product, 'category', None)
+
+            if not categories is None:
                 valid = valid.filter(Q(categories__isnull=True) | \
-                                     Q(categories__in=category))
+                                     Q(categories__in=categories))
             else:
                 valid = valid.filter(categories__isnull=True)
 
@@ -519,7 +546,7 @@ class CouponDiscountMixin(models.Model):
         abstract = True
 
     use_coupon = models.BooleanField(default=False, db_index=True)
-    coupon_code = models.CharField(verbose_name=_('coupon code'), null=True,
+    coupon_code = models.CharField(verbose_name=_('coupon code'),
                                    max_length=COUPON_LENGTH, blank=True,
                                    help_text=_('If left empty and a coupon \
                                                 is used, a code will \
@@ -574,10 +601,10 @@ class CouponDiscountMixin(models.Model):
         valid = superclass.get_valid_discounts(**kwargs)
 
         if coupon_code:
-            valid = valid.filter(Q(coupon_code__isnull=True) | \
+            valid = valid.filter(Q(use_coupon=False) | \
                                  Q(use_coupon=True, coupon_code=coupon_code))
         else:
-            valid = valid.filter(coupon_code__isnull=True)
+            valid = valid.filter(use_coupon=False)
 
         return valid
 

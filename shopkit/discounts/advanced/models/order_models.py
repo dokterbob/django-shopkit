@@ -116,7 +116,7 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
         return discounts
 
 
-    def get_total_discount(self, **kwargs):
+    def get_item_discount(self, **kwargs):
         """
         Get the total discount for this OrderItem.
         """
@@ -153,8 +153,9 @@ class PersistentDiscountedItemBase(models.Model):
         assert self.pk, 'Object not saved, need PK for assigning discounts'
         discounts = self.get_valid_discounts()
 
-        assert self.get_discount() == Decimal('0.00') or \
-            (self.get_discount() and discounts)
+        # This assertion is not valid anymore for order item discounts
+        # assert self.get_discount() == Decimal('0.00') or \
+        #     (self.get_discount() and discounts)
 
         logger.debug(u'Storing discounts %s for %s', discounts, self)
 

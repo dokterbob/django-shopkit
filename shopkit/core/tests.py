@@ -53,7 +53,7 @@ class CoreTestMixin(object):
         self.orderitem_class = \
             get_model_from_string(settings.SHOPKIT_ORDERITEM_MODEL)
     
-    def make_test_product(self):
+    def make_product(self):
         """ 
         Abstract function for creating a test product. As the actual
         properties of Products depend on the classes actually implementing
@@ -64,7 +64,7 @@ class CoreTestMixin(object):
     def test_basic_product(self):
         """ Test if we can create and save a simple product. """
         
-        p = self.make_test_product()
+        p = self.make_product()
         p.save()
         
         self.assert_(p.pk)
