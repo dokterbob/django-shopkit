@@ -41,11 +41,14 @@ class DiscountedItemBase(AbstractPricedItemBase):
         Return the most sensible discount related to this item. By default,
         it returns the total discount applicable as yielded by
         `get_total_discount`.
+        
+        ..todo::
+            The mechanism making sure the discount is never higher than the
+            original price is implemented here as well as in get_total_discount
+            of DiscountedCartBase and DiscountedOrderBase.
         """
 
         discount = self.get_total_discount(**kwargs)
-
-        logger.debug(u'Total discount for %s: %s', self, discount)
 
         return discount
 
@@ -63,10 +66,11 @@ class DiscountedItemBase(AbstractPricedItemBase):
     def get_price(self, **kwargs):
         """ Get the price with the discount applied. """
         undiscounted = self.get_price_without_discount(**kwargs)
-        discount = self.get_total_discount(**kwargs)
+        discount = self.get_discount(**kwargs)
 
         assert discount <= undiscounted, \
             'Discount is higher than item price - discounted price negative!'
+
 
         return undiscounted - discount
 
@@ -89,6 +93,8 @@ class DiscountedCartBase(DiscountedItemBase):
         for item in self.get_items():
             item_discount = item.get_discount(**kwargs)
             assert isinstance(item_discount, Decimal)
+            assert item_discount <= item.get_price_without_discount(), \
+                'Discount is higher than item price - discounted price negative!'
             discount += item_discount
 
         # Make sure the discount is never higher than the price of
@@ -105,7 +111,7 @@ class DiscountedCartBase(DiscountedItemBase):
         """
         Calculate the whole order discount, as distinct from discount
         that apply to specific order items. This method must be implemented
-        in subclasses.
+        elsewhere.
         """
         raise NotImplementedError
 
@@ -118,6 +124,31 @@ class DiscountedCartItemBase(DiscountedItemBase):
 
     class Meta:
         abstract = True
+    
+    def get_total_discount(self, **kwargs):
+        """
+        Return the total discount for the CartItem, which is simply a wrapper
+        around `get_item_discount`.
+        """
+        discount = self.get_item_discount(**kwargs)
+
+        # Make sure the discount is never higher than the price of
+        # the oringal item
+        price = self.get_price_without_discount(**kwargs)
+        if discount > price:
+            logger.info(u'Discount %s higher than price %s. Lowering to price.',
+                       discount, price)
+            return price
+        
+        return discount
+
+    
+    def get_item_discount(self, **kwargs):
+        """
+        Calculate the order item discount, as distinct from the whole order
+        discount. This method must be implemented in elsewhere.
+        """
+        raise NotImplementedError
 
 
 class DiscountedOrderBase(DiscountedItemBase):
@@ -192,7 +223,14 @@ class DiscountedOrderItemBase(DiscountedItemBase):
                           default=Decimal('0.00'))
     """ The amount of discount applied to this item. """
 
-    def get_discount(self, **kwargs):
+    def get_total_discount(self, **kwargs):
+        """
+        Return the total discount for the CartItem, which is simply a wrapper
+        around `get_item_discount`.
+        """
+        return self.get_item_discount(**kwargs)
+
+    def get_item_discount(self, **kwargs):
         """
         Return the discount for this item. This basically returns the
         `discount` property. To recalculate/update this value, call the
