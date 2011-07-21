@@ -469,10 +469,24 @@ if CATEGORIES:
             superclass = super(CategoryDiscountMixin, cls)
             valid = superclass.get_valid_discounts(**kwargs)
 
-            category = kwargs.get('category', None)
-            if not category is None:
+            # Allow for explicit specification of categories, get the
+            # categories from the product otherwise.
+            categories = kwargs.get('categories', None)
+            if categories is None:
+                product = kwargs.get('product', None)
+
+                if product:
+                    # A product might either have multiple categories (M2M)
+                    # or just one. We do not know this beforehand.
+                    if hasattr(product, 'categories'):
+                        categories = product.categories.all()
+                    else:
+                        categories = getattr(product, 'category', None)
+
+
+            if not categories is None:
                 valid = valid.filter(Q(category__isnull=True) | \
-                                     Q(category=category))
+                                     Q(category__in=categories))
             else:
                 valid = valid.filter(category__isnull=True)
 
@@ -502,7 +516,20 @@ if CATEGORIES:
             superclass = super(ManyCategoryDiscountMixin, cls)
             valid = superclass.get_valid_discounts(**kwargs)
 
+            # Allow for explicit specification of categories, get the
+            # categories from the product otherwise.
             categories = kwargs.get('categories', None)
+            if categories is None:
+                product = kwargs.get('product', None)
+
+                if product:
+                    # A product might either have multiple categories (M2M)
+                    # or just one. We do not know this beforehand.
+                    if hasattr(product, 'categories'):
+                        categories = product.categories.all()
+                    else:
+                        categories = getattr(product, 'category', None)
+
             if not categories is None:
                 valid = valid.filter(Q(categories__isnull=True) | \
                                      Q(categories__in=categories))
