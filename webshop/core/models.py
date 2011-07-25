@@ -126,6 +126,12 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         """
         return unicode(self)
 
+    def get_parent(self):
+        """
+        Get the relevant Cart. Used to have a generic API for Carts 
+        and Orders.
+        """
+        return self.cart
 
 class CartBase(AbstractPricedItemBase):
     """ Abstract base class for shopping carts. """
@@ -416,6 +422,13 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         When overriding, be sure to call the superclass.
         """
         logger.debug(u'Registering order item confirmation for %s', self)
+
+    def get_parent(self):
+        """
+        Get the relevant Order. Used to have a generic API for Carts 
+        and Orders.
+        """
+        return self.order
 
 
 class OrderStateChangeBase(models.Model):

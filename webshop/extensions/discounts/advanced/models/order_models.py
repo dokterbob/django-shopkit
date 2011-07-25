@@ -241,3 +241,23 @@ class DiscountCouponMixin(models.Model):
         superclass = super(DiscountCouponMixin, self)
         return superclass.get_valid_discounts(coupon_code=self.coupon_code,
                                               **kwargs)
+
+
+class DiscountCouponItemMixin(models.Model):
+    """
+    Model mixin class for order or cart items for which discounts are
+    calculated based on a coupon code.
+    """
+    class Meta:
+        abstract = True
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current item. """
+        superclass = super(DiscountCouponItemMixin, self)
+
+        # Get cart or order
+        parent = self.get_parent()
+
+        return superclass.get_valid_discounts(coupon_code=parent.coupon_code,
+                                              **kwargs)
+

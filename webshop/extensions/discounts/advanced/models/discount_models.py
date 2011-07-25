@@ -383,7 +383,6 @@ class ManyProductDiscountMixin(models.Model):
         superclass = super(ManyProductDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
-        # Note: products=product here might be wrong -> products__in=product
         product = kwargs.get('product', None)
         if not product is None:
             # When a product has been specified, allow discounts for this
@@ -593,10 +592,8 @@ class CouponDiscountMixin(models.Model):
         Return only items for which no coupon code has been set or
         ones for which the current coupon code matches that of the
         discounts.
-
-        .. todo::
-            Write tests for this.
         """
+
         superclass = super(CouponDiscountMixin, cls)
         valid = superclass.get_valid_discounts(**kwargs)
 
