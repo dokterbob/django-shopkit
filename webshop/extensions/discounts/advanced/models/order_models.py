@@ -126,8 +126,9 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
 
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
-            total_discount += discount.get_discount(item_price=price, \
-                                                    **kwargs)
+            item_discount = discount.get_discount(item_price=price, \
+                                                  **kwargs)
+            total_discount += item_discount * self.quantity
 
         return total_discount
 
