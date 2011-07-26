@@ -126,8 +126,9 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
 
         total_discount = Decimal('0.00')
         for discount in valid_discounts:
-            total_discount += discount.get_discount(item_price=price, \
-                                                    **kwargs)
+            item_discount = discount.get_discount(item_price=price, \
+                                                  **kwargs)
+            total_discount += item_discount * self.quantity
 
         return total_discount
 
@@ -241,3 +242,23 @@ class DiscountCouponMixin(models.Model):
         superclass = super(DiscountCouponMixin, self)
         return superclass.get_valid_discounts(coupon_code=self.coupon_code,
                                               **kwargs)
+
+
+class DiscountCouponItemMixin(models.Model):
+    """
+    Model mixin class for order or cart items for which discounts are
+    calculated based on a coupon code.
+    """
+    class Meta:
+        abstract = True
+
+    def get_valid_discounts(self, **kwargs):
+        """ Return valid discounts for the current item. """
+        superclass = super(DiscountCouponItemMixin, self)
+
+        # Get cart or order
+        parent = self.get_parent()
+
+        return superclass.get_valid_discounts(coupon_code=parent.coupon_code,
+                                              **kwargs)
+
