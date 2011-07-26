@@ -41,7 +41,7 @@ class DiscountedItemBase(AbstractPricedItemBase):
         Return the most sensible discount related to this item. By default,
         it returns the total discount applicable as yielded by
         `get_total_discount`.
-        
+
         ..todo::
             The mechanism making sure the discount is never higher than the
             original price is implemented here as well as in get_total_discount
@@ -52,16 +52,42 @@ class DiscountedItemBase(AbstractPricedItemBase):
 
         return discount
 
+    def get_piece_discount(self, **kwargs):
+        """
+        Get the discount per piece. Must be implemented in subclasses.
+        """
+        raise NotImplementedError
+
     def get_total_discount(self, **kwargs):
         """
         Return the total discount applicable for this item. Must be
         implemented in subclasses.
         """
-
         raise NotImplementedError
 
     def get_price_without_discount(self, **kwargs):
+        """
+        The price without discount. Wrapper around the `get_price`
+        method of the superclass.
+        """
         return super(DiscountedItemBase, self).get_price(**kwargs)
+
+    def get_piece_price_without_discount(self, **kwargs):
+        """
+        The price per piece without discount. Wrapper around the
+        `get_piece_price` method of the superclass.
+        """
+        return super(DiscountedItemBase, self).get_piece_price(**kwargs)
+
+    def get_piece_price_with_discount(self, **kwargs):
+        """ Get the piece price with the discount applied. """
+        undiscounted = self.get_piece_price_without_discount(**kwargs)
+        discount = self.get_piece_discount(**kwargs)
+
+        assert discount <= undiscounted, \
+            'Discount is higher than item price - discounted price negative!'
+
+        return undiscounted - discount
 
     def get_price(self, **kwargs):
         """ Get the price with the discount applied. """
@@ -70,7 +96,6 @@ class DiscountedItemBase(AbstractPricedItemBase):
 
         assert discount <= undiscounted, \
             'Discount is higher than item price - discounted price negative!'
-
 
         return undiscounted - discount
 
@@ -124,7 +149,7 @@ class DiscountedCartItemBase(DiscountedItemBase):
 
     class Meta:
         abstract = True
-    
+
     def get_total_discount(self, **kwargs):
         """
         Return the total discount for the CartItem, which is simply a wrapper
@@ -139,10 +164,10 @@ class DiscountedCartItemBase(DiscountedItemBase):
             logger.info(u'Discount %s higher than price %s. Lowering to price.',
                        discount, price)
             return price
-        
+
         return discount
 
-    
+
     def get_item_discount(self, **kwargs):
         """
         Calculate the order item discount, as distinct from the whole order

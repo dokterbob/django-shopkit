@@ -115,6 +115,20 @@ class CalculatedItemDiscountMixin(CalculatedDiscountMixin):
 
         return discounts
 
+    def get_piece_discount(self, **kwargs):
+        """
+        Get the total discount per piece for this OrderItem.
+        """
+        valid_discounts = self.get_valid_discounts(**kwargs)
+        price = self.get_piece_price_without_discount(**kwargs)
+
+        total_discount = Decimal('0.00')
+        for discount in valid_discounts:
+            total_discount += discount.get_discount(item_price=price, \
+                                                    quantity=1, \
+                                                    **kwargs)
+
+        return total_discount
 
     def get_item_discount(self, **kwargs):
         """
