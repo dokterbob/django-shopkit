@@ -198,9 +198,11 @@ class ItemDiscountAmountMixin(models.Model):
         """
         superclass = super(ItemDiscountAmountMixin, self)
 
+        quantity = kwargs.get('quantity', 1)
+
         discount = superclass.get_discount(**kwargs)
         if self.item_amount:
-            discount += self.item_amount
+            discount += self.item_amount * quantity
 
         return discount
 
