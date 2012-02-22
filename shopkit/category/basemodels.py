@@ -212,7 +212,14 @@ if USE_MPTT:
             in_shop = product_class.in_shop
             descendants = self.get_descendants(include_self=True)
 
-            return in_shop.filter(categories__in=descendants).distinct()
+            # To do: Create in_category manager for products to circumvent
+            # this awkward lookup
+            if hasattr(product_class, 'categories'):
+                return in_shop.filter(categories__in=descendants).distinct()
+            else:
+                # Distinct not necessary - product can only be in one
+                # category. Haha.
+                return in_shop.filter(category__in=descendants)
 
         def __unicode__(self):
             """ The unicode representation of a nested category is that of
