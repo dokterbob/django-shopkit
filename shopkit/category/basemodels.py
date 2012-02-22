@@ -177,8 +177,10 @@ if USE_MPTT:
     logger.debug(u'Enabling MPTTCategoryBase with category tree optimalization')
 
     from mptt.models import MPTTModel
+    from mptt.managers import TreeManager
 
     class MPTTCategoryBase(MPTTModel, NestedCategoryBase):
+        tree = TreeManager()
 
         class Meta(MPTTModel.Meta, NestedCategoryBase.Meta):
             abstract = True
