@@ -128,7 +128,7 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     def get_parent(self):
         """
-        Get the relevant Cart. Used to have a generic API for Carts 
+        Get the relevant Cart. Used to have a generic API for Carts
         and Orders.
         """
         return self.cart
@@ -168,11 +168,15 @@ class CartBase(AbstractPricedItemBase):
 
         if not cart.customer and request.user.is_authenticated():
             try:
-                customer = request.user.customer
+                if hasattr(request.user, 'customer'):
+                    customer = request.user.customer
 
-                logger.debug(u'Setting customer for cart to %s', customer)
+                    logger.debug(u'Setting customer for cart to %s', customer)
 
-                cart.customer = customer
+                    cart.customer = customer
+                else:
+                    logger.debug(u'Users appear not to have a customer object related to them.')
+
             except ObjectDoesNotExist:
                 logger.info(u'User %s logged in but no customer object '+
                             u'found. This user will not be able to buy '+
@@ -425,7 +429,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     def get_parent(self):
         """
-        Get the relevant Order. Used to have a generic API for Carts 
+        Get the relevant Order. Used to have a generic API for Carts
         and Orders.
         """
         return self.order
@@ -670,7 +674,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         # *does* occur in the process, we do not want to risk being able
         # to call `confirm()` again.
         self.confirmed = True
-        
+
         # Make sure the cart is reset in order to preserve referential
         # integrity
         self.cart = None
