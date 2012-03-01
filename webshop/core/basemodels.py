@@ -152,7 +152,7 @@ class OrderedItemBase(models.Model):
 
         super(OrderedItemBase, self).save()
 
-    sort_order = models.PositiveSmallIntegerField(
+    sort_order = models.PositiveIntegerField(
                                  verbose_name=('sort order'),
                                  unique=True, blank=True, db_index=True,
                                  help_text=_('Change this to alter the order \
