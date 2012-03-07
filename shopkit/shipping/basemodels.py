@@ -163,13 +163,16 @@ class ShippedOrderBase(ShippedItemBase):
             item.update_shipping()
 
 
-class AddressedShippedItemBase(models.Model):
-    class Meta:
-        abstract = True
+if ADDRESS_MODEL:
+    class AddressedShippedItemBase(models.Model):
+        class Meta:
+            abstract = True
 
-    shipping_address = models.ForeignKey(ADDRESS_MODEL, null=True, blank=True,
-                                        related_name='shippable%(class)s_set')
-    """ Shipping address for this order"""
+        shipping_address = models.ForeignKey(ADDRESS_MODEL, null=True, blank=True,
+                                            related_name='shippable%(class)s_set')
+        """ Shipping address for this order"""
+else:
+    logger.warn('ADDRESS_MODEL not defined, not using shipping_address in shipping module.')
 
 
 class ShippedOrderItemBase(ShippedItemBase):

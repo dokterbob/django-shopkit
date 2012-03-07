@@ -18,6 +18,6 @@
 
 from django.conf import settings
 
-ADDRESS_MODEL = getattr(settings, 'SHOPKIT_SHIPPING_ADDRESS_MODEL')
+ADDRESS_MODEL = getattr(settings, 'SHOPKIT_SHIPPING_ADDRESS_MODEL', None)
 """ Shipping address model """
 
