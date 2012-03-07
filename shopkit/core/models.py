@@ -164,22 +164,6 @@ class CartBase(AbstractPricedItemBase):
             logger.debug('No shopping cart found. Creating new instance.')
             cart = cls()
 
-        if not cart.customer and request.user.is_authenticated():
-            try:
-                if hasattr(request.user, 'customer'):
-                    customer = request.user.customer
-
-                    logger.debug(u'Setting customer for cart to %s', customer)
-
-                    cart.customer = customer
-                else:
-                    logger.debug(u'Users appear not to have a customer object related to them.')
-
-            except ObjectDoesNotExist:
-                logger.info(u'User %s logged in but no customer object '+
-                            u'found. This user will not be able to buy '+
-                            u'products.', request.user)
-
         return cart
 
     def to_request(self, request):
