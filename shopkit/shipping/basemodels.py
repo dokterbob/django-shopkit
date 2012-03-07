@@ -121,10 +121,6 @@ class ShippedOrderBase(ShippedItemBase):
     class Meta:
         abstract = True
 
-    shipping_address = models.ForeignKey(ADDRESS_MODEL, null=True, blank=True,
-                                        related_name='shippable%(class)s_set')
-    """ Shipping address for this order"""
-
     order_shipping_costs = PriceField(default=Decimal('0.00'),
                                       verbose_name=_('order shipping costs'))
     """
@@ -165,6 +161,15 @@ class ShippedOrderBase(ShippedItemBase):
 
         for item in self.get_items():
             item.update_shipping()
+
+
+class AddressedShippedItemBase(models.Model):
+    class Meta:
+        abstract = True
+
+    shipping_address = models.ForeignKey(ADDRESS_MODEL, null=True, blank=True,
+                                        related_name='shippable%(class)s_set')
+    """ Shipping address for this order"""
 
 
 class ShippedOrderItemBase(ShippedItemBase):
