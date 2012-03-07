@@ -490,7 +490,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     """ Shopping cart this order was created from. """
 
     customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
-                                 on_delete=models.PROTECT)
+                                 on_delete=models.PROTECT, null=True)
     """ Customer whom this order belongs to. """
 
     state = models.PositiveSmallIntegerField(_('status'),
@@ -537,9 +537,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         shopping cart, copying all the items.
         """
 
-        assert cart.customer
+        order = cls(cart=cart)
 
-        order = cls(customer=cart.customer, cart=cart)
+        if cart.customer:
+            order.customer = cart.customer
 
         # Save in order to be able to associate items
         order.save()
@@ -711,11 +712,18 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return _(u"%(pk)d by %(customer)s on %(date)s") % \
-            {'pk': self.pk,
-             'customer': self.customer,
-             'date': self.date_added.date()
-            }
+        if self.customer:
+            return _(u"%(pk)d by %(customer)s on %(date)s") % \
+                {'pk': self.pk,
+                 'customer': self.customer,
+                 'date': self.date_added.date()
+                }
+        else:
+            return _(u"%(pk)d on %(date)s") % \
+                {'pk': self.pk,
+                 'date': self.date_added.date()
+                }
+
 
 class AddressBase(models.Model):
     """
