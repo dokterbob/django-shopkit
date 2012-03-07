@@ -18,7 +18,7 @@
 
 from django.conf import settings
 
-CUSTOMER_MODEL = getattr(settings, 'SHOPKIT_CUSTOMER_MODEL')
+CUSTOMER_MODEL = getattr(settings, 'SHOPKIT_CUSTOMER_MODEL', None)
 """ Reference to the customer model used in the shop. """
 
 PRODUCT_MODEL = getattr(settings, 'SHOPKIT_PRODUCT_MODEL')
