@@ -38,3 +38,12 @@ class PriceField(DecimalField):
             kwargs.get('decimal_places', CURRENCY_DECIMALS)
 
         return super(PriceField, self).__init__(**kwargs)
+
+# If South is installed, add introspection rules
+try:
+    from south.modelsinspector import add_introspection_rules
+
+    add_introspection_rules([], ["^shopkit\.currency\.simple\.fields\.PriceField"])
+
+except ImportError:
+    pass
