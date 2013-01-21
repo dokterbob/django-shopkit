@@ -128,7 +128,7 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     def get_parent(self):
         """
-        Get the relevant Cart. Used to have a generic API for Carts 
+        Get the relevant Cart. Used to have a generic API for Carts
         and Orders.
         """
         return self.cart
@@ -425,7 +425,7 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
 
     def get_parent(self):
         """
-        Get the relevant Order. Used to have a generic API for Carts 
+        Get the relevant Order. Used to have a generic API for Carts
         and Orders.
         """
         return self.order
@@ -459,7 +459,10 @@ class OrderStateChangeBase(models.Model):
         `StateChange` is available.
         """
         try:
-            return cls.objects.filter(order=order).order_by('-pk').latest('date')
+            qs = cls.objects.filter(order=order).order_by('-date', '-pk')
+            # Explicitly execute a get so the result as to prevent caching
+            return qs[0:1].get()
+
         except cls.DoesNotExist:
             logger.debug(u'Latest state change for %s not found', order)
             return None
@@ -670,7 +673,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         # *does* occur in the process, we do not want to risk being able
         # to call `confirm()` again.
         self.confirmed = True
-        
+
         # Make sure the cart is reset in order to preserve referential
         # integrity
         self.cart = None
