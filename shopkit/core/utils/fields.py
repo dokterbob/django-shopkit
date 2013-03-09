@@ -73,3 +73,13 @@ class PercentageField(MinMaxDecimalField):
         kwargs['max_digits'] = kwargs.get('max_digits', 3)
 
         super(PercentageField, self).__init__(**kwargs)
+
+# If South is installed, add introspection rules
+try:
+    from south.modelsinspector import add_introspection_rules
+
+    add_introspection_rules([], ["^shopkit\.core\.utils\.fields\.MinMaxDecimalField"])
+    add_introspection_rules([], ["^shopkit\.core\.utils\.fields\.PercentageField"])
+
+except ImportError:
+    pass

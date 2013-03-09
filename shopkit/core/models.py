@@ -445,7 +445,10 @@ class OrderStateChangeBase(models.Model):
         `StateChange` is available.
         """
         try:
-            return cls.objects.filter(order=order).order_by('-pk').latest('date')
+            qs = cls.objects.filter(order=order).order_by('-date', '-pk')
+            # Explicitly execute a get so the result as to prevent caching
+            return qs[0:1].get()
+
         except cls.DoesNotExist:
             logger.debug(u'Latest state change for %s not found', order)
             return None
