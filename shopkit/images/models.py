@@ -23,7 +23,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 try:
-    from sorl.thumbnail import ImageField    
+    from sorl.thumbnail import ImageField
     logger.debug(u'Sorl-thumbnail found: using it.')
 
 except ImportError:
@@ -36,20 +36,20 @@ from shopkit.core.basemodels import OrderedInlineItemBase
 
 class ProductImageBase(models.Model):
     """ Base class for image relating to a product. """
-    
+
     class Meta:
         abstract = True
         verbose_name = _('image')
         verbose_name_plural = _('images')
 
     product = models.ForeignKey(PRODUCT_MODEL)
-    image = ImageField(verbose_name=_('image'), 
+    image = ImageField(verbose_name=_('image'),
                        upload_to='product_images')
 
 
 class OrderedProductImageBase(ProductImageBase, OrderedInlineItemBase):
     """ Base class for explicitly ordere image relating to a product. """
-    
+
     class Meta(ProductImageBase.Meta, OrderedInlineItemBase.Meta):
         abstract = True
         unique_together = ('sort_order', 'product')
@@ -63,16 +63,13 @@ class ImagesProductMixin(object):
     """ Mixin representing a product with multiple images
         associated to it.
     """
-    
+
     def get_default_image(self):
         """ By default, this returns the first image according to whatever
             sortorder is used.
         """
-        if self.productimage_set.all().count() > 0:
+        try:
             return self.productimage_set.all()[0]
-        else:
+        except IndexError:
+            # No images found, return None
             return None
-    
-    
-    
-
