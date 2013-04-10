@@ -56,7 +56,7 @@ from shopkit.core.listeners import *
 """ Abstract base models for essential shop components. """
 
 class UserCustomerBase(AbstractCustomerBase, User):
-    """ Abstract base class for customers which can also be Django users. """
+    """ Abstract base class for Cs which can also be Django users. """
 
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
@@ -133,6 +133,7 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         """
         return self.cart
 
+
 class CartBase(AbstractPricedItemBase):
     """ Abstract base class for shopping carts. """
 
@@ -140,9 +141,6 @@ class CartBase(AbstractPricedItemBase):
         verbose_name = _('cart')
         verbose_name_plural = _('carts')
         abstract = True
-
-    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
-    """ Customer who owns this cart, if any. """
 
     @classmethod
     def from_request(cls, request):
@@ -165,22 +163,6 @@ class CartBase(AbstractPricedItemBase):
         else:
             logger.debug('No shopping cart found. Creating new instance.')
             cart = cls()
-
-        if not cart.customer and request.user.is_authenticated():
-            try:
-                if hasattr(request.user, 'customer'):
-                    customer = request.user.customer
-
-                    logger.debug(u'Setting customer for cart to %s', customer)
-
-                    cart.customer = customer
-                else:
-                    logger.debug(u'Users appear not to have a customer object related to them.')
-
-            except ObjectDoesNotExist:
-                logger.info(u'User %s logged in but no customer object '+
-                            u'found. This user will not be able to buy '+
-                            u'products.', request.user)
 
         return cart
 
@@ -492,10 +474,6 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
                              null=True, on_delete=models.SET_NULL)
     """ Shopping cart this order was created from. """
 
-    customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
-                                 on_delete=models.PROTECT)
-    """ Customer whom this order belongs to. """
-
     state = models.PositiveSmallIntegerField(_('status'),
                                              choices=ORDER_STATES,
                                              default=DEFAULT_ORDER_STATE)
@@ -540,9 +518,7 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         shopping cart, copying all the items.
         """
 
-        assert cart.customer
-
-        order = cls(customer=cart.customer, cart=cart)
+        order = cls(cart=cart)
 
         # Save in order to be able to associate items
         order.save()
@@ -714,11 +690,11 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return _(u"%(pk)d by %(customer)s on %(date)s") % \
+        return _(u"%(pk)d on %(date)s") % \
             {'pk': self.pk,
-             'customer': self.customer,
              'date': self.date_added.date()
             }
+
 
 class AddressBase(models.Model):
     """
@@ -740,37 +716,6 @@ class AddressBase(models.Model):
         return self.addressee
 
 
-class CustomerAddressBase(models.Model):
-    """
-    Base class for addresses with a relation to a customer, for which the
-    `addressee` field is automatically set when saving.
-    """
-
-    class Meta(AddressBase.Meta):
-        abstract = True
-
-    addressee = models.CharField(_('addressee'), max_length=255, blank=True,
-                                 help_text=_('Automatically set to the name of the customer when left empty.'))
-    customer = models.ForeignKey(CUSTOMER_MODEL, editable=False)
-
-    def save(self, **kwargs):
-        """
-        Default the addressee to the full name of the user if none has
-        been specified explicitly.
-        """
-
-        if not self.addressee:
-            assert self.customer
-
-            self.addressee = self.customer.get_full_name()
-
-        super(CustomerAddressBase, self).save(**kwargs)
-
-    def __unicode__(self):
-        """ Return the addressee property. """
-        return self.addressee
-
-
 class PaymentBase(models.Model):
     """ Abstract base class for payments. """
 
@@ -783,3 +728,101 @@ class PaymentBase(models.Model):
         abstract = True
 
 
+if CUSTOMER_MODEL:
+    class CustomerCartBase(CartBase):
+        """ Abstract base class for shopping carts related to a Customer. """
+
+        customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
+        """ Customer who owns this cart, if any. """
+
+        @classmethod
+        def from_request(cls, request):
+            """
+            Get cart from request and associate with customer, if related to the
+            authenticated user.
+            """
+
+            cart = super(CustomerCartBase, cls).from_request(request)
+
+            if not cart.customer and request.user.is_authenticated():
+                try:
+                    if hasattr(request.user, 'customer'):
+                        customer = request.user.customer
+
+                        logger.debug(u'Setting customer for cart to %s', customer)
+
+                        cart.customer = customer
+                    else:
+                        logger.debug(u'Users appear not to have a customer object related to them.')
+
+                except ObjectDoesNotExist:
+                    logger.info(u'User %s logged in but no customer object '+
+                                u'found. This user will not be able to buy '+
+                                u'products.', request.user)
+
+            return cart
+
+
+    class CustomerOrderBase(OrderBase):
+        """ Abstract base class for orders with Customer management. """
+
+        customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
+                                     on_delete=models.PROTECT, null=True)
+        """ Customer whom this order belongs to. """
+
+        @classmethod
+        def from_cart(cls, cart):
+            """
+            Make sure we copy the customer from the Cart, if available.
+            """
+
+            order = super(CustomerOrderBase, cls).from_cart(cart)
+
+            if cart.customer:
+                order.customer = cart.customer
+                order.save()
+
+            return order
+
+        def __unicode(self):
+            """ Textual representation of order, with Customer. """
+
+            return _(u"%(pk)d by %(customer)s on %(date)s") % \
+                {'pk': self.pk,
+                 'customer': self.customer,
+                 'date': self.date_added.date()
+                }
+
+
+    class CustomerAddressBase(models.Model):
+        """
+        Base class for addresses with a relation to a customer, for which the
+        `addressee` field is automatically set when saving.
+        """
+
+        class Meta(AddressBase.Meta):
+            abstract = True
+
+        addressee = models.CharField(_('addressee'), max_length=255, blank=True,
+                                     help_text=_('Automatically set to the name of the customer when left empty.'))
+        customer = models.ForeignKey(CUSTOMER_MODEL, editable=False)
+
+        def save(self, **kwargs):
+            """
+            Default the addressee to the full name of the user if none has
+            been specified explicitly.
+            """
+
+            if not self.addressee:
+                assert self.customer
+
+                self.addressee = self.customer.get_full_name()
+
+            super(CustomerAddressBase, self).save(**kwargs)
+
+        def __unicode__(self):
+            """ Return the addressee property. """
+            return self.addressee
+
+else:
+    logger.warn('No CUSTOMER_MODEL defined, disabling Customer*Base models.')
