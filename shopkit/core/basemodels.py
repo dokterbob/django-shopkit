@@ -153,10 +153,12 @@ class OrderedItemBase(models.Model):
         super(OrderedItemBase, self).save()
 
     sort_order = models.PositiveIntegerField(
-                                 verbose_name=('sort order'),
-                                 unique=True, blank=True, db_index=True,
-                                 help_text=_('Change this to alter the order \
-                                              in which items are displayed.'))
+        verbose_name=('sort order'),
+        unique=True, blank=True, db_index=True,
+        help_text=_(
+            'Change this to alter the order in which items are displayed.'
+        )
+    )
 
 
 class OrderedInlineItemBase(models.Model):
@@ -186,6 +188,10 @@ class OrderedInlineItemBase(models.Model):
 
 
     """
+
+    class Meta:
+        abstract = True
+        ordering = ('sort_order', )
 
     def get_related_ordering(self):
         """
@@ -220,23 +226,20 @@ class OrderedInlineItemBase(models.Model):
             related = self.get_related_ordering()
             self.sort_order = self.get_next_ordering(related)
 
-            logger.debug(u'Generated sort_order %d for object %s',
-                self.sort_order, self)
-
+            logger.debug(
+                u'Generated sort_order %d for object %s',
+                self.sort_order, self
+            )
 
         super(OrderedInlineItemBase, self).save()
 
-
-    class Meta:
-        abstract = True
-        ordering = ('sort_order', )
-
     sort_order = models.PositiveSmallIntegerField(
-                                 verbose_name=('sort order'),
-                                 blank=True, db_index=True,
-                                 help_text=_('Change this to alter the order \
-                                              in which items are displayed.'))
-
+        verbose_name=('sort order'),
+        blank=True, db_index=True,
+        help_text=_(
+            'Change this to alter the order in which items are displayed.'
+        )
+    )
 
 
 class ActiveItemBase(models.Model):
@@ -352,5 +355,3 @@ class NumberedOrderBase(models.Model):
 
         # Note: This save operation might not me necessary
         self.save()
-
-
