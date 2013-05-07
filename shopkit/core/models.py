@@ -749,6 +749,9 @@ if CUSTOMER_MODEL:
     class CustomerCartBase(CartBase):
         """ Abstract base class for shopping carts related to a Customer. """
 
+        class Meta:
+            abstract = True
+
         customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
         """ Customer who owns this cart, if any. """
 
@@ -784,6 +787,9 @@ if CUSTOMER_MODEL:
 
     class CustomerOrderBase(OrderBase):
         """ Abstract base class for orders with Customer management. """
+
+        class Meta:
+            abstract = True
 
         customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
                                      on_delete=models.PROTECT, null=True)
