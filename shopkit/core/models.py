@@ -28,14 +28,19 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
-from shopkit.core.settings import PRODUCT_MODEL, CART_MODEL, \
-                                  CARTITEM_MODEL, ORDER_MODEL, \
-                                  ORDERITEM_MODEL, CUSTOMER_MODEL, \
-                                  ORDERSTATE_CHANGE_MODEL, ORDER_STATES, \
-                                  DEFAULT_ORDER_STATE
+from shopkit.core.settings import (
+    PRODUCT_MODEL, CART_MODEL,
+    CARTITEM_MODEL, ORDER_MODEL,
+    ORDERITEM_MODEL, CUSTOMER_MODEL,
+    ORDERSTATE_CHANGE_MODEL, ORDER_STATES,
+    DEFAULT_ORDER_STATE
+)
+
 from shopkit.core import signals
-from shopkit.core.basemodels import AbstractPricedItemBase, DatedItemBase, \
-                                    QuantizedItemBase, AbstractCustomerBase
+from shopkit.core.basemodels import (
+    AbstractPricedItemBase, DatedItemBase,
+    QuantizedItemBase, AbstractCustomerBase
+)
 
 from shopkit.core.utils import get_model_from_string
 
@@ -54,6 +59,7 @@ from shopkit.core.listeners import *
 
 
 """ Abstract base models for essential shop components. """
+
 
 class UserCustomerBase(AbstractCustomerBase, User):
     """ Abstract base class for Cs which can also be Django users. """
@@ -86,7 +92,6 @@ class CartItemBase(AbstractPricedItemBase, QuantizedItemBase):
         verbose_name_plural = _('cart items')
         abstract = True
         unique_together = ('cart', 'product')
-
 
     cart = models.ForeignKey(CART_MODEL)
     """ Shopping cart this item belongs to. """
@@ -172,7 +177,7 @@ class CartBase(AbstractPricedItemBase):
         """
         assert self.pk, 'Cart object not saved'
 
-        logger.debug('Storing shopping cart with pk %d in session.' % self.pk)
+        logger.debug('Storing shopping cart with pk %d in session.', self.pk)
         request.session['cart_pk'] = self.pk
 
     def get_items(self):
@@ -205,13 +210,16 @@ class CartBase(AbstractPricedItemBase):
                                                   product=product,
                                                   **kwargs)
 
-            logger.debug(u'Found existing cart item for product \'%s\'' \
-                            % product)
+            logger.debug(
+                u'Found existing cart item for product \'%s\'', product
+            )
 
         except cartitem_class.DoesNotExist:
             if create:
-                logger.debug(u'Product \'%s\' not already in Cart, creating item.' \
-                                % product)
+                logger.debug(
+                    u'Product \'%s\' not already in Cart, creating item.',
+                    product
+                )
 
                 cartitem = cartitem_class(cart=self,
                                           product=product,
@@ -300,8 +308,10 @@ class CartBase(AbstractPricedItemBase):
 
         for cartitem in self.get_items():
             item_price = cartitem.get_total_price(**kwargs)
-            logger.debug(u'Adding price %f for item \'%s\' to total cart price.' % \
-                (item_price, cartitem))
+            logger.debug(
+                u'Adding price %f for item \'%s\' to total cart price.',
+                item_price, cartitem
+            )
             assert isinstance(item_price, Decimal)
 
             price += item_price
@@ -328,7 +338,6 @@ class OrderItemBase(AbstractPricedItemBase, QuantizedItemBase):
         verbose_name_plural = _('order items')
         abstract = True
         unique_together = ('order', 'product')
-
 
     order = models.ForeignKey(ORDER_MODEL)
     """ Order this item belongs to. """
@@ -454,12 +463,12 @@ class OrderStateChangeBase(models.Model):
             return None
 
     def __unicode__(self):
-        return _(u'%(order)s on %(date)s to %(state)s: %(message)s') % \
-            {'order': self.order,
-             'date': self.date,
-             'state': self.state,
-             'message': self.message
-            }
+        return _(u'%(order)s on %(date)s to %(state)s: %(message)s') % {
+            'order': self.order,
+            'date': self.date,
+            'state': self.state,
+            'message': self.message
+        }
 
 
 class OrderBase(AbstractPricedItemBase, DatedItemBase):
@@ -557,10 +566,13 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
         else:
             latest_state = None
 
-        logger.debug(u'Considering state change: %s %s %s',
-                     self,
-                     latest_state,
-                     self.state)
+        logger.debug(
+            u'Considering state change: %s %s %s',
+            self,
+            latest_state,
+            self.state
+        )
+
         if latest_state is None or latest_state != self.state or message:
             state_change = orderstate_change_class(state=self.state,
                                                    order=self,
@@ -568,18 +580,21 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
             state_change.save()
 
             # There's a new state change to be made
-            logger.debug(u'Saved state change from %s to %s for %s with message \'%s\'',
-                         latest_state,
-                         self.state,
-                         self,
-                         message)
+            logger.debug(
+                u'Saved state change from %s to %s for %s with message \'%s\'',
+                latest_state,
+                self.state,
+                self,
+                message
+            )
 
             # Send order_state_change signal
             results = signals.order_state_change.send_robust(
-                                            sender=self,
-                                            old_state=latest_state,
-                                            new_state=self.state,
-                                            state_change=state_change)
+                sender=self,
+                old_state=latest_state,
+                new_state=self.state,
+                state_change=state_change
+            )
 
             # Re-raise exceptions in listeners
             for (receiver, response) in results:
@@ -680,8 +695,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
 
         for orderitem in self.get_items():
             item_price = orderitem.get_total_price(**kwargs)
-            logger.debug(u'Adding price %f for item \'%s\' to total price.' % \
-                (item_price, orderitem))
+            logger.debug(
+                u'Adding price %f for item \'%s\' to total price.',
+                item_price, orderitem
+            )
             assert isinstance(item_price, Decimal)
             price += item_price
 
@@ -690,10 +707,10 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return _(u"%(pk)d on %(date)s") % \
-            {'pk': self.pk,
-             'date': self.date_added.date()
-            }
+        return _(u"%(pk)d on %(date)s") % {
+            'pk': self.pk,
+            'date': self.date_added.date()
+        }
 
 
 class AddressBase(models.Model):
@@ -756,9 +773,11 @@ if CUSTOMER_MODEL:
                         logger.debug(u'Users appear not to have a customer object related to them.')
 
                 except ObjectDoesNotExist:
-                    logger.info(u'User %s logged in but no customer object '+
-                                u'found. This user will not be able to buy '+
-                                u'products.', request.user)
+                    logger.info(
+                        u'User %s logged in but no customer object '
+                        u'found. This user will not be able to buy '
+                        u'products.', request.user
+                    )
 
             return cart
 
@@ -787,11 +806,11 @@ if CUSTOMER_MODEL:
         def __unicode(self):
             """ Textual representation of order, with Customer. """
 
-            return _(u"%(pk)d by %(customer)s on %(date)s") % \
-                {'pk': self.pk,
-                 'customer': self.customer,
-                 'date': self.date_added.date()
-                }
+            return _(u"%(pk)d by %(customer)s on %(date)s") % {
+                'pk': self.pk,
+                'customer': self.customer,
+                'date': self.date_added.date()
+            }
 
 
     class CustomerAddressBase(models.Model):
