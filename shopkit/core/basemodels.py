@@ -141,7 +141,7 @@ class OrderedItemBase(models.Model):
     def get_next_ordering(cls):
         return get_next_ordering(cls.objects.all())
 
-    def save(self):
+    def clean(self):
         """
         If no `sort_order` has been specified, make sure we calculate the
         it based on the highest available current `sort_order`.
@@ -149,8 +149,6 @@ class OrderedItemBase(models.Model):
 
         if not self.sort_order:
             self.sort_order = self.get_next_ordering()
-
-        super(OrderedItemBase, self).save()
 
     sort_order = models.PositiveIntegerField(
         verbose_name=('sort order'),
