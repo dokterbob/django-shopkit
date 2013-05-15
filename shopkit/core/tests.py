@@ -26,21 +26,21 @@ class CoreTestMixin(object):
         not directly be used, rather it should be subclassed similar to the
         way that included model base classes should be subclassed.
     """
-    
+
     def setUp(self):
-        """ 
+        """
         This function gets the model classes from `settings.py` and
-        makes them available as `self.cusomter_class`, `self.product_class` 
+        makes them available as `self.cusomter_class`, `self.product_class`
         etcetera.
         """
         super(CoreTestMixin, self).setUp()
-        
+
         self.customer_class = \
             get_model_from_string(settings.SHOPKIT_CUSTOMER_MODEL)
-        
+
         self.product_class = \
             get_model_from_string(settings.SHOPKIT_PRODUCT_MODEL)
-        
+
         self.cart_class = \
             get_model_from_string(settings.SHOPKIT_CART_MODEL)
 
@@ -52,9 +52,9 @@ class CoreTestMixin(object):
 
         self.orderitem_class = \
             get_model_from_string(settings.SHOPKIT_ORDERITEM_MODEL)
-    
+
     def make_product(self):
-        """ 
+        """
         Abstract function for creating a test product. As the actual
         properties of Products depend on the classes actually implementing
         it, this function must be overridden in subclasses.
@@ -63,41 +63,41 @@ class CoreTestMixin(object):
 
     def test_basic_product(self):
         """ Test if we can create and save a simple product. """
-        
+
         p = self.make_product()
+        p.clean()
         p.save()
-        
+
         self.assert_(p.pk)
-        
+
     def test_cartitem_from_product(self):
         """ Create a `CartItem` from a `Product`. """
         pass
-    
+
     def test_orderitem_from_cartitem(self):
         """ Create an `OrderItem` from a `CartItem`. """
         pass
-    
+
     def test_create_usercustomer(self):
         """ Create a `UserCustomer`. """
         pass
-    
+
     def test_cart(self):
-        """ 
+        """
         Create a shopping cart with several products, quantities and
         prices.
         """
         pass
-    
+
     def test_order(self):
         """
         Create an order on the basis of a shopping cart and a customer
         object.
         """
         pass
-    
+
     def test_orderstate_change_tracking(self):
         """
         Change the state of an order, see if the state change gets logged.
         """
         pass
-
