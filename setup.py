@@ -16,9 +16,6 @@
 # along with this program; if not, write to the Free Software Foundation,
 # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import distribute_setup
-distribute_setup.use_setuptools()
-
 from setuptools import setup, find_packages
 
 try:
@@ -30,7 +27,7 @@ try:
     REQUIREMENTS = open('requirements.txt').read()
 except:
     REQUIREMENTS = None
-    
+
 SHORT_DESCRIPTION = \
 """ A webshop application framework, similar to the way that
 Django is a web application framework. It, essentially, is a toolkit for
