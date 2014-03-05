@@ -60,7 +60,7 @@ from shopkit.core.listeners import *
 
 
 class UserCustomerBase(AbstractCustomerBase, User):
-    """ Abstract base class for Cs which can also be Django users. """
+    """ Abstract base class for Customers which can also be Django users. """
 
     class Meta(AbstractCustomerBase.Meta):
         abstract = True
@@ -719,7 +719,7 @@ class AddressBase(models.Model):
     """
     Base class for address models.
 
-    This base class should be used when defining addresses for customers.
+    This base class should be used when defining addresses.
     """
 
     class Meta:
@@ -759,7 +759,7 @@ if CUSTOMER_MODEL:
     class CustomerCartBase(CartBase):
         """ Abstract base class for shopping carts related to a Customer. """
 
-        class Meta:
+        class Meta(CartBase.Meta):
             abstract = True
 
         customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
@@ -801,7 +801,7 @@ if CUSTOMER_MODEL:
     class CustomerOrderBase(OrderBase):
         """ Abstract base class for orders with Customer management. """
 
-        class Meta:
+        class Meta(OrderBase.Meta):
             abstract = True
 
         customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
