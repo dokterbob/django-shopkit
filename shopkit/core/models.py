@@ -849,7 +849,9 @@ if CUSTOMER_MODEL:
 
         addressee = models.CharField(_('addressee'), max_length=255, blank=True,
                                      help_text=_('Automatically set to the name of the customer when left empty.'))
-        customer = models.ForeignKey(CUSTOMER_MODEL, editable=False)
+        customer = models.ForeignKey(
+            CUSTOMER_MODEL, editable=False, null=True
+        )
 
         def save(self, **kwargs):
             """
