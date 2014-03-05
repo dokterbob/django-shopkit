@@ -745,12 +745,7 @@ class PaymentBase(models.Model):
         verbose_name_plural = _('payments')
         abstract = True
 
-    addressee = models.CharField(
-        _('addressee'), max_length=255, blank=True,
-        help_text=_(
-            'Automatically set to the name of the customer when left empty.'
-        )
-    )
+    addressee = models.CharField(_('addressee'), max_length=255, blank=True)
 
 
 if CUSTOMER_MODEL:
