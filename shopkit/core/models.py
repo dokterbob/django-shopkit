@@ -708,9 +708,8 @@ class OrderBase(AbstractPricedItemBase, DatedItemBase):
     def __unicode__(self):
         """ Textual representation of order. """
 
-        return _(u"%(pk)d by %(customer)s on %(date)s") % {
+        return _(u"%(pk)d by on %(date)s") % {
             'pk': self.pk,
-            'customer': self.customer,
             'date': self.date_added.date()
         }
 
@@ -752,17 +751,28 @@ class PaymentBase(models.Model):
             'Automatically set to the name of the customer when left empty.'
         )
     )
-    customer = models.ForeignKey(CUSTOMER_MODEL, editable=False)
 
 
 if CUSTOMER_MODEL:
+    class CustomerPaymentBase(PaymentBase):
+        """ Abstract base class for payment related to a Customer. """
+
+        class Meta(PaymentBase.Meta):
+            abstract = True
+
+        customer = models.ForeignKey(
+            CUSTOMER_MODEL, editable=False, null=True,
+            on_delete=models.PROTECT
+        )
+
+
     class CustomerCartBase(CartBase):
         """ Abstract base class for shopping carts related to a Customer. """
 
         class Meta(CartBase.Meta):
             abstract = True
 
-        customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'), null=True)
+        customer = models.ForeignKey(CUSTOMER_MODEL, blank=True, null=True)
         """ Customer who owns this cart, if any. """
 
         @classmethod
@@ -804,8 +814,9 @@ if CUSTOMER_MODEL:
         class Meta(OrderBase.Meta):
             abstract = True
 
-        customer = models.ForeignKey(CUSTOMER_MODEL, verbose_name=('customer'),
-                                     on_delete=models.PROTECT, null=True)
+        customer = models.ForeignKey(
+            CUSTOMER_MODEL, on_delete=models.PROTECT, null=True, blank=True
+        )
         """ Customer whom this order belongs to. """
 
         @classmethod
