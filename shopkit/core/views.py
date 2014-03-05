@@ -133,8 +133,9 @@ class CartAddBase(TemplateResponseMixin, CartAddFormMixin, BaseFormView):
         ..todo::
             Refactor this!
         """
+        cart_class = get_model_from_string(CART_MODEL)
 
-        cart = get_cart_from_request(self.request)
+        cart = cart_class.from_request(self.request)
 
         # The cart might not have been saved so far
         if not cart.pk:
@@ -161,5 +162,3 @@ class CartAddBase(TemplateResponseMixin, CartAddFormMixin, BaseFormView):
                 _('Added \'%s\' to shopping cart.') % product)
 
         return super(BaseFormView, self).form_valid(form)
-
-

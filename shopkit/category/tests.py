@@ -26,30 +26,31 @@ class CategoryTestMixinBase(object):
     """
     Base class for testing categories.
     """
-    
+
     def setUp(self):
         """
         We want to have the category class available in `self`.
         """
-        
+
         super(CategoryTestMixinBase, self).setUp()
-        
+
         self.category_class = \
             get_model_from_string(settings.SHOPKIT_CATEGORY_MODEL)
-        
+
     def make_category(self):
-        """ 
+        """
         Abstract function for creating a test category. As the actual
         properties of Products depend on the classes actually implementing
         it, this function must be overridden in subclasses.
         """
-        
+
         raise NotImplementedError
-    
+
     def test_basic_category(self):
         """ Test if we can make and save a simple category. """
-        
+
         c = self.make_category()
+        c.clean()
         c.save()
-        
+
         self.assert_(c.pk)
