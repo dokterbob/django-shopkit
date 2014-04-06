@@ -256,10 +256,11 @@ class ActiveItemBase(models.Model):
 class ActiveItemInShopBase(ActiveItemBase):
     """
     This is a subclass of :class:`ActiveItemBase` with an
-    :class:`ActiveItemManager <shopkit.core.managers.ActiveItemManager>` called `in_shop`.
+    :class:`ActiveItemManager <shopkit.core.managers.ActiveItemManager>`
+    called `in_shop` returning only items with `active=True`.
 
     The main purpose of this class is allowing for items to be enabled or
-    disabled in the shop's frontend
+    disabled in the shop's backend.
     """
 
     class Meta:
@@ -267,9 +268,6 @@ class ActiveItemInShopBase(ActiveItemBase):
 
     objects = models.Manager()
     in_shop = ActiveItemManager()
-    """ An instance of :class:`ActiveItemManager <shopkit.core.managers.ActiveItemManager>`,
-        returning only items with `active=True`.
-    """
 
 
 class DatedItemBase(models.Model):

@@ -28,7 +28,12 @@ from shopkit.category.settings import USE_MPTT
 
 
 class CategoryBase(models.Model):
-    """ Abstract base class for a category. """
+    """
+    Abstract base class for a category.
+
+    The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
+    containing all the items which should be enabled in the shop's frontend.
+    """
 
     class Meta:
         abstract = True
@@ -37,10 +42,6 @@ class CategoryBase(models.Model):
 
     objects = models.Manager()
     in_shop = objects
-    """ The `in_shop` property should be a :class:`Manager <django.db.models.Manager>`
-        containing all the items which should be enabled in the
-        shop's frontend.
-    """
 
     @classmethod
     def get_categories(cls):
