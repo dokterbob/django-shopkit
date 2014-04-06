@@ -53,8 +53,6 @@ PriceField = get_currency_field()
     probably integrate this functionality into the core.
 """
 
-from shopkit.core.listeners import *
-
 
 """ Abstract base models for essential shop components. """
 
