@@ -23,33 +23,31 @@ try:
 except:
     README = None
 
-try:
-    REQUIREMENTS = open('requirements.txt').read()
-except:
-    REQUIREMENTS = None
-
-SHORT_DESCRIPTION = \
-""" A webshop application framework, similar to the way that
-Django is a web application framework. It, essentially, is a toolkit for
-building customized webshop applications using Django, for 'perfectionists
-with deadlines'. """
+SHORT_DESCRIPTION = (
+    "A webshop application framework, similar to the way that "
+    "Django is a web application framework. It, essentially, is a toolkit for "
+    "building customized webshop applications using Django, for "
+    "'perfectionists with deadlines'."
+)
 
 setup(
-    name = 'django-shopkit',
-    version = "0.1",
-    description = SHORT_DESCRIPTION,
-    long_description = README,
-    install_requires = REQUIREMENTS,
-    author = 'Mathijs de Bruin',
-    author_email = 'mathijs@mathijsfietst.nl',
-    url = 'http://github.com/dokterbob/django-newsletter',
-    packages = find_packages(),
-    include_package_data = True,
-    classifiers = ['Development Status :: 2 - Pre-Alpha',
-                   'Environment :: Web Environment',
-                   'Framework :: Django',
-                   'Intended Audience :: Developers',
-                   'Operating System :: OS Independent',
-                   'Programming Language :: Python',
-                   'Topic :: Utilities'],
+    name='django-shopkit',
+    version="0.1",
+    description=SHORT_DESCRIPTION,
+    long_description=README,
+    install_requires=['Django>=1.4.10'],
+    author='Mathijs de Bruin',
+    author_email='mathijs@mathijsfietst.nl',
+    url='http://github.com/dokterbob/django-shopkit',
+    packages=find_packages(),
+    include_package_data=True,
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Framework :: Django',
+        'Intended Audience :: Developers',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Utilities'
+    ],
 )
