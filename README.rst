@@ -16,10 +16,10 @@ is an apparent lack of documentation, which we hope to fix during the upcoming
 months while unrolling subsequent webshop implementations.
 
 If you are interested in using `django-shopkit` for building your own webshop
-application, please 
-`contact us <mailto:mathijs@mathijsfietst.nl>`_ and we'll see how we can work together in helping you understand shopkit's internals while laying out a
-documentation trail in the meanwhile.
+application, please `contact us <mailto:mathijs@mathijsfietst.nl>`_ and we'll
+see how we can work together in helping you understand shopkit's internals
+while laying out a documentation trail in the meanwhile.
 
 More information
 ----------------
-Please refer to the documentation at http://dokterbob.github.com/django-shopkit/.
+Please refer to the documentation on `Read the Docs <https://readthedocs.org/projects/django-shopkit/>`_.
