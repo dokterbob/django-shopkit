@@ -35,7 +35,7 @@ setup(
     version="0.1",
     description=SHORT_DESCRIPTION,
     long_description=README,
-    install_requires=['Django>=1.4.10'],
+    install_requires=['Django>=1.4.10,<1.6'],
     author='Mathijs de Bruin',
     author_email='mathijs@mathijsfietst.nl',
     url='http://github.com/dokterbob/django-shopkit',

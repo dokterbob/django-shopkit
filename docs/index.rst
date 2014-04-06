@@ -20,28 +20,19 @@ is an apparent lack of documentation, which we hope to fix during the upcoming
 months while unrolling subsequent webshop implementations.
 
 If you are interested in using `django-shopkit` for building your own webshop
-application, please 
-`contact us <mailto:mathijs@mathijsfietst.nl>`_ and we'll see how we can work together in helping you understand shopkit's internals while laying out a
-documentation trail in the meanwhile.
+application, please `contact us <mailto:mathijs@mathijsfietst.nl>`_ and
+we'll see how we can work together in helping you understand shopkit's
+internals while laying out a documentation trail in the meanwhile.
 
 Compatibility
 -------------
-This piece of software will be compatible with Django 1.3. Due to the 
-unavailability of Class Based Generic Views, it will not work on earlier
-releases. It is being developed on the SVN trunk until Django hits the 1.3
-release.
+Django-shopkit is compatible with Django 1.4 and 1.5.
 
 Dependencies
 ------------
-You will need the dependencies mentioned in `requirements.txt` to be installed
-somewhere in your `PYTHONPATH`. `django-shopkit` will default to using (the
-new) `sorl-thumbnail <https://github.com/sorl/sorl-thumbnail>`_ when
-available, but does not depend on it.
-
-When available, it has support for MPTT indexing of nested categories using
-`django-mptt <https://github.com/django-mptt/django-mptt>`_. However, this
-support is entirely optional, though using  some kind of tree optimization
-algorithm is recommended.
+The only hard dependency of `django-shopkit` is Django 1.4 or 1.5. When
+available, `django-shopkit` will use `django-mptt` (< v0.6) for nested categories
+and `sorl-thumbnail` (< v12) for images.
 
 Contents
 --------
@@ -49,8 +40,8 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   gettingstarted.rst 
-   
+   gettingstarted.rst
+
    todo.rst
 
    extending.rst
