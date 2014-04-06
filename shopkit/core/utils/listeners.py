@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 Mathijs de Bruin <mathijs@mathijsfietst.nl>
+# Copyright (C) 2010-2014 Mathijs de Bruin <mathijs@mathijsfietst.nl>
 #
 # This file is part of django-shopkit.
 #
@@ -55,9 +55,12 @@ class Listener(object):
         # sanitize keyword arguments
         for key in initkwargs:
             if key in cls.http_method_names:
-                raise TypeError(u"You tried to pass in the %s method name as a "
-                                u"keyword argument to %s(). Don't do that."
-                                % (key, cls.__name__))
+                raise TypeError(
+                    u"You tried to pass in the %s method name as a "
+                    u"keyword argument to %s(). Don't do that." % (
+                        key, cls.__name__
+                    )
+                )
             if not hasattr(cls, key):
                 raise TypeError(u"%s() received an invalid keyword %r" % (
                     cls.__name__, key))

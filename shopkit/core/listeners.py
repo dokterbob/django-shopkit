@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2011 Mathijs de Bruin <mathijs@mathijsfietst.nl>
+# Copyright (C) 2010-2014 Mathijs de Bruin <mathijs@mathijsfietst.nl>
 #
 # This file is part of django-shopkit.
 #
@@ -20,12 +20,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMessage
 
 from django.template.loader import render_to_string
 from django.contrib.sites.models import Site
 
 from django.utils import translation
+from django.utils.translation import get_language
 
 from shopkit.core.utils.listeners import Listener
 
@@ -43,9 +44,6 @@ class StateChangeListener(Listener):
                 # <do something>
     """
 
-    new_state = None
-    old_state = None
-
     def dispatch(self, sender, **kwargs):
         """
         The dispatch method is equivlant to the similarly named method in
@@ -53,17 +51,25 @@ class StateChangeListener(Listener):
         should be handled at all (whether or not it matches the specified)
         state change) and then calls the `handle()` method.
         """
-        # Match the new state, if given
-        if self.new_state and not self.new_state == sender.state:
-            logger.debug(u'Signal for %s doesn\'t match listener for %s', sender, self)
-            return
+        assert self.state
 
-        # Match the old state
-        if self.old_state and not self.old_state == kwargs['old_state']:
-            logger.debug(u'Old state for %s doesn\'t match old state for listener %s', sender, self)
-            return
+        old_state = getattr(self, 'old_state', None)
+        if sender.state == self.state:
+            logger.debug(u'State for %s matches listener for %s', sender, self)
 
-        self.handler(sender, **kwargs)
+            if old_state and not old_state is kwargs['old_state']:
+                logger.debug(
+                    u'Old state for %s doesn\'t match old state for listener %s',
+                    sender, self
+                )
+                return
+
+            self.handler(sender, **kwargs)
+        else:
+            logger.debug(
+                u'Signal for %s doesn\'t match listener for %s',
+                sender, self
+            )
 
     def handler(self, sender, **kwargs):
         """
@@ -92,13 +98,12 @@ class EmailingListener(Listener):
     """ Listener which sends out emails. """
 
     body_template_name = None
-    body_html_template_name = None
     subject_template_name = None
 
     def get_subject_template_names(self):
         """
-        Returns a list of template names to be used for the request. Must
-        return a list. May not be called if render_to_response is overridden.
+        Returns a list of template names to be used for the request. Must return
+        a list. May not be called if render_to_response is overridden.
         """
         if self.subject_template_name is None:
             raise ImproperlyConfigured(
@@ -109,8 +114,8 @@ class EmailingListener(Listener):
 
     def get_body_template_names(self):
         """
-        Returns a list of template names to be used for the request. Must
-        return a list. May not be called if render_to_response is overridden.
+        Returns a list of template names to be used for the request. Must return
+        a list. May not be called if render_to_response is overridden.
         """
         if self.body_template_name is None:
             raise ImproperlyConfigured(
@@ -119,16 +124,6 @@ class EmailingListener(Listener):
         else:
 
             return [self.body_template_name]
-
-    def get_body_html_template_names(self):
-        """
-        Returns a list of HTML template names to be used for the request. Must
-        return a list. May not be called if render_to_response is overridden.
-        """
-        if self.body_html_template_name is None:
-            return None
-        else:
-            return [self.body_html_template_name]
 
     def get_context_data(self):
         """
@@ -158,21 +153,15 @@ class EmailingListener(Listener):
 
     def create_message(self, context):
         """ Create an email message. """
-        recipients = self.get_recipients()
-        sender = self.get_sender()
-
         subject = render_to_string(self.get_subject_template_names(), context)
         # Clean the subject a bit for common errors (newlines!)
         subject = subject.strip().replace('\n', ' ')
 
         body = render_to_string(self.get_body_template_names(), context)
+        recipients = self.get_recipients()
+        sender = self.get_sender()
 
-        email = EmailMultiAlternatives(subject, body, sender, recipients)
-
-        html_body_template_names = self.get_body_html_template_names()
-        if html_body_template_names:
-            html_body = render_to_string(html_body_template_names, context)
-            email.attach_alternative(html_body, 'text/html')
+        email = EmailMessage(subject, body, sender, recipients)
 
         return email
 
@@ -202,7 +191,7 @@ class TranslatedEmailingListener(EmailingListener):
         class but changing locale on beforehand, switching back to the
         original afterwards.
         """
-        old_language = translation.get_language()
+        old_language = get_language()
 
         language = self.get_language(sender, **kwargs)
 
