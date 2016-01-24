@@ -374,8 +374,7 @@ class ManyProductDiscountMixin(models.Model):
         abstract = True
 
     products = models.ManyToManyField(PRODUCT_MODEL, db_index=True,
-                                blank=True, null=True,
-                                verbose_name=_('products'))
+                                blank=True, verbose_name=_('products'))
     """ Products this discount relates to. """
 
     @classmethod
@@ -506,7 +505,7 @@ if CATEGORIES:
             abstract = True
 
         categories = models.ManyToManyField(CATEGORY_MODEL, db_index=True,
-                                            blank=True, null=True,
+                                            blank=True,
                                             verbose_name=_('categories'))
         """ Categories this discount relates to. """
 
