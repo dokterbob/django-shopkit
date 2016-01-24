@@ -297,7 +297,7 @@ class PublishDateItemBase(models.Model):
         ordering = ['-date_publish']
         get_latest_by = 'date_publish'
 
-    date_publish = models.DateTimeField(default=datetime.datetime.now(),
+    date_publish = models.DateTimeField(default=datetime.datetime.now,
                                         verbose_name=_('publication date'),
                                         db_index=True)
 
