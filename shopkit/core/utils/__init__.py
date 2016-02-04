@@ -20,6 +20,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.apps import apps
 
 from shopkit.core.settings import CART_MODEL
 
@@ -27,15 +28,15 @@ from shopkit.core.settings import CART_MODEL
 
 
 def get_model_from_string(model):
-    """ 
+    """
     Takes a string in the form of `appname.Model`, (ie.
     `basic_webshop.CartItem`) and returns the model class for it.
     """
     if model == '#doc':
         return False
-    
-    model_class = models.get_model(*model.split('.'))
-    
+
+    model_class = apps.get_model(*model.split('.'))
+
     assert isinstance(model_class, models.base.ModelBase), \
         '%s does not refer to a known Model class.' % model
 
