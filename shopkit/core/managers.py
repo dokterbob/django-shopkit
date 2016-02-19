@@ -18,19 +18,18 @@
 
 from django.db import models
 
+
 class ActiveItemManager(models.Manager):
-    """ 
+    """
     Manager returning only activated items, ideally for subclasses of
-    :class:`AbstractActiveItemBase <shopkit.core.basemodels.AbstractActiveItemBase>`. 
+    :class:`AbstractActiveItemBase <shopkit.core.basemodels.AbstractActiveItemBase>`.
     """
 
-    def get_query_set(self):
+    def get_queryset(self):
         """ Filter the original queryset so it returns only items with
             `active=True`.
         """
-        qs = super(ActiveItemManager, self).get_query_set()
+        qs = super(ActiveItemManager, self).get_queryset()
         qs = qs.filter(active=True)
 
         return qs
-
-
