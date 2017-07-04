@@ -76,17 +76,18 @@ class ImagesProductAdminMixin(object):
 
         """
 
-        image = obj.get_default_image()
+        image_obj = obj.get_default_image()
 
-        if image:
+        if image_obj:
             if SORL_THUMBNAIL:
                 # This should not raise an error when an image is non-
                 # existant or something like that.
                 try:
-                    image = sorl_backend.get_thumbnail(image.image,
+                    image = sorl_backend.get_thumbnail(image_obj.image,
                                                        self.thumbnail_geometry)
                 except:
                     logger.warn('Error rendering thumbnail')
+                    return u''
 
             return u'<a href="%d/"><img src="%s" alt="%s"/></a>' % \
                 (obj.pk, image.url, unicode(obj))
@@ -95,5 +96,3 @@ class ImagesProductAdminMixin(object):
             return u''
     default_image.short_description = _('image')
     default_image.allow_tags = True
-
-
